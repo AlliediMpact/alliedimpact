@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Allied iMpact Coin Box</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      max-width: 600px;
+    }
+
+    .icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .icon svg {
+      width: 60px;
+      height: 60px;
+      fill: currentColor;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .button {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 1rem 2rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+
+    .button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .status {
+      margin-top: 3rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      background: #ef4444;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .online .status-indicator {
+      background: #22c55e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12zm10-6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>
+        <path d="M13 7h-2v5.41l4.29 4.29 1.41-1.41L13 11.59z"/>
+      </svg>
+    </div>
+
+    <h1>You're Offline</h1>
+    
+    <p>
+      It looks like you've lost your internet connection. Don't worry, Allied iMpact Coin Box will continue working once you're back online.
+    </p>
+
+    <button class="button" onclick="window.location.reload()">
+      Try Again
+    </button>
+
+    <div class="status" id="status">
+      <span class="status-indicator"></span>
+      <span id="status-text">Offline</span>
+    </div>
+  </div>
+
+  <script>
+    // Monitor connection status
+    function updateOnlineStatus() {
+      const status = document.getElementById('status');
+      const statusText = document.getElementById('status-text');
+      
+      if (navigator.onLine) {
+        status.classList.add('online');
+        statusText.textContent = 'Back Online - Reconnecting...';
+        
+        // Wait a moment then reload
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        status.classList.remove('online');
+        statusText.textContent = 'Offline';
+      }
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    // Check connection every 5 seconds
+    setInterval(() => {
+      if (navigator.onLine) {
+        updateOnlineStatus();
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

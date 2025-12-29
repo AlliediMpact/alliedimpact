@@ -1,0 +1,225 @@
+# Artillery Load Testing Configuration
+# Tests API endpoints under various load conditions
+
+config:
+  target: "http://localhost:3000"
+  phases:
+    # Warm-up phase - gradual ramp up
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm-up"
+    
+    # Ramp-up phase - increasing load
+    - duration: 120
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp-up"
+    
+    # Sustained load - peak traffic
+    - duration: 180
+      arrivalRate: 100
+      name: "Peak load - 100 users/sec"
+    
+    # Spike test - sudden traffic surge
+    - duration: 60
+      arrivalRate: 200
+      name: "Spike test"
+    
+    # Cool-down - return to normal
+    - duration: 60
+      arrivalRate: 20
+      name: "Cool-down"
+
+  # Performance thresholds
+  ensure:
+    maxErrorRate: 1 # Max 1% error rate
+    p95: 500 # 95th percentile response time under 500ms
+    p99: 1000 # 99th percentile response time under 1s
+
+  # Custom variables
+  variables:
+    testUserId: "load-test-user-{{ $randomString() }}"
+    testApiKey: "sk_test_{{ $randomString() }}"
+
+  # Plugins for enhanced reporting
+  plugins:
+    metrics-by-endpoint:
+      # Track metrics per endpoint
+      stripQueryString: false
+    
+  # HTTP defaults
+  http:
+    timeout: 10
+    pool: 50 # Connection pool size
+
+# Test scenarios
+scenarios:
+  # Scenario 1: Public API - Read Operations
+  - name: "Public API Read Operations"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/public/loans"
+          headers:
+            X-API-Key: "{{ testApiKey }}"
+          expect:
+            - statusCode: [200, 401, 429]
+          capture:
+            - json: "$.tickets[0].id"
+              as: "loanId"
+      
+      - think: 2 # 2 second pause
+      
+      - get:
+          url: "/api/public/loans/{{ loanId }}"
+          headers:
+            X-API-Key: "{{ testApiKey }}"
+          expect:
+            - statusCode: [200, 401, 404, 429]
+      
+      - get:
+          url: "/api/public/transactions"
+          headers:
+            X-API-Key: "{{ testApiKey }}"
+          expect:
+            - statusCode: [200, 401, 429]
+
+  # Scenario 2: Public API - Write Operations
+  - name: "Public API Write Operations"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/public/loans"
+          headers:
+            X-API-Key: "{{ testApiKey }}"
+            Content-Type: "application/json"
+          json:
+            amount: 1000
+            duration: 30
+            interestRate: 20
+          expect:
+            - statusCode: [201, 400, 401, 403, 429]
+      
+      - think: 1
+      
+      - post:
+          url: "/api/public/investments"
+          headers:
+            X-API-Key: "{{ testApiKey }}"
+            Content-Type: "application/json"
+          json:
+            ticketId: "{{ $randomString() }}"
+            amount: 500
+          expect:
+            - statusCode: [201, 400, 401, 403, 429]
+
+  # Scenario 3: Bulk Operations
+  - name: "Bulk Operations"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/bulk/loans/create"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+            Content-Type: "application/json"
+          json:
+            loans:
+              - amount: 1000
+                duration: 30
+                interestRate: 20
+              - amount: 1500
+                duration: 45
+                interestRate: 21
+              - amount: 2000
+                duration: 60
+                interestRate: 22
+          expect:
+            - statusCode: [200, 400, 401, 429]
+          capture:
+            - json: "$.batchId"
+              as: "batchId"
+      
+      - think: 3
+      
+      - get:
+          url: "/api/bulk/loans/create?batchId={{ batchId }}"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+          expect:
+            - statusCode: [200, 401, 404]
+
+  # Scenario 4: API Key Management
+  - name: "API Key Management"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/api-keys/create"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+            Content-Type: "application/json"
+          json:
+            name: "Load Test Key"
+            tier: "basic"
+            permissions: ["loans:read"]
+          expect:
+            - statusCode: [201, 400, 401]
+          capture:
+            - json: "$.data.id"
+              as: "keyId"
+      
+      - get:
+          url: "/api/api-keys/list"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+          expect:
+            - statusCode: [200, 401]
+      
+      - get:
+          url: "/api/api-keys/{{ keyId }}"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+          expect:
+            - statusCode: [200, 401, 404]
+
+  # Scenario 5: Webhook Operations
+  - name: "Webhook Operations"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/webhooks"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+            Content-Type: "application/json"
+          json:
+            url: "https://example.com/webhook"
+            events: ["loan.created", "loan.approved"]
+          expect:
+            - statusCode: [201, 400, 401]
+          capture:
+            - json: "$.data.id"
+              as: "webhookId"
+      
+      - get:
+          url: "/api/webhooks"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+          expect:
+            - statusCode: [200, 401]
+      
+      - get:
+          url: "/api/webhooks/{{ webhookId }}/deliveries"
+          headers:
+            Authorization: "Bearer {{ $randomString() }}"
+          expect:
+            - statusCode: [200, 401, 404]
+
+  # Scenario 6: Rate Limit Testing
+  - name: "Rate Limit Stress Test"
+    weight: 5
+    flow:
+      - loop:
+          - get:
+              url: "/api/public/loans"
+              headers:
+                X-API-Key: "{{ testApiKey }}"
+          count: 20 # Rapid-fire 20 requests to test rate limiting

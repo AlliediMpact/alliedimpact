@@ -1,0 +1,36 @@
+{
+  "name": "allied-impact",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Allied iMpact - Multi-Product Platform",
+  "workspaces": [
+    "platform/*",
+    "apps/*",
+    "packages/*",
+    "web"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "coinbox:dev": "turbo run dev --filter=@allied-impact/coinbox",
+    "coinbox:build": "turbo run build --filter=@allied-impact/coinbox",
+    "coinbox:test": "turbo run test --filter=@allied-impact/coinbox",
+    "platform:dev": "turbo run dev --filter=@allied-impact/platform-*",
+    "web:dev": "turbo run dev --filter=@allied-impact/web"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "prettier": "^3.1.0",
+    "turbo": "^1.11.0",
+    "typescript": "^5.3.3"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
