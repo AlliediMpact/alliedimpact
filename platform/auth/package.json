@@ -13,6 +13,7 @@
     "@allied-impact/types": "workspace:*",
     "firebase": "^10.7.1",
     "firebase-admin": "^12.0.0",
+    "next": "^14.0.4",
     "zod": "^3.22.4"
   },
   "devDependencies": {

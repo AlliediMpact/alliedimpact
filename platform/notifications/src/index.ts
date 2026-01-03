@@ -5,8 +5,11 @@
  * Handles email, in-app, push, and SMS notifications.
  */
 
+import { createLogger } from '@allied-impact/shared';
 import { getFirestore, collection, doc, addDoc, getDoc, updateDoc, query, where, getDocs, orderBy, limit as firestoreLimit, Timestamp } from 'firebase/firestore';
 import type { Notification, ProductId, NotificationType, NotificationPriority } from '@allied-impact/types';
+
+const logger = createLogger('notifications');
 
 // Email service configuration (will be expanded with SendGrid/similar)
 let emailService: any = null;
@@ -85,7 +88,10 @@ async function sendEmailNotification(
   const email = userData.email;
   
   // TODO: Integrate with email service (SendGrid, Firebase Email Extension, etc.)
-  console.log(`[EMAIL] Sending to ${email}:`, notification.title);
+  logger.info('Sending email', { 
+    recipient: email, 
+    title: notification.title 
+  });
   
   // Placeholder for actual email sending
   // await emailService.send({
@@ -103,7 +109,10 @@ async function sendPushNotification(
   notification: Pick<Notification, 'title' | 'message' | 'actionUrl'>
 ): Promise<void> {
   // TODO: Integrate with Firebase Cloud Messaging
-  console.log(`[PUSH] Sending to user ${userId}:`, notification.title);
+  logger.info('Sending push notification', { 
+    userId, 
+    title: notification.title 
+  });
   
   // Placeholder for FCM integration
   // const messaging = getMessaging();
@@ -134,12 +143,15 @@ async function sendSmsNotification(
   const phoneNumber = userData.phoneNumber;
   
   if (!phoneNumber) {
-    console.warn(`User ${userId} has no phone number for SMS`);
+    logger.warn('User has no phone number for SMS', { userId });
     return;
   }
   
   // TODO: Integrate with SMS service (Twilio, Africa's Talking, etc.)
-  console.log(`[SMS] Sending to ${phoneNumber}:`, notification.message);
+  logger.info('Sending SMS', { 
+    recipient: phoneNumber, 
+    message: notification.message?.substring(0, 50) 
+  });
 }
 
 /**

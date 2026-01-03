@@ -196,6 +196,10 @@ export async function updatePlatformUserProfile(
   });
 }
 
+// Re-export admin and middleware modules
+export * from './admin';
+export * from './middleware';
+
 export default {
   initializeAuth,
   getAuthInstance,

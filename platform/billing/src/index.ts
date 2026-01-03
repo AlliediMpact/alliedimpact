@@ -2,9 +2,24 @@
  * @allied-impact/billing
  * 
  * Platform-wide billing and payment service.
- * Handles Stripe integration, subscriptions, and transaction recording.
+ * Provider-agnostic architecture supporting PayFast, Stripe, and more.
  */
 
+// Export core types
+export * from './core/types';
+
+// Export service
+export * from './core/service';
+export { default as BillingService } from './core/service';
+
+// Export transaction store
+export * from './core/transaction-store';
+
+// Export providers
+export { PayFastProvider } from './providers/payfast';
+export { StripeProvider } from './providers/stripe';
+
+// Legacy exports (for backwards compatibility - to be deprecated)
 import Stripe from 'stripe';
 import { getFirestore, collection, doc, addDoc, getDoc, updateDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import type { PlatformTransaction, ProductId, TransactionType, TransactionStatus, PaymentMethod } from '@allied-impact/types';
@@ -12,7 +27,7 @@ import type { PlatformTransaction, ProductId, TransactionType, TransactionStatus
 let stripe: Stripe | null = null;
 
 /**
- * Initialize Stripe with API key
+ * @deprecated Use initializeBilling with provider pattern instead
  */
 export function initializeStripe(apiKey: string): Stripe {
   if (!stripe) {
@@ -25,7 +40,7 @@ export function initializeStripe(apiKey: string): Stripe {
 }
 
 /**
- * Get Stripe instance
+ * @deprecated Use getBillingService() instead
  */
 export function getStripeInstance(): Stripe {
   if (!stripe) {
@@ -35,7 +50,7 @@ export function getStripeInstance(): Stripe {
 }
 
 /**
- * Create a payment intent for one-time payment
+ * @deprecated Use BillingService.createPayment() instead
  */
 export async function createPaymentIntent(
   userId: string,

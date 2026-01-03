@@ -13,7 +13,9 @@
   "dependencies": {
     "@allied-impact/types": "workspace:*",
     "firebase": "^10.7.1",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@upstash/ratelimit": "^1.0.0",
+    "@upstash/redis": "^1.28.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",

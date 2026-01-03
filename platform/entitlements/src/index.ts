@@ -7,6 +7,10 @@
 
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, Timestamp } from 'firebase/firestore';
 import type { ProductEntitlement, ProductId, SubscriptionTier, SubscriptionStatus } from '@allied-impact/types';
+import { getCache, invalidateUserCache } from './cache';
+
+// Re-export cache utilities
+export * from './cache';
 
 /**
  * Check if a user has access to a product
@@ -61,15 +65,24 @@ export async function getProductEntitlement(
 }
 
 /**
- * Get all entitlements for a user
+ * Get all entitlements for a user (with caching)
  */
-export async function getUserEntitlements(userId: string): Promise<ProductEntitlement[]> {
+export async function getUserEntitlements(userId: string, skipCache: boolean = false): Promise<ProductEntitlement[]> {
+  // Check cache first (unless explicitly skipped)
+  if (!skipCache) {
+    const cached = getCache().get(userId);
+    if (cached) {
+      return cached;
+    }
+  }
+
+  // Fetch from Firestore
   const db = getFirestore();
   const entitlementsRef = collection(db, 'product_entitlements');
   const q = query(entitlementsRef, where('userId', '==', userId));
   const snapshot = await getDocs(q);
   
-  return snapshot.docs.map((doc) => {
+  const entitlements = snapshot.docs.map((doc) => {
     const data = doc.data();
     return {
       ...data,
@@ -80,6 +93,11 @@ export async function getUserEntitlements(userId: string): Promise<ProductEntitl
       updatedAt: data.updatedAt.toDate()
     } as ProductEntitlement;
   });
+
+  // Cache the result
+  getCache().set(userId, entitlements);
+
+  return entitlements;
 }
 
 /**
@@ -124,6 +142,9 @@ export async function grantProductAccess(
     createdAt: Timestamp.fromDate(entitlement.createdAt),
     updatedAt: Timestamp.fromDate(entitlement.updatedAt)
   });
+
+  // Invalidate cache
+  invalidateUserCache(userId);
   
   return entitlement;
 }
@@ -139,6 +160,9 @@ export async function revokeProductAccess(
   const entitlementId = `${userId}_${productId}`;
   
   await updateDoc(doc(db, 'product_entitlements', entitlementId), {
+
+  // Invalidate cache
+  invalidateUserCache(userId);
     status: 'cancelled',
     updatedAt: Timestamp.now()
   });
@@ -156,6 +180,9 @@ export async function updateEntitlementTier(
   const entitlementId = `${userId}_${productId}`;
   
   await updateDoc(doc(db, 'product_entitlements', entitlementId), {
+
+  // Invalidate cache
+  invalidateUserCache(userId);
     tier: newTier,
     updatedAt: Timestamp.now()
   });
@@ -170,6 +197,9 @@ export async function updateEntitlementStatus(
   status: SubscriptionStatus
 ): Promise<void> {
   const db = getFirestore();
+
+  // Invalidate cache
+  invalidateUserCache(userId);
   const entitlementId = `${userId}_${productId}`;
   
   await updateDoc(doc(db, 'product_entitlements', entitlementId), {
