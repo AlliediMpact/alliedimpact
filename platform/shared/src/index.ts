@@ -386,3 +386,9 @@ export default {
   chunk,
   retry
 };
+
+// Export user archetypes
+export * from './user-archetypes';
+
+// Export product categories
+export * from './product-categories';
