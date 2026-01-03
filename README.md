@@ -90,7 +90,9 @@ Copy code
 | File | Purpose |
 |-----|--------|
 | `README.md` | Platform overview (this file) |
+| `docs/MASTER_IMPLEMENTATION_PLAN.md` | **Current development plan** ⭐ |
 | `docs/PLATFORM_AND_PRODUCTS.md` | Deep explanation of platform & apps |
+| `docs/ALLIED_IMPACT_PLATFORM_MODEL.md` | Conceptual & strategic model |
 | `apps/*/README.md` | App-specific rules & logic |
 
 ---
