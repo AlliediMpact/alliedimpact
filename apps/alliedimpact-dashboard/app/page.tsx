@@ -2,21 +2,40 @@
 
 import { useDashboard } from './lib/dashboard-context';
 import { analytics, AnalyticsEvents } from './lib/analytics';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { DashboardEngine, UserArchetype, detectArchetypes } from './lib/dashboard-engine';
+import { getSubscriptionProducts } from '@allied-impact/shared';
 import ProductGrid from './components/ProductGrid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
-import { Sparkles, TrendingUp, Users } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, LayoutDashboard } from 'lucide-react';
 
 export default function DashboardPage() {
   const { platformUser, entitlements, loading } = useDashboard();
+  const [archetypes, setArchetypes] = useState<UserArchetype[]>([UserArchetype.INDIVIDUAL]);
+  const [dashboardView, setDashboardView] = useState<string>('individual');
 
   const activeSubscriptions = entitlements.filter(e => e.status === 'active').length;
+  const subscriptionProducts = getSubscriptionProducts();
 
   useEffect(() => {
     if (platformUser) {
+      // Detect user archetypes
+      const detectedArchetypes = detectArchetypes({
+        email: platformUser.email || '',
+        customClaims: (platformUser as any).customClaims
+      });
+      setArchetypes(detectedArchetypes);
+
+      // Determine primary view
+      const primaryView = DashboardEngine.getPrimaryView(detectedArchetypes);
+      setDashboardView(primaryView);
+
+      // Track analytics
       analytics.page('Dashboard', {
         userId: platformUser.uid,
         activeSubscriptions,
+        view: primaryView,
+        archetypes: detectedArchetypes
       });
     }
   }, [platformUser, activeSubscriptions]);

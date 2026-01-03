@@ -1,14 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { useDashboard } from '../lib/dashboard-context';
 import { analytics, AnalyticsEvents } from '../lib/analytics';
+import { getSubscriptionProducts, ProductMetadata } from '@allied-impact/shared';
+import { SubscriptionModal } from '../../components/SubscriptionModal';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
 import { Button } from '@allied-impact/ui';
 import { 
-  Wallet, 
-  Car, 
-  Code, 
-  Users, 
   Lock, 
   ExternalLink,
   CheckCircle,
@@ -17,71 +16,35 @@ import {
 } from 'lucide-react';
 import type { ProductEntitlement } from '@allied-impact/types';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  url: string;
-  color: string;
-}
-
-const PRODUCTS: Product[] = [
-  {
-    id: 'coinbox',
-    name: 'Coin Box',
-    description: 'P2P financial platform with savings jars, crypto trading, and international money transfers',
-    icon: Wallet,
-    url: process.env.NEXT_PUBLIC_COINBOX_URL || 'http://localhost:3002',
-    color: 'from-green-500 to-emerald-600',
-  },
-  {
-    id: 'drive-master',
-    name: 'Drive Master',
-    description: 'Comprehensive driving school management system',
-    icon: Car,
-    url: process.env.NEXT_PUBLIC_DRIVE_MASTER_URL || 'http://localhost:3003',
-    color: 'from-blue-500 to-cyan-600',
-  },
-  {
-    id: 'codetech',
-    name: 'CodeTech',
-    description: 'Learn programming and technology skills',
-    icon: Code,
-    url: process.env.NEXT_PUBLIC_CODETECH_URL || 'http://localhost:3004',
-    color: 'from-purple-500 to-pink-600',
-  },
-  {
-    id: 'umkhanyakude',
-    name: 'Umkhanyakude',
-    description: 'Community platform for local services',
-    icon: Users,
-    url: process.env.NEXT_PUBLIC_UMKHANYAKUDE_URL || 'http://localhost:3005',
-    color: 'from-orange-500 to-red-600',
-  },
-];
-
 interface ProductCardProps {
-  product: Product;
+  product: ProductMetadata;
   entitlement: ProductEntitlement | undefined;
+  onSubscribeClick: (product: ProductMetadata) => void;
+  userId: string;
 }
 
-function ProductCard({ product, entitlement }: ProductCardProps) {
-  const Icon = product.icon;
+function ProductCard({ product, entitlement, onSubscribeClick, userId }: ProductCardProps) {
   const hasAccess = entitlement?.status === 'active';
   const isPending = entitlement?.status === 'pending';
   const isExpired = entitlement?.status === 'expired';
+  const isComingSoon = product.status === 'coming-soon';
 
   const handleLaunch = () => {
-    if (hasAccess) {
+    if (hasAccess && product.url) {
+      // Track product launch
+      analytics.track(AnalyticsEvents.PRODUCT_CLICKED, {
+        userId,
+        productId: product.id,
+        productName: product.name
+      });
       window.location.href = product.url;
     }
   };
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className={`h-32 bg-gradient-to-br ${product.color} flex items-center justify-center`}>
-        <Icon className="w-16 h-16 text-white" />
+      <div className="h-32 bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center">
+        <span className="text-6xl">{product.icon}</span>
       </div>
       
       <CardHeader>
@@ -98,18 +61,25 @@ function ProductCard({ product, entitlement }: ProductCardProps) {
           )}
           {isExpired && (
             <XCircle className="w-5 h-5 text-red-500" />
-          )}
-        </div>
-        <CardDescription className="line-clamp-2">
-          {product.description}
-        </CardDescription>
-      </CardHeader>
+         isComingSoon && (
+          <>
+            <p className="text-sm text-muted-foreground font-medium">
+              🚀 Coming Soon
+            </p>
+            <Button 
+              variant="outline"
+              disabled
+              className="w-full"
+            >
+              Not Available Yet
+            </Button>
+          </>
+        )}
 
-      <CardContent className="space-y-3">
-        {hasAccess && (
+        {!isComingSoon && hasAccess && (
           <>
             <p className="text-sm text-green-600 font-medium">
-              Active subscription
+              ✓ Active subscription
             </p>
             <Button 
               onClick={handleLaunch}
@@ -121,10 +91,10 @@ function ProductCard({ product, entitlement }: ProductCardProps) {
           </>
         )}
 
-        {isPending && (
+        {!isComingSoon && isPending && (
           <>
             <p className="text-sm text-yellow-600 font-medium">
-              Access pending approval
+              ⏳ Access pending
             </p>
             <Button 
               variant="outline"
@@ -136,14 +106,13 @@ function ProductCard({ product, entitlement }: ProductCardProps) {
           </>
         )}
 
-        {!entitlement && (
+        {!isComingSoon && !entitlement && (
           <>
             <p className="text-sm text-muted-foreground">
               Subscribe to get access
             </p>
             <Button 
-              variant="outline"
-              onClick={() => window.location.href = '/subscriptions?product=' + product.id}
+              onClick={() => onSubscribeClick(product)}
               className="w-full"
             >
               View Plans
@@ -151,27 +120,29 @@ function ProductCard({ product, entitlement }: ProductCardProps) {
           </>
         )}
 
-        {isExpired && (
+        {!isComingSoon && isExpired && (
           <>
             <p className="text-sm text-red-600 font-medium">
-              Subscription expired
+              ⚠ Subscription expired
             </p>
             <Button 
-              variant="outline"
-              onClick={() => window.location.href = '/subscriptions?product=' + product.id}
-              className="w-full"
-            >
-              Renew Subscription
-            </Button>
-          </>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
+          platformUser, entitlements, loading } = useDashboard();
+  const [selectedProduct, setSelectedProduct] = useState<ProductMetadata | null>(null);
+  
+  const products = getSubscriptionProducts();
 
-export default function ProductGrid() {
-  const { entitlements, loading } = useDashboard();
+  const handleSubscribeClick = (product: ProductMetadata) => {
+    setSelectedProduct(product);
+    analytics.track(AnalyticsEvents.SUBSCRIPTION_MODAL_OPENED, {
+      userId: platformUser?.uid,
+      productId: product.id,
+      productName: product.name
+    });
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null);
+  };
 
   if (loading) {
     return (
@@ -184,6 +155,41 @@ export default function ProductGrid() {
               <div className="h-4 bg-muted rounded w-full" />
             </CardHeader>
             <CardContent>
+              <div className="h-10 bg-muted rounded" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {products.map((product) => {
+          const entitlement = entitlements.find(e => e.productId === product.id);
+          return (
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              entitlement={entitlement}
+              onSubscribeClick={handleSubscribeClick}
+              userId={platformUser?.uid || ''}
+            />
+          );
+        })}
+      </div>
+
+      {/* Subscription Modal */}
+      {selectedProduct && platformUser && (
+        <SubscriptionModal
+          product={selectedProduct}
+          open={!!selectedProduct}
+          onClose={handleCloseModal}
+          userId={platformUser.uid}
+        />
+      )}
+    </   <CardContent>
               <div className="h-10 bg-muted rounded" />
             </CardContent>
           </Card>
