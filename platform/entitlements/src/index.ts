@@ -3,6 +3,13 @@
  * 
  * Platform-wide entitlement management service.
  * Controls user access to products and features across Allied iMpact.
+ * 
+ * Supports multiple access types:
+ * - subscription: Paid subscriptions
+ * - sponsored: Sponsored by organizations
+ * - project: Project-based access
+ * - role: Role-based access
+ * - grant: Grant-funded access
  */
 
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, Timestamp } from 'firebase/firestore';
@@ -11,6 +18,35 @@ import { getCache, invalidateUserCache } from './cache';
 
 // Re-export cache utilities
 export * from './cache';
+
+/**
+ * Access types for entitlements
+ */
+export enum AccessType {
+  SUBSCRIPTION = 'subscription',
+  SPONSORED = 'sponsored',
+  PROJECT = 'project',
+  ROLE = 'role',
+  GRANT = 'grant'
+}
+
+/**
+ * Enhanced entitlement with multi-source support
+ */
+export interface EnhancedEntitlement extends ProductEntitlement {
+  accessType: AccessType;
+  
+  // Context (optional, depends on accessType)
+  sponsorId?: string;
+  sponsorshipName?: string;
+  projectId?: string;
+  projectName?: string;
+  grantId?: string;
+  grantName?: string;
+  
+  // Who granted this access
+  grantedBy: string;
+}
 
 /**
  * Check if a user has access to a product
@@ -101,7 +137,7 @@ export async function getUserEntitlements(userId: string, skipCache: boolean = f
 }
 
 /**
- * Grant product access to a user
+ * Grant product access to a user (legacy - defaults to subscription)
  */
 export async function grantProductAccess(
   userId: string,
@@ -115,20 +151,59 @@ export async function grantProductAccess(
     metadata?: Record<string, any>;
   } = {}
 ): Promise<ProductEntitlement> {
+  return grantAccess(userId, productId, {
+    accessType: AccessType.SUBSCRIPTION,
+    tier,
+    ...options,
+    grantedBy: 'system'
+  });
+}
+
+/**
+ * Grant access to a user (enhanced with multi-source support)
+ */
+export async function grantAccess(
+  userId: string,
+  productId: ProductId,
+  options: {
+    accessType: AccessType;
+    tier?: SubscriptionTier;
+    startDate?: Date;
+    endDate?: Date;
+    trialEndDate?: Date;
+    autoRenew?: boolean;
+    sponsorId?: string;
+    sponsorshipName?: string;
+    projectId?: string;
+    projectName?: string;
+    grantId?: string;
+    grantName?: string;
+    grantedBy: string;
+    metadata?: Record<string, any>;
+  }
+): Promise<EnhancedEntitlement> {
   const db = getFirestore();
   const entitlementId = `${userId}_${productId}`;
   
   const now = new Date();
-  const entitlement: ProductEntitlement = {
+  const entitlement: EnhancedEntitlement = {
     id: entitlementId,
     userId,
     productId,
-    tier,
+    tier: options.tier || 'basic',
+    accessType: options.accessType,
     status: options.trialEndDate ? 'trial' : 'active',
     startDate: options.startDate || now,
     endDate: options.endDate,
     trialEndDate: options.trialEndDate,
-    autoRenew: options.autoRenew ?? true,
+    autoRenew: options.autoRenew ?? (options.accessType === AccessType.SUBSCRIPTION),
+    sponsorId: options.sponsorId,
+    sponsorshipName: options.sponsorshipName,
+    projectId: options.projectId,
+    projectName: options.projectName,
+    grantId: options.grantId,
+    grantName: options.grantName,
+    grantedBy: options.grantedBy,
     createdAt: now,
     updatedAt: now,
     metadata: options.metadata
@@ -147,6 +222,172 @@ export async function grantProductAccess(
   invalidateUserCache(userId);
   
   return entitlement;
+}
+
+/**
+ * Grant subscription access (paid subscription)
+ */
+export async function grantSubscription(
+  userId: string,
+  productId: ProductId,
+  tier: SubscriptionTier,
+  options: {
+    startDate?: Date;
+    endDate?: Date;
+    autoRenew?: boolean;
+  } = {}
+): Promise<EnhancedEntitlement> {
+  return grantAccess(userId, productId, {
+    accessType: AccessType.SUBSCRIPTION,
+    tier,
+    grantedBy: 'billing',
+    ...options
+  });
+}
+
+/**
+ * Grant sponsored access (sponsored by organization)
+ */
+export async function grantSponsoredAccess(
+  userId: string,
+  productId: ProductId,
+  sponsorId: string,
+  options: {
+    sponsorshipName?: string;
+    duration?: number; // milliseconds
+    tier?: SubscriptionTier;
+  } = {}
+): Promise<EnhancedEntitlement> {
+  const endDate = options.duration 
+    ? new Date(Date.now() + options.duration)
+    : undefined;
+
+  return grantAccess(userId, productId, {
+    accessType: AccessType.SPONSORED,
+    tier: options.tier,
+    sponsorId,
+    sponsorshipName: options.sponsorshipName,
+    endDate,
+    autoRenew: false,
+    grantedBy: sponsorId
+  });
+}
+
+/**
+ * Grant project-based access (custom dev clients)
+/**
+ * Get entitlements by access type
+ */
+export async function getEntitlementsByAccessType(
+  userId: string,
+  accessType: AccessType
+): Promise<EnhancedEntitlement[]> {
+  const allEntitlements = await getUserEntitlements(userId);
+  return allEntitlements.filter(
+    (e: any) => e.accessType === accessType
+  ) as EnhancedEntitlement[];
+}
+
+/**
+ * Check if user has sponsored access
+ */
+export async function hasSponsoredAccess(
+  userId: string,
+  productId: ProductId
+): Promise<boolean> {
+  const entitlement = await getProductEntitlement(userId, productId);
+  return (entitlement as any)?.accessType === AccessType.SPONSORED && 
+         entitlement?.status === 'active';
+}
+
+/**
+ * Check if user has any access (regardless of type)
+ */
+export async function hasAnyAccess(
+  userId: string,
+  productId: ProductId
+): Promise<boolean> {
+  return hasProductAccess(userId, productId);
+}
+
+export default {
+  // Legacy functions (backward compatible)
+  hasProductAccess,
+  getProductEntitlement,
+  getUserEntitlements,
+  grantProductAccess,
+  revokeProductAccess,
+  updateEntitlementTier,
+  updateEntitlementStatus,
+  isInTrial,
+  getSubscriptionTier,
+  
+  // Enhanced functions
+  grantAccess,
+  grantSubscription,
+  grantSponsoredAccess,
+  grantProjectAccess,
+  grantRoleAccess,
+  grantGrantAccess,
+  getEntitlementsByAccessType,
+  hasSponsoredAccess,
+  hasAnyAccess
+): Promise<EnhancedEntitlement> {
+  return grantAccess(userId, productId, {
+    accessType: AccessType.PROJECT,
+    tier: options.tier,
+    projectId,
+    projectName: options.projectName,
+    endDate: options.endDate,
+    autoRenew: false,
+    grantedBy: 'admin'
+  });
+}
+
+/**
+ * Grant role-based access (admins, staff)
+ */
+export async function grantRoleAccess(
+  userId: string,
+  productId: ProductId,
+  options: {
+    tier?: SubscriptionTier;
+  } = {}
+): Promise<EnhancedEntitlement> {
+  return grantAccess(userId, productId, {
+    accessType: AccessType.ROLE,
+    tier: options.tier,
+    autoRenew: false,
+    grantedBy: 'admin'
+  });
+}
+
+/**
+ * Grant grant-funded access (NGOs, institutions)
+ */
+export async function grantGrantAccess(
+  userId: string,
+  productId: ProductId,
+  grantId: string,
+  options: {
+    grantName?: string;
+    duration?: number;
+    tier?: SubscriptionTier;
+  } = {}
+): Promise<EnhancedEntitlement> {
+  const endDate = options.duration 
+    ? new Date(Date.now() + options.duration)
+    : undefined;
+
+  return grantAccess(userId, productId, {
+    accessType: AccessType.GRANT,
+    tier: options.tier,
+    grantId,
+    grantName: options.grantName,
+    endDate,
+    autoRenew: false,
+    grantedBy: 'admin'
+  });
 }
 
 /**
