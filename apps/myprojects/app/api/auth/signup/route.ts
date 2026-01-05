@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuth } from '@allied-impact/auth';
+import { createProject, ProjectStatus, ProjectType } from '@allied-impact/projects';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { getApp } from 'firebase/app';
 
 /**
  * My Projects Signup API
@@ -34,52 +38,63 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Implement with Firebase Auth + Firestore
-    // For now, return mock response
+    // Get auth service
+    const auth = getAuth();
+    const db = getFirestore(getApp());
 
     // 1. Create user account with Firebase Auth
-    // const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-    // const userId = userCredential.user.uid;
+    const { createUserWithEmailAndPassword, updateProfile } = await import('firebase/auth');
+    const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+    const userId = userCredential.user.uid;
+
+    // Update user profile with display name
+    await updateProfile(userCredential.user, { displayName: data.name });
 
     // 2. Create user profile in Firestore
-    // await setDoc(doc(db, 'users', userId), {
-    //   email: data.email,
-    //   name: data.name,
-    //   organizationName: data.organizationName,
-    //   phone: data.phone,
-    //   createdAt: serverTimestamp(),
-    //   archetypes: ['individual']
-    // });
+    await setDoc(doc(db, 'users', userId), {
+      email: data.email,
+      name: data.name,
+      organizationName: data.organizationName,
+      phone: data.phone,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      archetypes: ['individual']
+    });
 
     // 3. Auto-create first project from discovery data
     let projectId = null;
     if (data.discoveryData) {
-      // const projectRef = doc(collection(db, 'projects'));
-      // projectId = projectRef.id;
+      const projectType = mapDiscoveryTypeToProjectType(data.discoveryData.projectType);
+      const projectName = getProjectName(data.discoveryData.projectType, data.discoveryData.customProjectType);
       
-      // await setDoc(projectRef, {
-      //   userId,
-      //   name: getProjectName(data.discoveryData.projectType, data.discoveryData.customProjectType),
-      //   type: data.discoveryData.projectType,
-      //   customType: data.discoveryData.customProjectType,
-      //   budgetRange: data.discoveryData.budgetRange,
-      //   timeline: data.discoveryData.timeline,
-      //   description: data.discoveryData.description,
-      //   status: 'discovery',
-      //   health: 'on_track',
-      //   progress: 0,
-      //   milestones: [],
-      //   deliverables: [],
-      //   createdAt: serverTimestamp(),
-      //   updatedAt: serverTimestamp()
-      // });
+      const project = await createProject(userId, {
+        clientId: userId,
+        clientName: data.name,
+        name: projectName,
+        type: projectType,
+        status: ProjectStatus.DISCOVERY,
+        description: data.discoveryData.description,
+        startDate: new Date(),
+        estimatedBudget: mapBudgetRangeToNumber(data.discoveryData.budgetRange),
+        currency: 'ZAR',
+        progress: 0,
+        milestones: [],
+        deliverables: [],
+        tickets: [],
+        teamMembers: [userId],
+        createdBy: userId,
+        settings: {
+          allowTickets: true,
+          requireApprovals: true,
+          notifyOnUpdate: true
+        }
+      });
 
-      projectId = 'mock-project-id';
+      projectId = project.id;
     }
 
-    // Mock response for now
     return NextResponse.json({
-      userId: 'mock-user-id',
+      userId,
       projectId,
       message: 'Account created successfully'
     });
@@ -91,6 +106,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Email already in use' },
         { status: 409 }
+      );
+    }
+
+    if (error.code === 'auth/weak-password') {
+      return NextResponse.json(
+        { error: 'Password is too weak' },
+        { status: 400 }
       );
     }
 
@@ -114,4 +136,34 @@ function getProjectName(projectType: string, customType?: string): string {
   };
 
   return typeNames[projectType] || 'New Project';
+}
+
+/**
+ * Map discovery project type to ProjectType enum
+ */
+function mapDiscoveryTypeToProjectType(discoveryType: string): ProjectType {
+  const mapping: Record<string, ProjectType> = {
+    'web-app': ProjectType.WEB_APP,
+    'mobile-app': ProjectType.MOBILE_APP,
+    'web-mobile': ProjectType.WEB_APP, // We'll add mobile later
+    'api-integration': ProjectType.API,
+    'custom': ProjectType.CUSTOM
+  };
+
+  return mapping[discoveryType] || ProjectType.CUSTOM;
+}
+
+/**
+ * Map budget range to estimated number
+ */
+function mapBudgetRangeToNumber(budgetRange: string): number {
+  const mapping: Record<string, number> = {
+    'under-50k': 40000,
+    '50k-100k': 75000,
+    '100k-250k': 175000,
+    '250k-500k': 375000,
+    '500k-plus': 600000
+  };
+
+  return mapping[budgetRange] || 100000;
 }
