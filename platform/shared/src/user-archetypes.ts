@@ -11,12 +11,7 @@ import { Timestamp } from 'firebase/firestore';
 
 export enum UserArchetype {
   INDIVIDUAL = 'individual',
-  LEARNER = 'learner',
-  INVESTOR = 'investor',
-  SPONSOR = 'sponsor',
-  NGO = 'ngo',
-  INSTITUTION = 'institution',
-  CUSTOM_CLIENT = 'custom_client',
+  MY_PROJECTS = 'my_projects',
   ADMIN = 'admin',
   SUPER_ADMIN = 'super_admin'
 }
@@ -32,19 +27,7 @@ export type UserProfile = {
   // Individual/Learner context
   subscriptions?: string[];  // Product IDs
   
-  // Organization context
-  organizationId?: string;
-  organizationRole?: 'admin' | 'member';
-  
-  // Sponsor/Investor context
-  sponsorships?: Array<{
-    id: string;
-    initiative: string;
-    amount: number;
-    startDate: Date;
-  }>;
-  
-  // Custom Client context
+  // Project context
   projectIds?: string[];
   
   // Preferences
@@ -82,27 +65,14 @@ export function getDashboardSections(profile: UserProfile): string[] {
     sections.push('organization-overview', 'user-management', 'programs-management');
   }
   
-  // Impact tracking
-  if (profile.archetypes.includes(UserArchetype.SPONSOR) ||
-      profile.archetypes.includes(UserArchetype.INVESTOR)) {
-    sections.push('my-sponsorships', 'impact-metrics', 'funding-opportunities');
+  // Individual - App subscriptions
+  if (profile.archetypes.includes(UserArchetype.INDIVIDUAL)) {
+    sections.push('my-subscriptions', 'recommended-products', 'recent-activity');
   }
   
-  // Project tracking
-  if (profile.archetypes.includes(UserArchetype.CUSTOM_CLIENT)) {
-    sections.push('my-projects', 'project-timeline', 'support-tickets');
-  }
-  
-  // Platform administration
-  if (profile.archetypes.includes(UserArchetype.ADMIN) ||
-      profile.archetypes.includes(UserArchetype.SUPER_ADMIN)) {
-    sections.push('admin-panel', 'platform-analytics', 'user-admin', 'system-monitoring');
-  }
-  
-  return sections;
-}
-
-/**
+  // Projects - Custom solutions
+  if (profile.archetypes.includes(UserArchetype.MY_PROJECTS)) {
+    sections.push('my-projects', 'project-timeline', 'support-tickets', 'deliverable
  * Check if user has specific archetype
  */
 export function hasArchetype(profile: UserProfile, archetype: UserArchetype): boolean {
@@ -179,12 +149,7 @@ export function getArchetypeIcon(archetype: UserArchetype): string {
     [UserArchetype.NGO]: '🤝',
     [UserArchetype.INSTITUTION]: '🏢',
     [UserArchetype.CUSTOM_CLIENT]: '📋',
-    [UserArchetype.ADMIN]: '⚙️',
-    [UserArchetype.SUPER_ADMIN]: '👑'
-  };
-  
-  return icons[archetype];
-}
+    [UserArchetype.MY_PROJECTS]: 'My Projects
 
 /**
  * Default archetype for new users
@@ -203,7 +168,4 @@ export const RESTRICTED_ARCHETYPES = [
 
 /**
  * Check if archetype requires approval
- */
-export function requiresApproval(archetype: UserArchetype): boolean {
-  return RESTRICTED_ARCHETYPES.includes(archetype);
-}
+ */MY_PROJECTS

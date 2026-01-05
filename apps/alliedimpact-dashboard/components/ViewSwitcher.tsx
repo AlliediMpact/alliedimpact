@@ -6,13 +6,9 @@ import { UserArchetype } from '@allied-impact/shared';
 import { Button } from '@allied-impact/ui';
 import { 
   User, 
-  Building2, 
-  Briefcase, 
-  Heart, 
+  Briefcase,
   Shield,
-  ChevronDown,
-  GraduationCap,
-  TrendingUp
+  ChevronDown
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -35,35 +31,11 @@ const VIEW_CONFIG = {
     icon: User,
     description: 'Your subscriptions and products'
   },
-  learner: {
-    path: '/(learner)',
-    label: 'Learning',
-    icon: GraduationCap,
-    description: 'Your courses and progress'
-  },
-  investor: {
-    path: '/(investor)',
-    label: 'Investments',
-    icon: TrendingUp,
-    description: 'Portfolio and returns'
-  },
-  organization: {
-    path: '/organization',
-    label: 'Organization',
-    icon: Building2,
-    description: 'Manage users and programs'
-  },
-  client: {
-    path: '/client',
-    label: 'Client',
+  projects: {
+    path: '/projects',
+    label: 'My Projects',
     icon: Briefcase,
-    description: 'Track your projects'
-  },
-  sponsor: {
-    path: '/sponsor',
-    label: 'Sponsor',
-    icon: Heart,
-    description: 'View impact metrics'
+    description: 'Track your custom projects'
   },
   admin: {
     path: '/admin',
@@ -77,37 +49,31 @@ export function ViewSwitcher({ currentView, availableArchetypes }: ViewSwitcherP
   const router = useRouter();
   const pathname = usePathname();
   
-  // Determine available views based on archetypes
+  // === V1 GATING: Only show INDIVIDUAL and ADMIN dashboards ===
+  // All other archetypes (Learner, Investor, Organization, Client, Sponsor) are DORMANT
+  // until their corresponding products/contracts exist.
+  const availableViews: string[] = [];
+  avaMap archetypes to views
   const availableViews: string[] = [];
   availableArchetypes.forEach(archetype => {
-    // Map archetypes to views
     if (archetype === UserArchetype.INDIVIDUAL) {
       availableViews.push('individual');
     }
-    if (archetype === UserArchetype.LEARNER) {
-      availableViews.push('learner');
-    }
-    if (archetype === UserArchetype.INVESTOR) {
-      availableViews.push('investor');
-    }
-    if (archetype === UserArchetype.NGO || archetype === UserArchetype.INSTITUTION) {
-      availableViews.push('organization');
-    }
-    if (archetype === UserArchetype.CUSTOM_CLIENT) {
-      availableViews.push('client');
-    }
-    if (archetype === UserArchetype.SPONSOR) {
-      availableViews.push('sponsor');
+    if (archetype === UserArchetype.MY_PROJECTS) {
+      availableViews.push('projects');
     }
     if (archetype === UserArchetype.ADMIN || archetype === UserArchetype.SUPER_ADMIN) {
       availableViews.push('admin');
-    }uniqueViews.length <= 1) {
+    }
+  });
+  
+  // Deduplicate views
+  const uniqueViews = [...new Set(availableViews)];
+  
+  // Only show ViewSwitcher if user has multiple views
+  if (uniqueViews.length <= 1) {
     return null;
   }
-
-  const currentConfig = VIEW_CONFIG[currentView as keyof typeof VIEW_CONFIG] || VIEW_CONFIG.individual;
-  const CurrentIcon = currentConfig.icon;
-
   const handleViewChange = (view: string) => {
     const config = VIEW_CONFIG[view as keyof typeof VIEW_CONFIG];
     if (config) {

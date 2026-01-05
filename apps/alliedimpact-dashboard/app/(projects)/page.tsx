@@ -28,7 +28,7 @@ import {
   getProjectHealthStatus,
 } from '@allied-impact/projects';
 
-export default function ClientDashboard() {
+export default function MyProjectsDashboard() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
