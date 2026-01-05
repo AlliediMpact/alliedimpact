@@ -13,7 +13,8 @@ import {
   TrendingUp,
   FileText,
   MessageSquare,
-  ExternalLink
+  ExternalLink,
+  Plus
 } from 'lucide-react';
 import {
   Project,
@@ -21,12 +22,19 @@ import {
   Milestone,
   Deliverable,
   Ticket,
+  MilestoneStatus,
+  DeliverableStatus,
+  TicketStatus,
   getClientProjects,
   getProjectMilestones,
   getProjectDeliverables,
   getProjectTickets,
   getProjectHealthStatus,
+  updateMilestone,
 } from '@allied-impact/projects';
+import { MilestoneModal, MilestoneCard } from '@/components/MilestoneManager';
+import { DeliverableModal, DeliverableCard } from '@/components/DeliverableManager';
+import { TicketModal, TicketDetailModal, TicketCard } from '@/components/TicketManager';
 
 export default function MyProjectsDashboard() {
   const router = useRouter();
@@ -37,6 +45,13 @@ export default function MyProjectsDashboard() {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
   const [tickets, setTickets] = useState<Ticket[]>([]);
+
+  // Modal states
+  const [showMilestoneModal, setShowMilestoneModal] = useState(false);
+  const [showDeliverableModal, setShowDeliverableModal] = useState(false);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [editingMilestone, setEditingMilestone] = useState<Milestone | undefined>();
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | undefined>();
 
   useEffect(() => {
     // Check authentication and set up real-time listeners
@@ -227,6 +242,55 @@ export default function MyProjectsDashboard() {
     if (health === 'on-track') return <CheckCircle2 className="h-5 w-5 text-green-600" />;
     if (health === 'at-risk') return <AlertCircle className="h-5 w-5 text-yellow-600" />;
     return <AlertCircle className="h-5 w-5 text-red-600" />;
+  };
+
+  // Handler functions for modals
+  const handleMilestoneEdit = (milestone: Milestone) => {
+    setEditingMilestone(milestone);
+    setShowMilestoneModal(true);
+  };
+
+  const handleMilestoneModalClose = () => {
+    setShowMilestoneModal(false);
+    setEditingMilestone(undefined);
+  };
+
+  const handleDeliverableStatusUpdate = async (id: string, status: DeliverableStatus) => {
+    try {
+      const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+      const { getApp } = await import('firebase/app');
+      const db = getFirestore(getApp());
+      
+      await updateDoc(doc(db, 'deliverables', id), {
+        status,
+        updatedAt: new Date(),
+        ...(status === DeliverableStatus.APPROVED && { approvedDate: new Date() })
+      });
+    } catch (error) {
+      console.error('Failed to update deliverable:', error);
+      alert('Failed to update deliverable status');
+    }
+  };
+
+  const handleTicketStatusUpdate = async (ticketId: string, status: TicketStatus) => {
+    try {
+      const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+      const { getApp } = await import('firebase/app');
+      const db = getFirestore(getApp());
+      
+      await updateDoc(doc(db, 'tickets', ticketId), {
+        status,
+        updatedAt: new Date(),
+        ...(status === TicketStatus.RESOLVED && { resolvedAt: new Date() })
+      });
+    } catch (error) {
+      console.error('Failed to update ticket:', error);
+      alert('Failed to update ticket status');
+    }
+  };
+
+  const handleTicketClick = (ticket: Ticket) => {
+    setSelectedTicket(ticket);
   };
 
   if (loading) {
@@ -448,48 +512,31 @@ export default function MyProjectsDashboard() {
 
           {/* Milestones */}
           <Card>
-            <CardHeader>
-              <CardTitle>Milestones</CardTitle>
-              <CardDescription>Track project milestones and deliverables</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Milestones</CardTitle>
+                <CardDescription>Track project milestones and progress</CardDescription>
+              </div>
+              <Button onClick={() => setShowMilestoneModal(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Milestone
+              </Button>
             </CardHeader>
             <CardContent>
               {milestones.length === 0 ? (
-                <p className="text-gray-600 text-center py-8">No milestones yet</p>
+                <div className="text-center py-12">
+                  <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-600">No milestones yet</p>
+                  <p className="text-sm text-gray-500 mt-1">Add your first milestone to track progress</p>
+                </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   {milestones.map(milestone => (
-                    <div key={milestone.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h4 className="font-semibold">{milestone.name}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
-                        </div>
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          milestone.status === 'completed' ? 'bg-green-100 text-green-700' :
-                          milestone.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
-                          milestone.status === 'overdue' ? 'bg-red-100 text-red-700' :
-                          'bg-gray-100 text-gray-700'
-                        }`}>
-                          {milestone.status.replace('_', ' ').toUpperCase()}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-6 text-sm text-gray-600 mt-3">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          <span>Due: {new Date(milestone.dueDate).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2 w-24">
-                            <div 
-                              className="bg-blue-600 h-2 rounded-full"
-                              style={{ width: `${milestone.progress}%` }}
-                            />
-                          </div>
-                          <span className="text-xs">{milestone.progress}%</span>
-                        </div>
-                      </div>
-                    </div>
+                    <MilestoneCard
+                      key={milestone.id}
+                      milestone={milestone}
+                      onEdit={handleMilestoneEdit}
+                    />
                   ))}
                 </div>
               )}
@@ -498,32 +545,31 @@ export default function MyProjectsDashboard() {
 
           {/* Deliverables */}
           <Card>
-            <CardHeader>
-              <CardTitle>Recent Deliverables</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Deliverables</CardTitle>
+                <CardDescription>Project deliverables and files</CardDescription>
+              </div>
+              <Button onClick={() => setShowDeliverableModal(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Deliverable
+              </Button>
             </CardHeader>
             <CardContent>
               {deliverables.length === 0 ? (
-                <p className="text-gray-600 text-center py-8">No deliverables yet</p>
+                <div className="text-center py-12">
+                  <FileText className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-600">No deliverables yet</p>
+                  <p className="text-sm text-gray-500 mt-1">Deliverables will appear here as they're added</p>
+                </div>
               ) : (
-                <div className="space-y-3">
-                  {deliverables.slice(0, 5).map(deliverable => (
-                    <div key={deliverable.id} className="flex items-center justify-between py-2 border-b last:border-b-0">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-gray-400" />
-                        <div>
-                          <p className="font-medium">{deliverable.name}</p>
-                          <p className="text-sm text-gray-600">Due: {new Date(deliverable.dueDate).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${
-                        deliverable.status === 'approved' ? 'bg-green-100 text-green-700' :
-                        deliverable.status === 'delivered' ? 'bg-blue-100 text-blue-700' :
-                        deliverable.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {deliverable.status.replace('_', ' ').toUpperCase()}
-                      </span>
-                    </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {deliverables.map(deliverable => (
+                    <DeliverableCard
+                      key={deliverable.id}
+                      deliverable={deliverable}
+                      onStatusUpdate={handleDeliverableStatusUpdate}
+                    />
                   ))}
                 </div>
               )}
@@ -532,57 +578,81 @@ export default function MyProjectsDashboard() {
 
           {/* Support Tickets */}
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Support Tickets</CardTitle>
-                  <CardDescription>Recent tickets and issues</CardDescription>
-                </div>
-                <Button size="sm" onClick={() => router.push('/tickets')}>
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  New Ticket
-                </Button>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Support Tickets</CardTitle>
+                <CardDescription>Questions, issues, and feedback</CardDescription>
               </div>
+              <Button onClick={() => setShowTicketModal(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Ticket
+              </Button>
             </CardHeader>
             <CardContent>
               {tickets.length === 0 ? (
-                <p className="text-gray-600 text-center py-8">No tickets yet</p>
+                <div className="text-center py-12">
+                  <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-600">No tickets yet</p>
+                  <p className="text-sm text-gray-500 mt-1">Create a ticket to get support from the team</p>
+                </div>
               ) : (
-                <div className="space-y-3">
-                  {tickets.slice(0, 5).map(ticket => (
-                    <div key={ticket.id} className="flex items-start justify-between py-3 border-b last:border-b-0">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                            ticket.priority === 'urgent' ? 'bg-red-100 text-red-700' :
-                            ticket.priority === 'high' ? 'bg-orange-100 text-orange-700' :
-                            ticket.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
-                            {ticket.priority.toUpperCase()}
-                          </span>
-                          <span className="text-xs text-gray-600">{ticket.type.toUpperCase()}</span>
-                        </div>
-                        <p className="font-medium">{ticket.title}</p>
-                        <p className="text-sm text-gray-600 mt-1">{ticket.description}</p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          Created {new Date(ticket.createdAt).toLocaleDateString()} • {ticket.comments.length} comments
-                        </p>
-                      </div>
-                      <span className={`ml-4 px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${
-                        ticket.status === 'resolved' ? 'bg-green-100 text-green-700' :
-                        ticket.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {ticket.status.replace('_', ' ').toUpperCase()}
-                      </span>
-                    </div>
+                <div className="grid gap-4">
+                  {tickets.map(ticket => (
+                    <TicketCard
+                      key={ticket.id}
+                      ticket={ticket}
+                      onClick={handleTicketClick}
+                    />
                   ))}
                 </div>
               )}
             </CardContent>
           </Card>
         </>
+      )}
+
+      {/* Modals */}
+      {showMilestoneModal && selectedProject && (
+        <MilestoneModal
+          projectId={selectedProject.id}
+          milestone={editingMilestone}
+          onClose={handleMilestoneModalClose}
+          onSuccess={() => {
+            // Real-time listener will update automatically
+          }}
+        />
+      )}
+
+      {showDeliverableModal && selectedProject && (
+        <DeliverableModal
+          projectId={selectedProject.id}
+          onClose={() => setShowDeliverableModal(false)}
+          onSuccess={() => {
+            // Real-time listener will update automatically
+          }}
+        />
+      )}
+
+      {showTicketModal && selectedProject && user && (
+        <TicketModal
+          projectId={selectedProject.id}
+          userId={user.uid}
+          userName={user.displayName || user.email}
+          onClose={() => setShowTicketModal(false)}
+          onSuccess={() => {
+            // Real-time listener will update automatically
+          }}
+        />
+      )}
+
+      {selectedTicket && user && (
+        <TicketDetailModal
+          ticket={selectedTicket}
+          userId={user.uid}
+          userName={user.displayName || user.email}
+          onClose={() => setSelectedTicket(undefined)}
+          onStatusUpdate={handleTicketStatusUpdate}
+        />
       )}
     </div>
   );
