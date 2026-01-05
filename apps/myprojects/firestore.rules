@@ -1,0 +1,146 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isProjectClient(projectData) {
+      return isAuthenticated() && request.auth.uid == projectData.clientId;
+    }
+    
+    function isTeamMember(projectData) {
+      return isAuthenticated() && request.auth.uid in projectData.teamMembers;
+    }
+    
+    function hasProjectAccess(projectData) {
+      return isProjectClient(projectData) || isTeamMember(projectData);
+    }
+    
+    // ==================== USERS ====================
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if isOwner(userId);
+      
+      // Users can create their own profile during signup
+      allow create: if isOwner(userId);
+      
+      // Users can update their own profile
+      allow update: if isOwner(userId);
+      
+      // Admins can read all users (add admin check when ready)
+      // allow read: if isAdmin();
+    }
+    
+    // ==================== PROJECTS ====================
+    match /projects/{projectId} {
+      // Read: Client or team members
+      allow read: if hasProjectAccess(resource.data);
+      
+      // Create: Authenticated users can create projects
+      allow create: if isAuthenticated() 
+        && request.resource.data.clientId == request.auth.uid;
+      
+      // Update: Client or team members
+      allow update: if hasProjectAccess(resource.data);
+      
+      // Delete: Only project owner/client
+      allow delete: if isProjectClient(resource.data);
+    }
+    
+    // ==================== MILESTONES ====================
+    match /milestones/{milestoneId} {
+      // Get parent project
+      function getProject() {
+        return get(/databases/$(database)/documents/projects/$(resource.data.projectId)).data;
+      }
+      
+      // Read: Anyone with project access
+      allow read: if hasProjectAccess(getProject());
+      
+      // Create: Team members only
+      allow create: if isAuthenticated()
+        && hasProjectAccess(get(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data);
+      
+      // Update: Team members only
+      allow update: if hasProjectAccess(getProject());
+      
+      // Delete: Team members only
+      allow delete: if hasProjectAccess(getProject());
+    }
+    
+    // ==================== DELIVERABLES ====================
+    match /deliverables/{deliverableId} {
+      function getProject() {
+        return get(/databases/$(database)/documents/projects/$(resource.data.projectId)).data;
+      }
+      
+      // Read: Anyone with project access
+      allow read: if hasProjectAccess(getProject());
+      
+      // Create: Team members only
+      allow create: if isAuthenticated()
+        && hasProjectAccess(get(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data);
+      
+      // Update: Team members and clients (clients can approve/reject)
+      allow update: if hasProjectAccess(getProject());
+      
+      // Delete: Team members only
+      allow delete: if isTeamMember(getProject());
+    }
+    
+    // ==================== TICKETS ====================
+    match /tickets/{ticketId} {
+      function getProject() {
+        return get(/databases/$(database)/documents/projects/$(resource.data.projectId)).data;
+      }
+      
+      // Read: Anyone with project access
+      allow read: if hasProjectAccess(getProject());
+      
+      // Create: Anyone with project access
+      allow create: if isAuthenticated()
+        && hasProjectAccess(get(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data)
+        && request.resource.data.reportedBy == request.auth.uid;
+      
+      // Update: Anyone with project access (for comments and status)
+      allow update: if hasProjectAccess(getProject());
+      
+      // Delete: Only ticket creator or team members
+      allow delete: if isOwner(resource.data.reportedBy) || isTeamMember(getProject());
+    }
+    
+    // ==================== ENTITLEMENTS (Platform) ====================
+    match /entitlements/{userId} {
+      // Users can read their own entitlements
+      allow read: if isOwner(userId);
+      
+      // Only system/admin can write entitlements
+      // allow write: if isAdmin();
+    }
+    
+    // ==================== PLATFORM USERS ====================
+    match /platform_users/{userId} {
+      // Users can read their own platform profile
+      allow read: if isOwner(userId);
+      
+      // Users can create their own profile
+      allow create: if isOwner(userId);
+      
+      // Users can update their own profile
+      allow update: if isOwner(userId);
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

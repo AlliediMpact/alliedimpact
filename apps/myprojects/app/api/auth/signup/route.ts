@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from '@allied-impact/auth';
+import { getAuthInstance } from '@allied-impact/auth';
 import { createProject, ProjectStatus, ProjectType } from '@allied-impact/projects';
 import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get auth service
-    const auth = getAuth();
+    const auth = getAuthInstance();
     const db = getFirestore(getApp());
 
     // 1. Create user account with Firebase Auth

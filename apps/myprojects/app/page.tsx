@@ -57,8 +57,8 @@ export default function MyProjectsDashboard() {
     // Check authentication and set up real-time listeners
     const checkAuth = async () => {
       try {
-        const { getAuth } = await import('@allied-impact/auth');
-        const auth = getAuth();
+        const { getAuthInstance } = await import('@allied-impact/auth');
+        const auth = getAuthInstance();
         
         if (!auth.currentUser) {
           router.push('/login');

@@ -1,0 +1,111 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function hasProjectAccess(projectId) {
+      let project = firestore.get(/databases/(default)/documents/projects/$(projectId)).data;
+      return isAuthenticated() && (
+        request.auth.uid == project.clientId ||
+        request.auth.uid in project.teamMembers
+      );
+    }
+    
+    // File size limits
+    function isValidFileSize() {
+      return request.resource.size < 10 * 1024 * 1024; // 10MB max
+    }
+    
+    function isValidImageSize() {
+      return request.resource.size < 5 * 1024 * 1024; // 5MB max for images
+    }
+    
+    // File type validation
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isDocument() {
+      return request.resource.contentType.matches('application/pdf') ||
+             request.resource.contentType.matches('application/msword') ||
+             request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
+             request.resource.contentType.matches('text/.*');
+    }
+    
+    function isAllowedFileType() {
+      return isImage() || isDocument() ||
+             request.resource.contentType.matches('application/zip') ||
+             request.resource.contentType.matches('application/x-zip-compressed');
+    }
+    
+    // ==================== PROJECT DELIVERABLE FILES ====================
+    match /projects/{projectId}/deliverables/{deliverableId}/{fileName} {
+      // Read: Anyone with project access
+      allow read: if hasProjectAccess(projectId);
+      
+      // Write: Team members only, with validation
+      allow write: if hasProjectAccess(projectId)
+        && isValidFileSize()
+        && isAllowedFileType();
+      
+      // Delete: Team members only
+      allow delete: if hasProjectAccess(projectId);
+    }
+    
+    // ==================== PROJECT ATTACHMENTS (Generic) ====================
+    match /projects/{projectId}/attachments/{fileName} {
+      // Read: Anyone with project access
+      allow read: if hasProjectAccess(projectId);
+      
+      // Write: Anyone with project access
+      allow write: if hasProjectAccess(projectId)
+        && isValidFileSize()
+        && isAllowedFileType();
+      
+      // Delete: Anyone with project access
+      allow delete: if hasProjectAccess(projectId);
+    }
+    
+    // ==================== USER AVATARS ====================
+    match /users/{userId}/avatar/{fileName} {
+      // Read: Anyone authenticated
+      allow read: if isAuthenticated();
+      
+      // Write: Only the user
+      allow write: if isOwner(userId)
+        && isImage()
+        && isValidImageSize();
+      
+      // Delete: Only the user
+      allow delete: if isOwner(userId);
+    }
+    
+    // ==================== TICKET ATTACHMENTS ====================
+    match /projects/{projectId}/tickets/{ticketId}/{fileName} {
+      // Read: Anyone with project access
+      allow read: if hasProjectAccess(projectId);
+      
+      // Write: Anyone with project access
+      allow write: if hasProjectAccess(projectId)
+        && isValidFileSize()
+        && isAllowedFileType();
+      
+      // Delete: Anyone with project access
+      allow delete: if hasProjectAccess(projectId);
+    }
+    
+    // Deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
