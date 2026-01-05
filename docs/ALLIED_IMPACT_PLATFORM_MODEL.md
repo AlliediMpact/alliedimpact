@@ -26,21 +26,45 @@ It is NOT just a SaaS app marketplace.
 
 ---
 
-## 2. User Archetypes (Core)
+## 2. User Archetypes (Core Concept)
 
-Every authenticated user fits into **one or more archetypes**:
+**Important:** Archetypes are LABELS that describe who a user is or what they're doing. They are NOT separate dashboard types.
 
-| Archetype | Description |
-|---------|-------------|
-| Individual User | Uses consumer apps (e.g. Coin Box) |
-| Learner / Youth | Uses education or sports platforms |
-| Investor / Sponsor | Funds impact or revenue initiatives |
-| NGO / Institution | Uses sponsored or subsidized solutions |
-| Custom Dev Client | Pays for bespoke platforms |
-| Admin | Manages users, entitlements, billing |
-| Super Admin | Full platform control |
+### Platform Archetypes (Managed by Allied iMpact)
 
-A single user account may span multiple archetypes.
+| Archetype | Description | Dashboard |
+|---------|-------------|-----------|
+| **INDIVIDUAL** | Uses consumer apps (Coin Box, Drive Master, CodeTech, etc.) | Individual Dashboard |
+| **MY_PROJECTS** | Has a custom solution project (web dev, custom software, etc.) - Can be NGO, school, gov, business, or individual | My Projects Dashboard |
+| **ADMIN** | Manages users, entitlements, billing | Admin Dashboard |
+| **SUPER_ADMIN** | Full platform control | Admin Dashboard |
+
+### App-Specific Archetypes (Managed by Individual Apps)
+
+These archetypes are tracked on the platform but their dashboards live in the apps:
+
+| Archetype | Managed By | Dashboard Location |
+|---------|------------|-------------------|
+| **Learner** | Drive Master, CodeTech | Inside the learning app |
+| **Investor** | Cup Final, uMkhanyakude | Inside the app with investment features |
+| **Sponsor** | Cup Final, uMkhanyakude | Inside the app with sponsorship features |
+
+**Example:** A school principal might have multiple archetypes:
+- `INDIVIDUAL` → Subscribed to Coin Box (personal use)
+- `MY_PROJECTS` → School website project (custom solution client)
+- `Learner` → Taking courses in Drive Master (sees learner dashboard inside Drive Master)
+
+The platform shows them the Individual Dashboard and My Projects Dashboard. When they enter Drive Master, they see their Learner dashboard inside that app.
+
+### Key Insight
+
+**The platform provides 2 dashboards:**
+1. Individual Dashboard (for app subscribers)
+2. My Projects Dashboard (for custom solution clients)
+
+**Each app provides its own specialized dashboards** for Learners, Investors, Sponsors, etc.
+
+A single user account may span multiple archetypes across both platform and apps.
 
 ---
 
