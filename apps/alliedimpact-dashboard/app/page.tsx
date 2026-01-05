@@ -3,16 +3,20 @@
 import { useDashboard } from './lib/dashboard-context';
 import { analytics, AnalyticsEvents } from './lib/analytics';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { DashboardEngine, UserArchetype, detectArchetypes } from './lib/dashboard-engine';
-import { getSubscriptionProducts } from '@allied-impact/shared';
+import { getSubscriptionProducts, getProduct } from '@allied-impact/shared';
 import ProductGrid from './components/ProductGrid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
-import { Sparkles, TrendingUp, Users, LayoutDashboard } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, LayoutDashboard, AlertCircle, XCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@allied-impact/ui';
 
 export default function DashboardPage() {
   const { platformUser, entitlements, loading } = useDashboard();
+  const searchParams = useSearchParams();
   const [archetypes, setArchetypes] = useState<UserArchetype[]>([UserArchetype.INDIVIDUAL]);
   const [dashboardView, setDashboardView] = useState<string>('individual');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const activeSubscriptions = entitlements.filter(e => e.status === 'active').length;
   const subscriptionProducts = getSubscriptionProducts();
@@ -39,6 +43,64 @@ export default function DashboardPage() {
       });
     }
   }, [platformUser, activeSubscriptions]);
+
+  // Handle error messages from redirects
+  useEffect(() => {
+    const Error Message Alert */}
+      {errorMessage && (
+        <Alert variant="destructive" className="animate-in fade-in slide-in-from-top-2">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Access Denied</AlertTitle>
+          <AlertDescription className="flex items-start justify-between">
+            <span>{errorMessage}</span>
+            <button
+              onClick={() => setErrorMessage(null)}
+              className="ml-4 hover:opacity-70 transition-opacity"
+              aria-label="Dismiss"
+            >
+              <XCircle className="h-4 w-4" />
+            </button>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* error = searchParams.get('error');
+    const productId = searchParams.get('product');
+    
+    if (error && productId) {
+      const product = getProduct(productId);
+      const productName = product?.name || productId;
+      
+      let message = '';
+      switch (error) {
+        case 'auth-required':
+          message = `Please sign in to access ${productName}.`;
+          break;
+        case 'subscription-required':
+          message = `You need an active subscription to access ${productName}. Subscribe below to get started!`;
+          break;
+        case 'error':
+          message = `There was an error accessing ${productName}. Please try again or contact support if the issue persists.`;
+          break;
+        default:
+          message = `Unable to access ${productName}.`;
+      }
+      
+      setErrorMessage(message);
+      
+      // Track error in analytics
+      analytics.track(AnalyticsEvents.ERROR_OCCURRED, {
+        userId: platformUser?.uid,
+        error,
+        product: productId,
+        message
+      });
+      
+      // Clear error message after 10 seconds
+      const timer = setTimeout(() => setErrorMessage(null), 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, platformUser]);
 
   return (
     <div className="space-y-8">

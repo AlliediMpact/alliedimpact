@@ -1,0 +1,22 @@
+{
+  "name": "@allied-impact/sponsorships",
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "@allied-impact/types": "workspace:*",
+    "@allied-impact/shared": "workspace:*",
+    "firebase": "^10.7.1",
+    "firebase-admin": "^11.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
+  }
+}

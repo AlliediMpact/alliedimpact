@@ -2,13 +2,39 @@
 
 import { useDashboard } from '../lib/dashboard-context';
 import { Button } from '@allied-impact/ui';
-import { LogOut, User, Settings, Menu, X } from 'lucide-react';
+import { LogOut, User, Settings, Menu, X, Bell } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { ViewSwitcher } from '../../components/ViewSwitcher';
+import { NotificationsCenter } from '../../components/NotificationsCenter';
+import { detectArchetypes } from '../lib/dashboard-engine';
 
 export default function DashboardNav() {
   const { user, platformUser, signOut } = useDashboard();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const pathname = usePathname();
+  const [archetypes, setArchetypes] = useState<any[]>([]);
+  
+  useEffect(() => {
+    if (platformUser) {
+      const detected = detectArchetypes({
+        email: platformUser.email || '',
+        customClaims: (platformUser as any).customClaims
+      });
+      setArchetypes(detected);
+    }
+  }, [platformUser]);
+  
+  // Determine current view from pathname
+  const currentView = pathname.startsWith('/organization') ? 'organization'
+    : pathname.startsWith('/client') ? 'client'
+    : pathname.startsWith('/sponsor') ? 'sponsor'
+    : pathname.startsWith('/(learner)') ? 'learner'
+    : pathname.startsWith('/(investor)') ? 'investor'
+    : pathname.startsWith('/admin') ? 'admin'
+    : 'individual';
 
   const handleSignOut = async () => {
     try {
@@ -48,19 +74,38 @@ export default function DashboardNav() {
               href="/profile" 
               className="text-foreground hover:text-primary transition-colors"
             >
-              Profile
-            </Link>
-            {/* TODO: Show only for admin users */}
             <Link 
-              href="/admin" 
+              href="/settings" 
               className="text-foreground hover:text-primary transition-colors"
             >
-              Admin
+              Settings
             </Link>
           </div>
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Notifications Bell */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              className="relative"
+            >
+              <Bell className="w-4 h-4" />
+              {/* Notification badge */}
+              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </Button>
+
+          {/* User Menu */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* View Switcher */}
+            {archetypes.length > 0 && (
+              <ViewSwitcher 
+                currentView={currentView}
+                availableArchetypes={archetypes}
+              />
+            )}
+            
             <div className="text-right">
               <p className="text-sm font-medium">{platformUser?.displayName || user?.email}</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
@@ -138,6 +183,14 @@ export default function DashboardNav() {
           </div>
         )}
       </div>
+
+      {/* Notifications Center */}
+      {notificationsOpen && (
+        <NotificationsCenter 
+          isOpen={notificationsOpen}
+          onClose={() => setNotificationsOpen(false)}
+        />
+      )}
     </nav>
   );
 }

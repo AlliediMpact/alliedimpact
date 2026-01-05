@@ -67,7 +67,9 @@ export const PRODUCTS: Record<string, ProductMetadata> = {
     description: 'P2P Financial Platform - Loans, Investments & Crypto Trading',
     category: ProductCategory.SUBSCRIPTION,
     icon: '🪙',
-    url: 'https://coinbox.alliedimpact.com',
+    url: process.env.NODE_ENV === 'production' 
+      ? 'https://coinbox.alliedimpact.com' 
+      : 'http://localhost:3002',
     status: 'active',
     subscription: {
       tiers: [
