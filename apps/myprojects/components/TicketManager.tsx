@@ -12,6 +12,8 @@ import {
   TicketStatus, 
   TicketComment 
 } from '@allied-impact/projects';
+import { FileUpload, FileList } from './FileUpload';
+import { uploadMultipleFiles, getTicketAttachmentPath } from '@/utils/storage';
 
 interface TicketModalProps {
   projectId: string;
@@ -29,6 +31,7 @@ export function TicketModal({ projectId, ticket, userId, userName, onClose, onSu
     priority: ticket?.priority || TicketPriority.MEDIUM,
     type: ticket?.type || 'question'
   });
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +41,7 @@ export function TicketModal({ projectId, ticket, userId, userName, onClose, onSu
     try {
       if (!ticket) {
         // Create new ticket
-        await createTicket({
+        const newTicket = await createTicket({
           projectId,
           title: formData.title,
           description: formData.description,
@@ -50,6 +53,22 @@ export function TicketModal({ projectId, ticket, userId, userName, onClose, onSu
           comments: [],
           attachments: []
         });
+
+        // Upload attachments if any
+        if (selectedFiles.length > 0) {
+          const uploadPath = getTicketAttachmentPath(projectId, newTicket.id);
+          const uploadResults = await uploadMultipleFiles(selectedFiles, uploadPath);
+
+          // Update ticket with attachment URLs
+          const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+          const { getApp } = await import('firebase/app');
+          const db = getFirestore(getApp());
+          
+          await updateDoc(doc(db, 'tickets', newTicket.id), {
+            attachments: uploadResults.map(r => r.url),
+            updatedAt: new Date()
+          });
+        }
       }
       // TODO: Add update functionality when needed
 
@@ -131,13 +150,32 @@ export function TicketModal({ projectId, ticket, userId, userName, onClose, onSu
               </div>
             </div>
 
+            {/* File Attachments */}
+            {!ticket && (
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Attachments (Optional)
+                </label>
+                <FileUpload
+                  onFilesSelected={setSelectedFiles}
+                  maxFiles={3}
+                  maxSizeMB={5}
+                  disabled={isSubmitting}
+                />
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={isSubmitting}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {isSubmitting ? 'Creating...' : 'Create Ticket'}
+                {isSubmitting 
+                  ? selectedFiles.length > 0 
+                    ? 'Uploading...' 
+                    : 'Creating...' 
+                  : 'Create Ticket'}
               </Button>
             </div>
           </form>
@@ -214,6 +252,27 @@ export function TicketDetailModal({ ticket, userId, userName, onClose, onStatusU
             <h4 className="text-sm font-medium text-gray-700 mb-2">Description</h4>
             <p className="text-gray-600">{ticket.description}</p>
           </div>
+
+          {/* Attachments */}
+          {ticket.attachments && ticket.attachments.length > 0 && (
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Attachments</h4>
+              <div className="flex flex-wrap gap-2">
+                {ticket.attachments.map((url, index) => (
+                  <a
+                    key={index}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm"
+                  >
+                    <Paperclip className="h-4 w-4" />
+                    Attachment {index + 1}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Metadata */}
           <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">

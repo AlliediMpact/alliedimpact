@@ -5,6 +5,8 @@ import { Button } from '@allied-impact/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@allied-impact/ui';
 import { X, Upload, Check, FileText, AlertCircle, Clock, Download } from 'lucide-react';
 import { createDeliverable, Deliverable, DeliverableStatus } from '@allied-impact/projects';
+import { FileUpload, FileUploadProgress } from './FileUpload';
+import { uploadMultipleFiles, getDeliverablePath, UploadProgress } from '@/utils/storage';
 
 interface DeliverableModalProps {
   projectId: string;
@@ -22,7 +24,9 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
     dueDate: deliverable?.dueDate ? new Date(deliverable.dueDate).toISOString().split('T')[0] : '',
     notes: deliverable?.notes || ''
   });
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: number]: number }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +34,8 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
 
     try {
       if (!deliverable) {
-        // Create new deliverable
-        await createDeliverable({
+        // Create deliverable first to get ID
+        const deliverableData = {
           projectId,
           milestoneId: milestoneId || '',
           name: formData.name,
@@ -39,11 +43,38 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
           type: formData.type,
           status: DeliverableStatus.PENDING,
           dueDate: new Date(formData.dueDate),
-          fileUrls: [],
+          fileUrls: [] as string[],
           notes: formData.notes
-        });
+        };
+
+        const newDeliverable = await createDeliverable(deliverableData);
+
+        // Upload files if any selected
+        if (selectedFiles.length > 0) {
+          const uploadPath = getDeliverablePath(projectId, newDeliverable.id);
+          
+          const uploadResults = await uploadMultipleFiles(
+            selectedFiles,
+            uploadPath,
+            (fileIndex, progress) => {
+              setUploadProgress(prev => ({
+                ...prev,
+                [fileIndex]: progress.progress
+              }));
+            }
+          );
+
+          // Update deliverable with file URLs
+          const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+          const { getApp } = await import('firebase/app');
+          const db = getFirestore(getApp());
+          
+          await updateDoc(doc(db, 'deliverables', newDeliverable.id), {
+            fileUrls: uploadResults.map(r => r.url),
+            updatedAt: new Date()
+          });
+        }
       }
-      // TODO: Add update functionality when needed
 
       onSuccess();
       onClose();
@@ -130,13 +161,45 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
               />
             </div>
 
+            {/* File Upload */}
+            {!deliverable && (
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Attach Files (Optional)
+                </label>
+                <FileUpload
+                  onFilesSelected={setSelectedFiles}
+                  maxFiles={5}
+                  maxSizeMB={10}
+                  disabled={isSubmitting}
+                />
+              </div>
+            )}
+
+            {/* Upload Progress */}
+            {isSubmitting && selectedFiles.length > 0 && (
+              <div className="space-y-2">
+                {selectedFiles.map((file, index) => (
+                  <FileUploadProgress
+                    key={index}
+                    fileName={file.name}
+                    progress={uploadProgress[index] || 0}
+                  />
+                ))}
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={isSubmitting}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting} className="flex-1">
-                {isSubmitting ? 'Saving...' : 'Add Deliverable'}
+                {isSubmitting 
+                  ? selectedFiles.length > 0 
+                    ? 'Uploading...' 
+                    : 'Saving...' 
+                  : 'Add Deliverable'}
               </Button>
             </div>
           </form>
