@@ -3,17 +3,19 @@
 import { useDashboard } from './lib/dashboard-context';
 import { analytics, AnalyticsEvents } from './lib/analytics';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { DashboardEngine, UserArchetype, detectArchetypes } from './lib/dashboard-engine';
 import { getSubscriptionProducts, getProduct } from '@allied-impact/shared';
 import ProductGrid from './components/ProductGrid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
-import { Sparkles, TrendingUp, Users, LayoutDashboard, AlertCircle, XCircle } from 'lucide-react';
+import { Button } from '@allied-impact/ui';
+import { Sparkles, TrendingUp, Users, LayoutDashboard, AlertCircle, XCircle, Lightbulb, ArrowRight } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@allied-impact/ui';
 
 export default function DashboardPage() {
   const { platformUser, entitlements, loading } = useDashboard();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [archetypes, setArchetypes] = useState<UserArchetype[]>([UserArchetype.INDIVIDUAL]);
   const [dashboardView, setDashboardView] = useState<string>('individual');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -165,7 +167,34 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+Start a Project CTA */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardContent className="pt-6">
+          <div className="flex items-start justify-between">
+            <div className="flex gap-4">
+              <div className="p-3 bg-blue-100 rounded-full">
+                <Lightbulb className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Need a Custom Solution?</h3>
+                <p className="text-gray-600 mb-4 max-w-2xl">
+                  Looking for a custom web app, mobile solution, or API integration? 
+                  Our team builds tailored solutions for businesses, NGOs, schools, and government.
+                </p>
+                <Button
+                  onClick={() => router.push('/solutions/discover')}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Start a Project
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
+      {/* 
       {/* Product Grid */}
       <div>
         <h2 className="text-2xl font-bold mb-4">Your Products</h2>
