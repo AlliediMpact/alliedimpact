@@ -255,17 +255,30 @@ export default function MyProjectsDashboard() {
     setEditingMilestone(undefined);
   };
 
-  const handleDeliverableStatusUpdate = async (id: string, status: DeliverableStatus) => {
+  const handleDeliverableStatusUpdate = async (id: string, status: DeliverableStatus, fileUrls?: string[]) => {
     try {
-      const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+      const { getFirestore, doc, updateDoc, arrayUnion } = await import('firebase/firestore');
       const { getApp } = await import('firebase/app');
       const db = getFirestore(getApp());
       
-      await updateDoc(doc(db, 'deliverables', id), {
+      const updateData: any = {
         status,
         updatedAt: new Date(),
-        ...(status === DeliverableStatus.APPROVED && { approvedDate: new Date() })
-      });
+      };
+
+      // Add timestamps based on status
+      if (status === DeliverableStatus.APPROVED) {
+        updateData.approvedDate = new Date();
+      } else if (status === DeliverableStatus.DELIVERED) {
+        updateData.deliveredDate = new Date();
+      }
+
+      // Add file URLs if provided (when uploading new files)
+      if (fileUrls && fileUrls.length > 0) {
+        updateData.fileUrls = arrayUnion(...fileUrls);
+      }
+      
+      await updateDoc(doc(db, 'deliverables', id), updateData);
     } catch (error) {
       console.error('Failed to update deliverable:', error);
       alert('Failed to update deliverable status');
