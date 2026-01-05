@@ -39,8 +39,7 @@ export default function MyProjectsDashboard() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
 
   useEffect(() => {
-    // TODO: Get user from auth context
-    // For now, check if user is logged in
+    // Check authentication and set up real-time listeners
     const checkAuth = async () => {
       try {
         const { getAuth } = await import('@allied-impact/auth');
@@ -52,7 +51,7 @@ export default function MyProjectsDashboard() {
         }
         
         setUser(auth.currentUser);
-        loadProjects(auth.currentUser.uid);
+        setupProjectsListener(auth.currentUser.uid);
       } catch (error) {
         console.error('Auth check failed:', error);
         router.push('/login');
@@ -64,41 +63,150 @@ export default function MyProjectsDashboard() {
 
   useEffect(() => {
     if (selectedProject) {
-      loadProjectDetails();
+      setupProjectDetailsListeners();
     }
+    
+    // Cleanup listeners on unmount or when project changes
+    return () => {
+      // Listeners will be cleaned up automatically
+    };
   }, [selectedProject]);
 
-  const loadProjects = async (userId: string) => {
+  const setupProjectsListener = async (userId: string) => {
     try {
       setLoading(true);
-      const clientProjects = await getClientProjects(userId);
-      setProjects(clientProjects);
+      const { getFirestore, collection, query, where, orderBy, onSnapshot } = await import('firebase/firestore');
+      const { getApp } = await import('firebase/app');
       
-      if (clientProjects.length > 0 && !selectedProject) {
-        setSelectedProject(clientProjects[0]);
-      }
+      const db = getFirestore(getApp());
+      const projectsQuery = query(
+        collection(db, 'projects'),
+        where('clientId', '==', userId),
+        orderBy('lastActivityAt', 'desc')
+      );
+
+      // Real-time listener for projects
+      const unsubscribe = onSnapshot(projectsQuery, (snapshot) => {
+        const clientProjects = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+            lastActivityAt: data.lastActivityAt.toDate(),
+            startDate: data.startDate.toDate(),
+            endDate: data.endDate ? data.endDate.toDate() : undefined,
+          } as Project;
+        });
+
+        setProjects(clientProjects);
+        
+        if (clientProjects.length > 0 && !selectedProject) {
+          setSelectedProject(clientProjects[0]);
+        }
+        
+        setLoading(false);
+      }, (error) => {
+        console.error('Projects listener error:', error);
+        setLoading(false);
+      });
+
+      // Store unsubscribe function for cleanup
+      return () => unsubscribe();
     } catch (error) {
-      console.error('Failed to load projects:', error);
-    } finally {
+      console.error('Failed to set up projects listener:', error);
       setLoading(false);
     }
   };
 
-  const loadProjectDetails = async () => {
+  const setupProjectDetailsListeners = async () => {
     if (!selectedProject) return;
 
     try {
-      const [projectMilestones, projectDeliverables, projectTickets] = await Promise.all([
-        getProjectMilestones(selectedProject.id),
-        getProjectDeliverables(selectedProject.id),
-        getProjectTickets(selectedProject.id),
-      ]);
+      const { getFirestore, collection, query, where, orderBy, onSnapshot } = await import('firebase/firestore');
+      const { getApp } = await import('firebase/app');
+      
+      const db = getFirestore(getApp());
 
-      setMilestones(projectMilestones);
-      setDeliverables(projectDeliverables);
-      setTickets(projectTickets);
+      // Real-time listener for milestones
+      const milestonesQuery = query(
+        collection(db, 'milestones'),
+        where('projectId', '==', selectedProject.id),
+        orderBy('dueDate', 'asc')
+      );
+
+      const unsubscribeMilestones = onSnapshot(milestonesQuery, (snapshot) => {
+        const projectMilestones = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+            dueDate: data.dueDate.toDate(),
+            completedDate: data.completedDate ? data.completedDate.toDate() : undefined,
+          } as Milestone;
+        });
+        setMilestones(projectMilestones);
+      });
+
+      // Real-time listener for deliverables
+      const deliverablesQuery = query(
+        collection(db, 'deliverables'),
+        where('projectId', '==', selectedProject.id),
+        orderBy('dueDate', 'asc')
+      );
+
+      const unsubscribeDeliverables = onSnapshot(deliverablesQuery, (snapshot) => {
+        const projectDeliverables = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+            dueDate: data.dueDate.toDate(),
+            deliveredDate: data.deliveredDate ? data.deliveredDate.toDate() : undefined,
+            approvedDate: data.approvedDate ? data.approvedDate.toDate() : undefined,
+          } as Deliverable;
+        });
+        setDeliverables(projectDeliverables);
+      });
+
+      // Real-time listener for tickets
+      const ticketsQuery = query(
+        collection(db, 'tickets'),
+        where('projectId', '==', selectedProject.id),
+        orderBy('createdAt', 'desc')
+      );
+
+      const unsubscribeTickets = onSnapshot(ticketsQuery, (snapshot) => {
+        const projectTickets = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            createdAt: data.createdAt.toDate(),
+            updatedAt: data.updatedAt.toDate(),
+            resolvedAt: data.resolvedAt ? data.resolvedAt.toDate() : undefined,
+            comments: data.comments.map((c: any) => ({
+              ...c,
+              createdAt: c.createdAt.toDate(),
+            })),
+          } as Ticket;
+        });
+        setTickets(projectTickets);
+      });
+
+      // Return cleanup function
+      return () => {
+        unsubscribeMilestones();
+        unsubscribeDeliverables();
+        unsubscribeTickets();
+      };
     } catch (error) {
-      console.error('Failed to load project details:', error);
+      console.error('Failed to set up project details listeners:', error);
     }
   };
 
