@@ -27,15 +27,9 @@ interface ViewSwitcherProps {
 const VIEW_CONFIG = {
   individual: {
     path: '/',
-    label: 'Personal',
+    label: 'Dashboard',
     icon: User,
-    description: 'Your subscriptions and products'
-  },
-  projects: {
-    path: '/projects',
-    label: 'My Projects',
-    icon: Briefcase,
-    description: 'Track your custom projects'
+    description: 'Your subscriptions and apps'
   },
   admin: {
     path: '/admin',
@@ -48,19 +42,12 @@ const VIEW_CONFIG = {
 export function ViewSwitcher({ currentView, availableArchetypes }: ViewSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
-  
-  // === V1 GATING: Only show INDIVIDUAL and ADMIN dashboards ===
-  // All other archetypes (Learner, Investor, Organization, Client, Sponsor) are DORMANT
-  // until their corresponding products/contracts exist.
-  const availableViews: string[] = [];
-  avaMap archetypes to views
+  // Map archetypes to views
+  // Note: My Projects is now a separate app, not a platform view
   const availableViews: string[] = [];
   availableArchetypes.forEach(archetype => {
     if (archetype === UserArchetype.INDIVIDUAL) {
       availableViews.push('individual');
-    }
-    if (archetype === UserArchetype.MY_PROJECTS) {
-      availableViews.push('projects');
     }
     if (archetype === UserArchetype.ADMIN || archetype === UserArchetype.SUPER_ADMIN) {
       availableViews.push('admin');
@@ -74,6 +61,10 @@ export function ViewSwitcher({ currentView, availableArchetypes }: ViewSwitcherP
   if (uniqueViews.length <= 1) {
     return null;
   }
+  
+  // Get current view config
+  const currentConfig = VIEW_CONFIG[currentView as keyof typeof VIEW_CONFIG] || VIEW_CONFIG.individual;
+  const CurrentIcon = currentConfig.icon;
   const handleViewChange = (view: string) => {
     const config = VIEW_CONFIG[view as keyof typeof VIEW_CONFIG];
     if (config) {
@@ -93,15 +84,9 @@ export function ViewSwitcher({ currentView, availableArchetypes }: ViewSwitcherP
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Switch View</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {Object.entries(VIEW_CONFIG).map(([key, config]) => {
-          if (!uniquclassName="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Switch View</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {Object.entries(VIEW_CONFIG).map(([key, config]) => {
-          if (!availableViews.includes(key)) return null;
+        {uniqueViews.map((key) => {
+          const config = VIEW_CONFIG[key as keyof typeof VIEW_CONFIG];
+          if (!config) return null;
           
           const Icon = config.icon;
           const isActive = currentView === key;

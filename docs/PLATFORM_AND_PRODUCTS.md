@@ -119,6 +119,21 @@ Rules:
 
 ---
 
+### 💼 My Projects
+- Custom solution client portal
+- Project tracking & milestone management
+- Direct communication with development team
+- File sharing & deliverables
+- Milestone-based payments (bank transfer or in-app)
+
+**Important:**
+- My Projects is a **separate independent app**, not a platform dashboard feature
+- Located at: https://myprojects.alliedimpact.com
+- Users can access directly OR via platform
+- Only for clients with custom development contracts
+
+---
+
 ## 5️⃣ Future Applications (Planned)
 
 - Gov Cross Platform  
@@ -138,52 +153,58 @@ These must:
 
 ### V1 Dashboard Structure (Current State)
 
-Allied iMpact provides **2 primary dashboards** for users:
+Allied iMpact provides **1 primary dashboard view** plus an admin view:
 
-#### 1. Individual Dashboard
-**For:** Anyone who subscribes to our apps  
-**Shows:** Product grid, active subscriptions, quick access to apps  
-**Access:** All authenticated users (default)  
-**Apps Included:** Coin Box, Drive Master, CodeTech, Cup Final, uMkhanyakude
+#### 1. Individual Dashboard (Default)
+**For:** All authenticated users  
+**Shows:** Product grid with all 6 apps, active subscriptions, quick access  
+**Access:** All users see this by default  
+**Apps Included:** Coin Box, Drive Master, CodeTech, Cup Final, uMkhanyakude, **My Projects**
 
-#### 2. My Projects Dashboard  
-**For:** Anyone getting a custom solution (web development, custom software, etc.)  
-**Shows:** Project tracking, milestones, deliverables, support tickets  
-**Access:** Granted when custom project/contract is signed  
-**Clients Can Be:** NGO, school, government, business, individual - doesn't matter
+**Note:** The Individual Dashboard shows all available apps. Users can click any app to either:
+- Subscribe (if it's a subscription app)
+- Access directly (if they already have access)
+- Learn more (if it's coming soon)
 
-**Note:** Organizations aren't separate dashboard types - an NGO, school, or business getting a custom solution all use the same My Projects Dashboard to track their work.
-
-#### 3. Admin Dashboard
+#### 2. Admin Dashboard
 **For:** Platform administrators only  
-**Shows:** Platform analytics, user management, system monitoring
+**Shows:** Platform analytics, user management, system monitoring  
+**Access:** Users with ADMIN or SUPER_ADMIN archetype
 
 ### ViewSwitcher Behavior
 
-Users only see the ViewSwitcher if they have **multiple dashboard types**:
-- Regular app user → Only Individual Dashboard (no switcher)
-- Custom client → Only My Projects Dashboard (no switcher)  
-- User with both → ViewSwitcher appears with both options
-- Admin → ViewSwitcher shows Individual + Admin (or all 3 if they have projects)
+The ViewSwitcher only appears for users with **admin access**:
+- Regular users → Only see Individual Dashboard (no switcher)
+- Admins → ViewSwitcher shows "Dashboard" ↔ "Admin"
 
-### Other Dashboard Types
+### App-Specific Dashboards
 
-**Learner, Investor, Sponsor dashboards** exist in their **respective apps**, not on the Allied iMpact platform:
-- **Learner dashboards** → Inside Drive Master and CodeTech apps
-- **Investor/Sponsor dashboards** → Inside Cup Final and uMkhanyakude apps (when those features launch)
+Each app has its own dashboards **inside the app**, not on the platform:
+- **Coin Box** → Wallet dashboard, investments, loans, crypto trading
+- **Drive Master** → Learner progress, lessons, test prep
+- **CodeTech** → Coding courses, certificates, projects
+- **Cup Final** → Fan engagement, team stats, voting
+- **uMkhanyakude** → School information, community features
+- **My Projects** → Project tracking, milestones, deliverables, tickets
 
-The platform tracks WHO they are (via archetypes), but their specialized dashboards live in the apps that serve them.
+The platform only tracks **authentication and entitlements** - each app controls its own features.
 
 ### User Flow
 
-1. User registers once on Allied iMpact
-2. Lands on Individual Dashboard (sees all available apps)
-3. Subscribes to apps they want
-4. Active apps are highlighted
-5. Clicking an app routes securely into it
-6. If user gets a custom project → My Projects Dashboard appears in ViewSwitcher
+1. User registers once on Allied iMpact platform
+2. Lands on Individual Dashboard (sees all 6 apps)
+3. Subscribes to apps OR accesses custom solutions
+4. Active subscriptions are highlighted in product grid
+5. Clicking an app routes securely into it (with SSO)
+6. User experiences app-specific features inside the app
 
-Apps never bypass the platform guard.
+**Example:** A client with a My Projects contract:
+- Logs into platform → sees product grid with My Projects
+- Can access My Projects directly at myprojects.alliedimpact.com
+- OR click "Launch My Projects" from platform dashboard
+- Either way, they're redirected to the My Projects app with SSO
+
+Apps never bypass platform authentication.
 
 ---
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * User Archetypes
  * 
  * Defines user types and roles across the Allied iMpact platform.
@@ -11,7 +11,6 @@ import { Timestamp } from 'firebase/firestore';
 
 export enum UserArchetype {
   INDIVIDUAL = 'individual',
-  MY_PROJECTS = 'my_projects',
   ADMIN = 'admin',
   SUPER_ADMIN = 'super_admin'
 }
@@ -24,11 +23,8 @@ export type UserProfile = {
   createdAt: Timestamp | Date;
   updatedAt?: Timestamp | Date;
   
-  // Individual/Learner context
-  subscriptions?: string[];  // Product IDs
-  
-  // Project context
-  projectIds?: string[];
+  // Subscriptions
+  subscriptions?: string[];  // Product IDs (Coin Box, Drive Master, etc.)
   
   // Preferences
   preferences?: {
@@ -53,26 +49,15 @@ export type UserProfile = {
 export function getDashboardSections(profile: UserProfile): string[] {
   const sections: string[] = [];
   
-  // Everyone gets personal section
-  if (profile.archetypes.includes(UserArchetype.INDIVIDUAL) ||
-      profile.archetypes.includes(UserArchetype.LEARNER)) {
-    sections.push('my-subscriptions', 'recommended-products', 'recent-activity');
-  }
-  
-  // Organization management
-  if (profile.archetypes.includes(UserArchetype.INSTITUTION) ||
-      profile.archetypes.includes(UserArchetype.NGO)) {
-    sections.push('organization-overview', 'user-management', 'programs-management');
-  }
-  
-  // Individual - App subscriptions
+  // Individual - App subscriptions (default for everyone)
   if (profile.archetypes.includes(UserArchetype.INDIVIDUAL)) {
     sections.push('my-subscriptions', 'recommended-products', 'recent-activity');
   }
   
-  // Projects - Custom solutions
-  if (profile.archetypes.includes(UserArchetype.MY_PROJECTS)) {
-    sections.push('my-projects', 'project-timeline', 'support-tickets', 'deliverable
+  return sections;
+}
+
+/**
  * Check if user has specific archetype
  */
 export function hasArchetype(profile: UserProfile, archetype: UserArchetype): boolean {
@@ -124,12 +109,6 @@ export function removeArchetype(
 export function getArchetypeLabel(archetype: UserArchetype): string {
   const labels: Record<UserArchetype, string> = {
     [UserArchetype.INDIVIDUAL]: 'Individual User',
-    [UserArchetype.LEARNER]: 'Learner',
-    [UserArchetype.INVESTOR]: 'Investor',
-    [UserArchetype.SPONSOR]: 'Sponsor',
-    [UserArchetype.NGO]: 'NGO',
-    [UserArchetype.INSTITUTION]: 'Institution',
-    [UserArchetype.CUSTOM_CLIENT]: 'Client',
     [UserArchetype.ADMIN]: 'Administrator',
     [UserArchetype.SUPER_ADMIN]: 'Super Administrator'
   };
@@ -143,13 +122,12 @@ export function getArchetypeLabel(archetype: UserArchetype): string {
 export function getArchetypeIcon(archetype: UserArchetype): string {
   const icons: Record<UserArchetype, string> = {
     [UserArchetype.INDIVIDUAL]: '👤',
-    [UserArchetype.LEARNER]: '🎓',
-    [UserArchetype.INVESTOR]: '💼',
-    [UserArchetype.SPONSOR]: '💝',
-    [UserArchetype.NGO]: '🤝',
-    [UserArchetype.INSTITUTION]: '🏢',
-    [UserArchetype.CUSTOM_CLIENT]: '📋',
-    [UserArchetype.MY_PROJECTS]: 'My Projects
+    [UserArchetype.ADMIN]: '👨‍💼',
+    [UserArchetype.SUPER_ADMIN]: '⚡'
+  };
+  
+  return icons[archetype] || '👤';
+}
 
 /**
  * Default archetype for new users
@@ -161,11 +139,5 @@ export const DEFAULT_ARCHETYPE = UserArchetype.INDIVIDUAL;
  */
 export const RESTRICTED_ARCHETYPES = [
   UserArchetype.ADMIN,
-  UserArchetype.SUPER_ADMIN,
-  UserArchetype.INSTITUTION,
-  UserArchetype.NGO
+  UserArchetype.SUPER_ADMIN
 ];
-
-/**
- * Check if archetype requires approval
- */MY_PROJECTS

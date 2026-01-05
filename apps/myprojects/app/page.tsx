@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
 import { Button } from '@allied-impact/ui';
 import { 
@@ -29,8 +29,9 @@ import {
 } from '@allied-impact/projects';
 
 export default function MyProjectsDashboard() {
-  const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -38,10 +39,28 @@ export default function MyProjectsDashboard() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
 
   useEffect(() => {
-    if (user) {
-      loadProjects();
-    }
-  }, [user]);
+    // TODO: Get user from auth context
+    // For now, check if user is logged in
+    const checkAuth = async () => {
+      try {
+        const { getAuth } = await import('@allied-impact/auth');
+        const auth = getAuth();
+        
+        if (!auth.currentUser) {
+          router.push('/login');
+          return;
+        }
+        
+        setUser(auth.currentUser);
+        loadProjects(auth.currentUser.uid);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        router.push('/login');
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   useEffect(() => {
     if (selectedProject) {
@@ -49,10 +68,10 @@ export default function MyProjectsDashboard() {
     }
   }, [selectedProject]);
 
-  const loadProjects = async () => {
+  const loadProjects = async (userId: string) => {
     try {
       setLoading(true);
-      const clientProjects = await getClientProjects(user!.uid);
+      const clientProjects = await getClientProjects(userId);
       setProjects(clientProjects);
       
       if (clientProjects.length > 0 && !selectedProject) {
@@ -120,7 +139,9 @@ export default function MyProjectsDashboard() {
             <p className="text-gray-600 text-center mb-6">
               You don't have any projects yet. Contact us to get started on your custom development project.
             </p>
-            <Button>Contact Sales</Button>
+            <Button onClick={() => window.open(process.env.NEXT_PUBLIC_PLATFORM_URL || 'https://alliedimpact.com', '_blank')}>
+              Contact Sales
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -141,10 +162,10 @@ export default function MyProjectsDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Client Dashboard</h1>
+          <h1 className="text-3xl font-bold">My Projects</h1>
           <p className="text-gray-600 mt-1">Track your custom development projects</p>
         </div>
-        <Button>
+        <Button onClick={() => router.push('/tickets')}>
           <MessageSquare className="h-4 w-4 mr-2" />
           Contact Support
         </Button>
@@ -296,19 +317,19 @@ export default function MyProjectsDashboard() {
 
               <div className="flex gap-4 mt-6">
                 {selectedProject.githubRepo && (
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => window.open(selectedProject.githubRepo, '_blank')}>
                     <ExternalLink className="h-4 w-4 mr-2" />
                     View Repository
                   </Button>
                 )}
                 {selectedProject.stagingUrl && (
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => window.open(selectedProject.stagingUrl, '_blank')}>
                     <ExternalLink className="h-4 w-4 mr-2" />
                     Staging Environment
                   </Button>
                 )}
                 {selectedProject.productionUrl && (
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => window.open(selectedProject.productionUrl, '_blank')}>
                     <ExternalLink className="h-4 w-4 mr-2" />
                     Production
                   </Button>
@@ -409,7 +430,7 @@ export default function MyProjectsDashboard() {
                   <CardTitle>Support Tickets</CardTitle>
                   <CardDescription>Recent tickets and issues</CardDescription>
                 </div>
-                <Button size="sm">
+                <Button size="sm" onClick={() => router.push('/tickets')}>
                   <MessageSquare className="h-4 w-4 mr-2" />
                   New Ticket
                 </Button>

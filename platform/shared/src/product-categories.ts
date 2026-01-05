@@ -309,6 +309,23 @@ export const PRODUCTS: Record<string, ProductMetadata> = {
 
   // === CUSTOM PRODUCTS ===
 
+  myprojects: {
+    id: 'myprojects',
+    name: 'My Projects',
+    description: 'Custom Solution Development Portal - Track Projects, Milestones & Payments',
+    category: ProductCategory.CUSTOM,
+    icon: '💼',
+    url: process.env.NODE_ENV === 'production' 
+      ? 'https://myprojects.alliedimpact.com' 
+      : 'http://localhost:3006',
+    status: 'beta',
+    custom: {
+      isProjectBased: true,
+      requiresContract: true,
+      estimatedDuration: 'Varies by project scope'
+    }
+  },
+
   govcross: {
     id: 'govcross',
     name: 'Gov Cross Platform',

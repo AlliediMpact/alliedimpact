@@ -8,9 +8,9 @@
 
 ## Executive Summary
 
-Allied iMpact V1 platform is **architecturally complete** after a major cleanup on January 5, 2026. The platform now accurately reflects our business reality: **2 user dashboards** (Individual + My Projects) and **1 admin dashboard**.
+Allied iMpact V1 platform is **architecturally complete** after restructuring on January 5-7, 2026. The platform now accurately reflects our business reality: **Platform is an identity/SSO hub** with **6 independent apps** (Coin Box, Drive Master, CodeTech, Cup Final, uMkhanyakude, **My Projects**).
 
-**Key Insight**: Specialized dashboards (Learner, Investor, Sponsor) belong in their respective apps (Drive Master, CodeTech, Cup Final, uMkhanyakude), not on the platform.
+**Key Insight**: My Projects is now a separate independent app (like Coin Box), not a platform dashboard feature. Each app handles its own payments, logic, and dashboards.
 
 ---
 
@@ -18,71 +18,119 @@ Allied iMpact V1 platform is **architecturally complete** after a major cleanup 
 
 ### Dashboard Structure
 
-**Platform Provides (Allied iMpact owns):**
+**Platform Provides (Allied iMpact Identity Hub):**
 
-1. **Individual Dashboard**
-   - For: Anyone who subscribes to our apps
-   - Shows: Product grid, active subscriptions, quick access
-   - Users: Students, professionals, individuals subscribing to Coin Box, Drive Master, CodeTech, etc.
+1. **Individual Dashboard (Default)**
+   - For: All authenticated users
+   - Shows: Product grid with all 6 apps, active subscriptions, quick access
+   - Apps shown: Coin Box, Drive Master, CodeTech, Cup Final, uMkhanyakude, **My Projects**
 
-2. **My Projects Dashboard**
-   - For: Anyone getting a custom solution
-   - Shows: Project tracking, milestones, deliverables, support tickets
-   - Users: NGO, school, government, business, individual (doesn't matter who they are - same dashboard)
-
-3. **Admin Dashboard**
-   - For: Platform administrators
+2. **Admin Dashboard**
+   - For: Platform administrators only
    - Shows: Platform analytics, user management, system monitoring
+   - Archetypes: ADMIN, SUPER_ADMIN
 
-**Apps Provide (Each app owns):**
-- Drive Master: Learner dashboard (courses, progress, certificates)
-- CodeTech: Learner dashboard (coding challenges, leaderboards)
-- Cup Final: Sponsor/Investor dashboards (when features launch)
-- uMkhanyakude: Sponsor/Investor dashboards (when features launch)
+**Independent Apps (Each has own domain, payments, dashboards):**
+
+1. **Coin Box** (https://coinbox.alliedimpact.com)
+   - P2P financial platform
+   - Payments: One-time membership fees (R550-R11,000)
+   - Dashboards: Wallet, Loans, Investments, Crypto Trading
+   - Status: ACTIVE ✅
+
+2. **Drive Master** (drivemaster.alliedimpact.com - planned)
+   - Driving education platform
+   - Payments: Monthly subscriptions (R99) or one-time (R999)
+   - Dashboards: Learner progress, lessons, test prep
+   - Status: Coming soon
+
+3. **CodeTech** (codetech.alliedimpact.com - planned)
+   - Coding education platform
+   - Payments: Monthly subscriptions (R149-R299)
+   - Dashboards: Courses, challenges, certificates
+   - Status: Coming soon
+
+4. **Cup Final** (cupfinal.alliedimpact.com - planned)
+   - Sports & fan engagement platform
+   - Payments: Monthly subscriptions (R79)
+   - Dashboards: Fan voting, team stats, fantasy leagues
+   - Status: Coming soon
+
+5. **uMkhanyakude** (umkhanyakude.alliedimpact.com - planned)
+   - High schools information & community
+   - Payments: Free (sponsorable)
+   - Dashboards: School info, community features
+   - Status: Coming soon
+
+6. **My Projects** (https://myprojects.alliedimpact.com)
+   - Custom solution client portal
+   - Payments: Milestone-based (bank transfer or in-app)
+   - Dashboards: Project tracking, milestones, deliverables, tickets
+   - Status: BETA (in development) 🚧
+   - **Important**: Separate app, not platform dashboard
 
 ---
 
 ## User Archetypes (Simplified)
 
-**Platform Archetypes** (Managed by Allied iMpact):
+**Platform Archetypes** (Only 3 - for platform access control):
 
 | Archetype | Description | Dashboard |
 |-----------|-------------|-----------|
-| `INDIVIDUAL` | App subscribers | Individual Dashboard |
-| `MY_PROJECTS` | Custom solution clients | My Projects Dashboard |
+| `INDIVIDUAL` | All users (default) | Individual Dashboard |
 | `ADMIN` | Platform administrators | Admin Dashboard |
 | `SUPER_ADMIN` | Super administrators | Admin Dashboard (elevated) |
 
-**App-Managed Types** (Not platform archetypes):
-- Learner → Managed by Drive Master, CodeTech
-- Investor → Managed by Cup Final, uMkhanyakude
-- Sponsor → Managed by Cup Final, uMkhanyakude
+**Important Changes (January 2026 Cleanup)**:
+- ❌ Removed `MY_PROJECTS` archetype - My Projects is now a separate app
+- ❌ Removed specialized archetypes (LEARNER, INVESTOR, SPONSOR, etc.) - apps manage their own user types
+- ✅ Platform only tracks authentication and entitlements
+- ✅ Each app handles its own user roles and permissions
+
+**App-Specific User Types** (Not platform archetypes):
+- Coin Box: Basic, Ambassador, VIP, Business members
+- Drive Master: Free, Premium, Lifetime learners
+- CodeTech: Free, Standard, Pro learners
+- Cup Final: Fans, sponsors (when launched)
+- uMkhanyakude: Community members, school admins (when launched)
+- My Projects: Custom solution clients (managed in My Projects app)
 
 ---
 
 ## User Flows
 
 ### Flow 1: App Subscriber
-1. User signs up on Allied iMpact
-2. Lands on Individual Dashboard
-3. Sees all available apps (Coin Box, Drive Master, CodeTech, etc.)
-4. Subscribes to desired apps
-5. Clicks app → Routes into app
-6. App may show specialized dashboards (e.g., Learner dashboard in Drive Master)
+1. User signs up on Allied iMpact platform OR directly on app (e.g., coinbox.alliedimpact.com)
+2. Platform signup → Lands on Individual Dashboard with product grid
+3. Sees all 6 available apps (Coin Box, Drive Master, CodeTech, Cup Final, uMkhanyakude, My Projects)
+4. Subscribes to desired apps (payments handled in each app)
+5. Platform receives entitlement notification from app
+6. Clicks app → Routes into app with SSO
+7. App shows app-specific dashboards
 
-### Flow 2: Custom Solution Client
-1. Client signs contract (NGO, school, business, etc.)
-2. Admin grants `MY_PROJECTS` archetype
-3. Client lands on My Projects Dashboard
-4. Sees their project progress, milestones, deliverables
-5. Can submit support tickets
-6. Tracks project health status
+### Flow 2: Custom Solution Client (My Projects)
+1. Client shows interest in custom solution (from platform discovery flow - coming soon)
+2. Registers at myprojects.alliedimpact.com (OR via platform)
+3. Project auto-created with "Discovery" status
+4. Lands on My Projects dashboard
+5. Sees project progress, milestones, deliverables
+6. Can submit tickets, communicate with team
+7. Makes milestone payments (bank transfer or in-app)
 
-### Flow 3: Both
-1. User is both app subscriber AND custom client
-2. ViewSwitcher appears
-3. Can switch between Individual Dashboard and My Projects Dashboard
-4. Separate contexts, separate data
+### Flow 3: Direct App Access
+1. User goes directly to app URL (e.g., https://coinbox.alliedimpact.com)
+2. App has own signup/login pages
+3. After successful signup/payment in app
+4. App reports entitlement to platform API
+5. User can now access app via platform OR direct URL
+6. SSO works in both directions
+
+### Flow 4: Admin
+1. Admin logs into platform
+2. ViewSwitcher appears showing "Dashboard" ↔ "Admin"
+3. Can switch between Individual Dashboard and Admin Dashboard
+4. Admin Dashboard shows platform-wide analytics
+5. Can manage users, view system health, monitor activity
 
 ---
 
@@ -104,49 +152,65 @@ Allied iMpact V1 platform is **architecturally complete** after a major cleanup 
 - Entitlements system (5 access types)
 - Role-based access control
 
-### Individual Dashboard ✅
-- Product grid (shows all apps)
-- Subscription status display
-- Active/inactive product indicators
-- Quick access to subscribed apps
-- Coin Box integration (production-ready)
+### Platform Dashboard ✅
+- Individual Dashboard (default for all users)
+  - Product grid showing all 6 apps
+  - Subscription status display
+  - Active/inactive product indicators
+  - Quick access to subscribed apps
+- Admin Dashboard
+  - Platform statistics (users, revenue, active products)
+  - User management interface
+  - System health monitoring
+  - Recent activity tracking
+- ViewSwitcher (only for admins: Dashboard ↔ Admin)
 
-### My Projects Dashboard ✅
-- Project tracking (status, progress, health)
-- Milestone visibility
-- Deliverable tracking
-- Support ticket management
-- Project health indicators
-- Mock data (needs backend API integration)
+### Coin Box Integration ✅
+- Production-ready integration
+- SSO authentication working
+- Entitlement verification working
+- Payment flow complete (PayFast ZAR + Stripe international)
+- Routes correctly from platform to app
 
-### Admin Dashboard ✅
-- Platform statistics (users, revenue, active products)
-- User management interface
-- System health monitoring
-- Recent activity tracking
-- Mock data (needs real analytics integration)
+### My Projects App 🚧 (In Development)
+- **Status**: Separate app structure created (apps/myprojects/)
+- ✅ App configuration complete (package.json, Next.js, TypeScript)
+- ✅ Login page created
+- ✅ Dashboard UI migrated from platform
+- ✅ Product registry updated
+- ⏳ Backend integration pending (Firestore)
+- ⏳ Payment system pending (milestone-based)
+- ⏳ Discovery flow pending
 
-### Core Features ✅
-- ViewSwitcher (shows only when user has 2+ dashboards)
+### Core Platform Features ✅
 - Notifications Center (6 types, filtering, mark as read)
 - Settings Pages (profile, notifications, privacy, billing)
 - DashboardNav (responsive, mobile-friendly)
 - Error handling & display
-- Payment flow (PayFast ZAR + Stripe international)
+- Payment webhooks (PayFast + Stripe)
 
 ---
 
-## What Was Removed (January 5 Cleanup)
+## What Was Removed (January 2026 Cleanup)
 
-### Deleted Dashboards
-- ❌ Learner Dashboard → Belongs in Drive Master/CodeTech
-- ❌ Investor Dashboard → Belongs in Cup Final/uMkhanyakude
-- ❌ Sponsor Dashboard → Belongs in Cup Final/uMkhanyakude
-- ❌ Organization Dashboard → Merged into My Projects
+### Removed from Platform Archetypes
+- ❌ `MY_PROJECTS` archetype → My Projects is now a separate app, not a dashboard type
+- ❌ `LEARNER` archetype → Managed in Drive Master/CodeTech apps
+- ❌ `INVESTOR` archetype → Managed in Cup Final/uMkhanyakude apps
+- ❌ `SPONSOR` archetype → Managed in Cup Final/uMkhanyakude apps
+- ❌ `NGO` archetype → Custom clients use My Projects app
+- ❌ `INSTITUTION` archetype → Custom clients use My Projects app
+- ❌ `CUSTOM_CLIENT` archetype → Custom clients use My Projects app
 
-### Deleted Services
-- ❌ `platform/organizations/` → Not needed (clients are just projects)
-- ❌ `platform/sponsorships/` → Belongs in respective apps
+### Restructured Architecture
+- ✅ My Projects moved from platform/dashboard to apps/myprojects/
+- ✅ ViewSwitcher simplified: Only "Dashboard" ↔ "Admin" (2 views instead of 3)
+- ✅ Platform archetypes reduced from 9 to 3 (INDIVIDUAL, ADMIN, SUPER_ADMIN)
+- ✅ UserProfile simplified: Removed projectIds field
+
+### Deleted Services/Features
+- ❌ `platform/organizations/` → Not needed (clients use My Projects app)
+- ❌ `platform/sponsorships/` → Belongs in respective apps (Cup Final, uMkhanyakude)
 
 ### Simplified Code
 - Archetypes: 9 → 4 (removed 5 unnecessary types)
