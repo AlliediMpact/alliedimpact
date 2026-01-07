@@ -48,8 +48,8 @@ export default function FeaturesSection() {
                 key={index} 
                 className="text-center space-y-4 p-6 rounded-xl hover:bg-background transition-colors duration-300"
               >
-                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                  <Icon className="w-8 h-8 text-primary" />
+                <div className="w-16 h-16 mx-auto rounded-full bg-primary-blue/10 flex items-center justify-center">
+                  <Icon className="w-8 h-8 text-primary-blue" />
                 </div>
                 <h3 className="text-xl font-semibold">{feature.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">

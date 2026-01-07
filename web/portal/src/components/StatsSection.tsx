@@ -13,7 +13,7 @@ export default function StatsSection() {
       description: 'Processed securely',
     },
     {
-      value: '5',
+      value: '6',
       label: 'Products',
       description: 'One platform',
     },
@@ -25,12 +25,12 @@ export default function StatsSection() {
   ];
 
   return (
-    <section className="w-full py-20 bg-primary text-white">
+    <section className="w-full py-20 bg-primary-blue text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {stats.map((stat, index) => (
             <div key={index} className="text-center space-y-2">
-              <div className="text-4xl sm:text-5xl font-bold text-accent">
+              <div className="text-4xl sm:text-5xl font-bold text-primary-purple">
                 {stat.value}
               </div>
               <div className="text-lg font-semibold">

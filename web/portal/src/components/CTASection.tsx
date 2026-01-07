@@ -1,12 +1,11 @@
 'use client';
 
-import { Button } from '@allied-impact/ui';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CTASection() {
   return (
-    <section className="w-full py-20 bg-gradient-to-br from-primary via-primary/95 to-primary/90 text-white">
+    <section className="w-full py-20 bg-gradient-to-br from-primary-blue via-primary-blue/95 to-primary-blue/90 text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <h2 className="text-4xl sm:text-5xl font-bold">
@@ -17,26 +16,19 @@ export default function CTASection() {
             Sign up once and unlock access to all our products.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-            <Button 
-              size="lg" 
-              className="bg-accent text-primary hover:bg-accent/90 font-semibold px-8 py-6 text-lg group"
-              asChild
+            <Link 
+              href="/signup"
+              className="inline-flex items-center justify-center bg-white text-primary-blue hover:bg-gray-100 font-semibold px-8 py-4 text-lg rounded-lg transition-colors group"
             >
-              <Link href="/signup">
-                Create Free Account
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-2 border-white text-white hover:bg-white hover:text-primary font-semibold px-8 py-6 text-lg"
-              asChild
+              Create Free Account
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link 
+              href="/login"
+              className="inline-flex items-center justify-center border-2 border-white text-white hover:bg-white hover:text-primary-blue font-semibold px-8 py-4 text-lg rounded-lg transition-colors"
             >
-              <Link href="/login">
-                Sign In
-              </Link>
-            </Button>
+              Sign In
+            </Link>
           </div>
           <p className="text-sm text-white/70 pt-4">
             No credit card required • Free to join • Access all products
