@@ -1,8 +1,10 @@
 'use client';
 
-import { Mail, Phone, MapPin, MessageCircle, FileText, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageCircle, FileText, Clock, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { getDbInstance } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -11,11 +13,46 @@ export default function ContactPage() {
     subject: '',
     message: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement contact form submission
-    console.log('Form submitted:', formData);
+    setLoading(true);
+    setSubmitStatus(null);
+
+    try {
+      const db = getDbInstance();
+      const contactSubmissionsRef = collection(db, 'contact_submissions');
+      
+      await addDoc(contactSubmissionsRef, {
+        ...formData,
+        status: 'new',
+        createdAt: serverTimestamp(),
+        readAt: null,
+      });
+
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.',
+      });
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+      });
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to send message. Please try again or contact us directly at support@alliedimpact.com',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -135,6 +172,24 @@ export default function ContactPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6 bg-background p-8 rounded-xl border-2 border-muted">
+              {/* Success/Error Message */}
+              {submitStatus && (
+                <div
+                  className={`p-4 rounded-lg flex items-start gap-3 ${
+                    submitStatus.type === 'success'
+                      ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200'
+                      : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200'
+                  }`}
+                >
+                  {submitStatus.type === 'success' ? (
+                    <CheckCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <Mail className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  )}
+                  <p className="text-sm">{submitStatus.message}</p>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -209,9 +264,17 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="w-full bg-primary-blue text-white hover:bg-primary-blue/90 font-semibold px-8 py-4 rounded-lg transition-colors"
+                disabled={loading}
+                className="w-full bg-primary-blue text-white hover:bg-primary-blue/90 font-semibold px-8 py-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Send Message
+                {loading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  'Send Message'
+                )}
               </button>
 
               <p className="text-sm text-muted-foreground text-center">
