@@ -6,6 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AnalyticsProvider } from '@/components/AnalyticsProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
+import { AccessibilityMonitor } from '@/components/AccessibilityMonitor';
 
 export const metadata: Metadata = {
   title: {
@@ -76,8 +77,9 @@ export default function RootLayout({
       <body className="antialiased">
         <ErrorBoundary>
           <AnalyticsProvider>
-            <AuWebVitalsReporter />
-              <thProvider>
+            <AuthProvider>
+              <AccessibilityMonitor />
+              <WebVitalsReporter />
               <Header />
               <main className="min-h-screen">
                 {children}
