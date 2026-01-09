@@ -12,6 +12,7 @@ import {
   TicketStatus, 
   TicketComment 
 } from '@allied-impact/projects';
+import RichTextEditor, { RichTextViewer } from './RichTextEditor';
 
 interface TicketModalProps {
   projectId: string;
@@ -90,12 +91,11 @@ export function TicketModal({ projectId, ticket, userId, userName, onClose, onSu
             {/* Description */}
             <div>
               <label className="block text-sm font-medium mb-2">Description *</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Provide detailed information about the issue or question..."
-                className="w-full px-4 py-2 border rounded-lg min-h-32"
-                required
+              <RichTextEditor
+                content={formData.description}
+                onChange={(html) => setFormData({ ...formData, description: html })}
+                placeholder="Provide detailed information about the issue, question, or request. Include steps to reproduce if reporting a bug..."
+                minHeight="250px"
               />
             </div>
 
@@ -156,21 +156,21 @@ interface TicketDetailModalProps {
 }
 
 export function TicketDetailModal({ ticket, userId, userName, onClose, onStatusUpdate }: TicketDetailModalProps) {
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState('<p></p>');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!comment.trim()) return;
+    if (!comment.trim() || comment === '<p></p>') return;
 
     setIsSubmitting(true);
     try {
       await addTicketComment(ticket.id, {
         userId,
         userName,
-        content: comment.trim()
+        content: comment
       });
-      setComment('');
+      setComment('<p></p>');
     } catch (error) {
       console.error('Failed to add comment:', error);
       alert('Failed to add comment. Please try again.');
@@ -212,7 +212,7 @@ export function TicketDetailModal({ ticket, userId, userName, onClose, onStatusU
           {/* Description */}
           <div className="mb-6">
             <h4 className="text-sm font-medium text-gray-700 mb-2">Description</h4>
-            <p className="text-gray-600">{ticket.description}</p>
+            <RichTextViewer content={ticket.description} />
           </div>
 
           {/* Metadata */}
@@ -287,7 +287,7 @@ export function TicketDetailModal({ ticket, userId, userName, onClose, onStatusU
                       <p className="font-medium text-sm">{comment.userName}</p>
                       <p className="text-xs text-gray-500">{formatDate(comment.createdAt)}</p>
                     </div>
-                    <p className="text-gray-700">{comment.content}</p>
+                    <RichTextViewer content={comment.content} />
                   </div>
                 ))
               ) : (
@@ -297,17 +297,19 @@ export function TicketDetailModal({ ticket, userId, userName, onClose, onStatusU
 
             {/* Add Comment Form */}
             {ticket.status !== TicketStatus.CLOSED && (
-              <form onSubmit={handleAddComment} className="flex gap-2">
-                <input
-                  type="text"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Add a comment..."
-                  className="flex-1 px-4 py-2 border rounded-lg"
+              <form onSubmit={handleAddComment} className="space-y-2">
+                <RichTextEditor
+                  content={comment}
+                  onChange={setComment}
+                  placeholder="Add a comment, provide updates, or ask questions..."
+                  minHeight="150px"
                 />
-                <Button type="submit" disabled={isSubmitting || !comment.trim()}>
-                  <Send className="h-4 w-4" />
-                </Button>
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={isSubmitting || !comment.trim() || comment === '<p></p>'}>
+                    <Send className="h-4 w-4 mr-2" />
+                    {isSubmitting ? 'Posting...' : 'Post Comment'}
+                  </Button>
+                </div>
               </form>
             )}
           </div>
@@ -335,7 +337,9 @@ export function TicketCard({ ticket, onClick }: TicketCardProps) {
     <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onClick(ticket)}>
       <CardContent className="pt-6">
         <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
+          <didiv className="text-sm text-gray-600 line-clamp-2">
+              <RichTextViewer content={ticket.description} />
+            </div
             <h4 className="font-semibold mb-1">{ticket.title}</h4>
             <p className="text-sm text-gray-600 line-clamp-2">{ticket.description}</p>
           </div>

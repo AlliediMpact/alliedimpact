@@ -25,8 +25,22 @@ const config: Config = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: '#193281',
+          foreground: '#FFFFFF',
+          light: '#3a57b0',
+          dark: '#122260',
+        },
+        accent: {
+          DEFAULT: '#5e17eb',
+          foreground: '#FFFFFF',
+          light: '#7e45ef',
+          dark: '#4b11c3',
+        },
+        status: {
+          success: '#10B981',
+          warning: '#F59E0B',
+          error: '#EF4444',
+          info: '#3B82F6',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',

@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { Button } from '@allied-impact/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@allied-impact/ui';
-import { X, Plus, Calendar, Check, AlertCircle } from 'lucide-react';
+import { X, Plus, Calendar, Check, AlertCircle, GitBranch } from 'lucide-react';
 import { createMilestone, updateMilestone, Milestone, MilestoneStatus } from '@allied-impact/projects';
+import RichTextEditor, { RichTextViewer } from './RichTextEditor';
+import DependencyGraph from './DependencyGraph';
 
 interface MilestoneModalProps {
   projectId: string;
@@ -87,12 +89,11 @@ export function MilestoneModal({ projectId, milestone, onClose, onSuccess }: Mil
             {/* Description */}
             <div>
               <label className="block text-sm font-medium mb-2">Description *</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Describe what needs to be accomplished..."
-                className="w-full px-4 py-2 border rounded-lg min-h-24"
-                required
+              <RichTextEditor
+                content={formData.description}
+                onChange={(html) => setFormData({ ...formData, description: html })}
+                placeholder="Describe the milestone objectives, deliverables, and success criteria..."
+                minHeight="250px"
               />
             </div>
 
@@ -163,9 +164,12 @@ export function MilestoneModal({ projectId, milestone, onClose, onSuccess }: Mil
 interface MilestoneCardProps {
   milestone: Milestone;
   onEdit: (milestone: Milestone) => void;
+  isSelected?: boolean;
+  onSelect?: (id: string) => void;
+  showCheckbox?: boolean;
 }
 
-export function MilestoneCard({ milestone, onEdit }: MilestoneCardProps) {
+export function MilestoneCard({ milestone, onEdit, isSelected = false, onSelect, showCheckbox = false }: MilestoneCardProps) {
   const getStatusColor = (status: MilestoneStatus) => {
     const colors = {
       [MilestoneStatus.PENDING]: 'bg-gray-100 text-gray-700',
@@ -195,18 +199,35 @@ export function MilestoneCard({ milestone, onEdit }: MilestoneCardProps) {
   const isOverdue = new Date(milestone.dueDate) < new Date() && milestone.status !== MilestoneStatus.COMPLETED;
 
   return (
-    <Card className={`cursor-pointer hover:shadow-md transition-shadow ${isOverdue ? 'border-orange-300' : ''}`}>
-      <CardContent className="pt-6" onClick={() => onEdit(milestone)}>
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            <h4 className="font-semibold mb-1">{milestone.name}</h4>
-            <p className="text-sm text-gray-600 line-clamp-2">{milestone.description}</p>
+    <Card className={`cursor-pointer hover:shadow-md transition-shadow ${isOverdue ? 'border-orange-300' : ''} ${isSelected ? 'border-blue-500 border-2' : ''}`}>
+      <CardContent className="pt-6">
+        {showCheckbox && (
+          <div className="absolute top-3 left-3">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => {
+                e.stopPropagation();
+                onSelect?.(milestone.id);
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            />
           </div>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusColor(milestone.status)}`}>
-            {getStatusIcon(milestone.status)}
-            {milestone.status.replace('_', ' ')}
-          </span>
-        </div>
+        )}
+        <div onClick={() => onEdit(milestone)}>
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex-1">
+              <h4 className="font-semibold mb-1">{milestone.name}</h4>
+              <div className="text-sm text-gray-600 line-clamp-2">
+                <RichTextViewer content={milestone.description} />
+              </div>
+            </div>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusColor(milestone.status)}`}>
+              {getStatusIcon(milestone.status)}
+              {milestone.status.replace('_', ' ')}
+            </span>
+          </div>
 
         <div className="space-y-2">
           {/* Progress Bar */}
@@ -231,6 +252,7 @@ export function MilestoneCard({ milestone, onEdit }: MilestoneCardProps) {
               <span className="text-orange-600 font-medium">(Overdue)</span>
             )}
           </div>
+        </div>
         </div>
       </CardContent>
     </Card>

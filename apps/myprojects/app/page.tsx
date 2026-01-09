@@ -14,7 +14,9 @@ import {
   FileText,
   MessageSquare,
   ExternalLink,
-  Plus
+  Plus,
+  GitBranch,
+  Search
 } from 'lucide-react';
 import {
   Project,
@@ -33,15 +35,20 @@ import {
   updateMilestone,
 } from '@allied-impact/projects';
 import { MilestoneModal, MilestoneCard } from '@/components/MilestoneManager';
+import DependencyGraph from '@/components/DependencyGraph';
 import { DeliverableModal, DeliverableCard } from '@/components/DeliverableManager';
 import { TicketModal, TicketDetailModal, TicketCard } from '@/components/TicketManager';
+import { useProject } from '@/contexts/ProjectContext';
+import RecentActivityWidget from '@/components/RecentActivityWidget';
+import UpcomingDeadlines from '@/components/UpcomingDeadlines';
+import BulkActionsBar from '@/components/BulkActionsBar';
+import AdvancedSearch from '@/components/AdvancedSearch';
 
 export default function MyProjectsDashboard() {
   const router = useRouter();
+  const { selectedProject } = useProject();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -50,11 +57,18 @@ export default function MyProjectsDashboard() {
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [showDeliverableModal, setShowDeliverableModal] = useState(false);
   const [showTicketModal, setShowTicketModal] = useState(false);
+  const [showDependencyGraph, setShowDependencyGraph] = useState(false);
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [editingMilestone, setEditingMilestone] = useState<Milestone | undefined>();
   const [selectedTicket, setSelectedTicket] = useState<Ticket | undefined>();
 
+  // Multi-select states for bulk actions
+  const [selectedMilestones, setSelectedMilestones] = useState<Set<string>>(new Set());
+  const [selectedDeliverables, setSelectedDeliverables] = useState<Set<string>>(new Set());
+  const [selectedTickets, setSelectedTickets] = useState<Set<string>>(new Set());
+
   useEffect(() => {
-    // Check authentication and set up real-time listeners
+    // Check authentication
     const checkAuth = async () => {
       try {
         const { getAuthInstance } = await import('@allied-impact/auth');
@@ -66,7 +80,7 @@ export default function MyProjectsDashboard() {
         }
         
         setUser(auth.currentUser);
-        setupProjectsListener(auth.currentUser.uid);
+        setLoading(false);
       } catch (error) {
         console.error('Auth check failed:', error);
         router.push('/login');
@@ -86,54 +100,6 @@ export default function MyProjectsDashboard() {
       // Listeners will be cleaned up automatically
     };
   }, [selectedProject]);
-
-  const setupProjectsListener = async (userId: string) => {
-    try {
-      setLoading(true);
-      const { getFirestore, collection, query, where, orderBy, onSnapshot } = await import('firebase/firestore');
-      const { getApp } = await import('firebase/app');
-      
-      const db = getFirestore(getApp());
-      const projectsQuery = query(
-        collection(db, 'projects'),
-        where('clientId', '==', userId),
-        orderBy('lastActivityAt', 'desc')
-      );
-
-      // Real-time listener for projects
-      const unsubscribe = onSnapshot(projectsQuery, (snapshot) => {
-        const clientProjects = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            ...data,
-            id: doc.id,
-            createdAt: data.createdAt.toDate(),
-            updatedAt: data.updatedAt.toDate(),
-            lastActivityAt: data.lastActivityAt.toDate(),
-            startDate: data.startDate.toDate(),
-            endDate: data.endDate ? data.endDate.toDate() : undefined,
-          } as Project;
-        });
-
-        setProjects(clientProjects);
-        
-        if (clientProjects.length > 0 && !selectedProject) {
-          setSelectedProject(clientProjects[0]);
-        }
-        
-        setLoading(false);
-      }, (error) => {
-        console.error('Projects listener error:', error);
-        setLoading(false);
-      });
-
-      // Store unsubscribe function for cleanup
-      return () => unsubscribe();
-    } catch (error) {
-      console.error('Failed to set up projects listener:', error);
-      setLoading(false);
-    }
-  };
 
   const setupProjectDetailsListeners = async () => {
     if (!selectedProject) return;
@@ -306,6 +272,152 @@ export default function MyProjectsDashboard() {
     setSelectedTicket(ticket);
   };
 
+  // Bulk operation handlers
+  const handleSelectMilestone = (id: string) => {
+    setSelectedMilestones(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAllMilestones = () => {
+    setSelectedMilestones(new Set(milestones.map(m => m.id)));
+  };
+
+  const handleDeselectAllMilestones = () => {
+    setSelectedMilestones(new Set());
+  };
+
+  const handleBulkMilestoneStatusUpdate = async (itemIds: string[], newStatus: string) => {
+    const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const db = getFirestore(getApp());
+
+    await Promise.all(
+      itemIds.map(id =>
+        updateDoc(doc(db, 'milestones', id), {
+          status: newStatus as MilestoneStatus,
+          updatedAt: new Date()
+        })
+      )
+    );
+  };
+
+  const handleBulkMilestoneDelete = async (itemIds: string[]) => {
+    const { getFirestore, doc, deleteDoc } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const db = getFirestore(getApp());
+
+    await Promise.all(itemIds.map(id => deleteDoc(doc(db, 'milestones', id))));
+  };
+
+  const handleSelectDeliverable = (id: string) => {
+    setSelectedDeliverables(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAllDeliverables = () => {
+    setSelectedDeliverables(new Set(deliverables.map(d => d.id)));
+  };
+
+  const handleDeselectAllDeliverables = () => {
+    setSelectedDeliverables(new Set());
+  };
+
+  const handleBulkDeliverableStatusUpdate = async (itemIds: string[], newStatus: string) => {
+    const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const db = getFirestore(getApp());
+
+    await Promise.all(
+      itemIds.map(id =>
+        updateDoc(doc(db, 'deliverables', id), {
+          status: newStatus as DeliverableStatus,
+          updatedAt: new Date()
+        })
+      )
+    );
+  };
+
+  const handleBulkDeliverableDelete = async (itemIds: string[]) => {
+    const { getFirestore, doc, deleteDoc } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const db = getFirestore(getApp());
+
+    await Promise.all(itemIds.map(id => deleteDoc(doc(db, 'deliverables', id))));
+  };
+
+  const handleSelectTicket = (id: string) => {
+    setSelectedTickets(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAllTickets = () => {
+    setSelectedTickets(new Set(tickets.map(t => t.id)));
+  };
+
+  const handleDeselectAllTickets = () => {
+    setSelectedTickets(new Set());
+  };
+
+  const handleBulkTicketStatusUpdate = async (itemIds: string[], newStatus: string) => {
+    const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const db = getFirestore(getApp());
+
+    await Promise.all(
+      itemIds.map(id =>
+        updateDoc(doc(db, 'tickets', id), {
+          status: newStatus as TicketStatus,
+          updatedAt: new Date()
+        })
+      )
+    );
+  };
+
+  const handleBulkTicketDelete = async (itemIds: string[]) => {
+    const { getFirestore, doc, deleteDoc } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const db = getFirestore(getApp());
+
+    await Promise.all(itemIds.map(id => deleteDoc(doc(db, 'tickets', id))));
+  };
+
+  // Search handler
+  const handleSearchResultClick = (entityType: string, itemId: string) => {
+    setShowAdvancedSearch(false);
+    
+    if (entityType === 'milestone') {
+      const milestone = milestones.find(m => m.id === itemId);
+      if (milestone) handleMilestoneEdit(milestone);
+    } else if (entityType === 'deliverable') {
+      // Scroll to deliverable section
+      document.getElementById('deliverables-section')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (entityType === 'ticket') {
+      const ticket = tickets.find(t => t.id === itemId);
+      if (ticket) handleTicketClick(ticket);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -350,10 +462,16 @@ export default function MyProjectsDashboard() {
           <h1 className="text-3xl font-bold">My Projects</h1>
           <p className="text-gray-600 mt-1">Track your custom development projects</p>
         </div>
-        <Button onClick={() => router.push('/tickets')}>
-          <MessageSquare className="h-4 w-4 mr-2" />
-          Contact Support
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowAdvancedSearch(true)}>
+            <Search className="h-4 w-4 mr-2" />
+            Advanced Search
+          </Button>
+          <Button onClick={() => router.push('/tickets')}>
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Contact Support
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -530,10 +648,18 @@ export default function MyProjectsDashboard() {
                 <CardTitle>Milestones</CardTitle>
                 <CardDescription>Track project milestones and progress</CardDescription>
               </div>
-              <Button onClick={() => setShowMilestoneModal(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Milestone
-              </Button>
+              <div className="flex gap-2">
+                {milestones.length > 0 && (
+                  <Button variant="outline" onClick={() => setShowDependencyGraph(true)}>
+                    <GitBranch className="h-4 w-4 mr-2" />
+                    Dependencies
+                  </Button>
+                )}
+                <Button onClick={() => setShowMilestoneModal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Milestone
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {milestones.length === 0 ? (
@@ -549,6 +675,9 @@ export default function MyProjectsDashboard() {
                       key={milestone.id}
                       milestone={milestone}
                       onEdit={handleMilestoneEdit}
+                      isSelected={selectedMilestones.has(milestone.id)}
+                      onSelect={handleSelectMilestone}
+                      showCheckbox={milestones.length > 1}
                     />
                   ))}
                 </div>
@@ -621,6 +750,12 @@ export default function MyProjectsDashboard() {
               )}
             </CardContent>
           </Card>
+
+          {/* Recent Activity Widget */}
+          {selectedProject && <RecentActivityWidget projectId={selectedProject.id} />}
+
+          {/* Upcoming Deadlines Widget */}
+          {selectedProject && <UpcomingDeadlines projectId={selectedProject.id} maxItems={5} showSnooze={true} />}
         </>
       )}
 
@@ -646,6 +781,18 @@ export default function MyProjectsDashboard() {
         />
       )}
 
+      {showDependencyGraph && selectedProject && user && (
+        <DependencyGraph
+          projectId={selectedProject.id}
+          milestones={milestones}
+          currentUserId={user.uid}
+          onClose={() => setShowDependencyGraph(false)}
+          onRefresh={() => {
+            // Real-time listener will update automatically
+          }}
+        />
+      )}
+
       {showTicketModal && selectedProject && user && (
         <TicketModal
           projectId={selectedProject.id}
@@ -665,6 +812,55 @@ export default function MyProjectsDashboard() {
           userName={user.displayName || user.email}
           onClose={() => setSelectedTicket(undefined)}
           onStatusUpdate={handleTicketStatusUpdate}
+        />
+      )}
+
+      {/* Bulk Actions Bars */}
+      {selectedProject && (
+        <>
+          <BulkActionsBar
+            selectedItems={selectedMilestones}
+            allItems={milestones}
+            entityType="milestones"
+            projectName={selectedProject.name}
+            onSelectAll={handleSelectAllMilestones}
+            onDeselectAll={handleDeselectAllMilestones}
+            onBulkStatusUpdate={handleBulkMilestoneStatusUpdate}
+            onBulkDelete={handleBulkMilestoneDelete}
+          />
+          
+          <BulkActionsBar
+            selectedItems={selectedDeliverables}
+            allItems={deliverables}
+            entityType="deliverables"
+            projectName={selectedProject.name}
+            onSelectAll={handleSelectAllDeliverables}
+            onDeselectAll={handleDeselectAllDeliverables}
+            onBulkStatusUpdate={handleBulkDeliverableStatusUpdate}
+            onBulkDelete={handleBulkDeliverableDelete}
+          />
+          
+          <BulkActionsBar
+            selectedItems={selectedTickets}
+            allItems={tickets}
+            entityType="tickets"
+            projectName={selectedProject.name}
+            onSelectAll={handleSelectAllTickets}
+            onDeselectAll={handleDeselectAllTickets}
+            onBulkStatusUpdate={handleBulkTicketStatusUpdate}
+            onBulkDelete={handleBulkTicketDelete}
+          />
+        </>
+      )}
+
+      {/* Advanced Search */}
+      {showAdvancedSearch && (
+        <AdvancedSearch
+          milestones={milestones}
+          deliverables={deliverables}
+          tickets={tickets}
+          onClose={() => setShowAdvancedSearch(false)}
+          onResultClick={handleSearchResultClick}
         />
       )}
     </div>

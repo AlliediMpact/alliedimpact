@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import { Button } from '@allied-impact/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@allied-impact/ui';
-import { X, Upload, Check, FileText, AlertCircle, Clock, Download, Trash2 } from 'lucide-react';
+import { X, Upload, Check, FileText, AlertCircle, Clock, Download, Trash2, GitBranch, History } from 'lucide-react';
 import { createDeliverable, Deliverable, DeliverableStatus } from '@allied-impact/projects';
+import RichTextEditor from './RichTextEditor';
+import VersionHistory from './VersionHistory';
+import VersionCompare from './VersionCompare';
+import { createDeliverableVersion } from '@/lib/version-control';
 
 interface DeliverableModalProps {
   projectId: string;
@@ -20,11 +24,14 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
     description: deliverable?.description || '',
     type: deliverable?.type || 'document',
     dueDate: deliverable?.dueDate ? new Date(deliverable.dueDate).toISOString().split('T')[0] : '',
-    notes: deliverable?.notes || ''
+    notes: deliverable?.notes || '',
+    versionComment: '' // New field for version comments
   });
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [showVersionCompare, setShowVersionCompare] = useState<{ v1: number; v2: number } | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -126,12 +133,11 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
             {/* Description */}
             <div>
               <label className="block text-sm font-medium mb-2">Description *</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Describe the deliverable..."
-                className="w-full px-4 py-2 border rounded-lg min-h-24"
-                required
+              <RichTextEditor
+                content={formData.description}
+                onChange={(html) => setFormData({ ...formData, description: html })}
+                placeholder="Describe the deliverable requirements and acceptance criteria..."
+                minHeight="200px"
               />
             </div>
 
@@ -167,11 +173,11 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
             <div>
               <label className="block text-sm font-medium mb-2">Notes</label>
               <textarea
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Additional notes or requirements..."
-                className="w-full px-4 py-2 border rounded-lg min-h-16"
-              />
+               RichTextEditor
+                content={formData.notes}
+                onChange={(html) => setFormData({ ...formData, notes: html })}
+                placeholder="Additional notes, comments, or special instructions..."
+                minHeight="150px
             </div>
 
             {/* File Upload */}
