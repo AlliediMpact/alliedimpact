@@ -4,21 +4,22 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, Sun, Moon, User, LogOut, Settings } from 'lucide-react';
 import Logo from '../Logo';
+import { useAuth } from '@/hooks/useAuth';
 
-interface HeaderProps {
-  user?: {
-    uid: string;
-    email?: string;
-    displayName?: string;
-    photoURL?: string;
-  } | null;
-  onSignOut?: () => void;
-}
-
-export default function Header({ user, onSignOut }: HeaderProps) {
+export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      setUserMenuOpen(false);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -114,7 +115,7 @@ export default function Header({ user, onSignOut }: HeaderProps) {
                       <button
                         onClick={() => {
                           setUserMenuOpen(false);
-                          onSignOut?.();
+                          handleSignOut();
                         }}
                         className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
@@ -196,7 +197,7 @@ export default function Header({ user, onSignOut }: HeaderProps) {
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
-                      onSignOut?.();
+                      handleSignOut();
                     }}
                     className="py-3 text-sm font-medium text-red-600 hover:text-red-700 text-left"
                   >

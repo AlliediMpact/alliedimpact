@@ -5,12 +5,14 @@ import { Button } from '@allied-impact/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const { resetPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,15 +20,22 @@ export default function ResetPasswordPage() {
     setLoading(true);
 
     try {
-      // TODO: Implement platform auth password reset
-      // const { sendPasswordReset } = await import('@allied-impact/auth');
-      // await sendPasswordReset(email);
-
-      // For now, simulate
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await resetPassword(email);
       setSent(true);
     } catch (err: any) {
-      setError(err.message || 'Failed to send reset email. Please try again.');
+      console.error('Password reset error:', err);
+      
+      // Handle Firebase auth errors
+      switch (err.code) {
+        case 'auth/invalid-email':
+          setError('Invalid email address.');
+          break;
+        case 'auth/user-not-found':
+          setError('No account found with this email.');
+          break;
+        default:
+          setError(err.message || 'Failed to send reset email. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

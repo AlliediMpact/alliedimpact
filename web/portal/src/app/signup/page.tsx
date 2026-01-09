@@ -9,6 +9,7 @@ import {
   CheckCircle2, XCircle, Eye, EyeOff, Info 
 } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
 
 interface PasswordRequirement {
   regex: RegExp;
@@ -36,6 +37,7 @@ export default function SignUpPage() {
     new Array(PASSWORD_REQUIREMENTS.length).fill(false)
   );
   const router = useRouter();
+  const { signUp } = useAuth();
 
   useEffect(() => {
     const newRequirements = PASSWORD_REQUIREMENTS.map((req) =>
@@ -62,15 +64,30 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      // TODO: Implement platform auth signup
-      // const { signUp } = await import('@allied-impact/auth');
-      // await signUp({ fullName, email, phone, password });
-
-      // For now, simulate signup
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await signUp(email, password, fullName);
+      
+      // Redirect to verify email page
       router.push('/verify-email?email=' + encodeURIComponent(email));
     } catch (err: any) {
-      setError(err.message || 'Sign up failed. Please try again.');
+      console.error('Sign up error:', err);
+      
+      // Handle Firebase auth errors
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          setError('An account with this email already exists.');
+          break;
+        case 'auth/invalid-email':
+          setError('Invalid email address.');
+          break;
+        case 'auth/operation-not-allowed':
+          setError('Email/password accounts are not enabled.');
+          break;
+        case 'auth/weak-password':
+          setError('Password is too weak. Please choose a stronger password.');
+          break;
+        default:
+          setError(err.message || 'Sign up failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

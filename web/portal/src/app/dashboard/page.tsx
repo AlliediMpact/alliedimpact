@@ -2,14 +2,11 @@
 
 import { ArrowRight, Wallet, FolderKanban, GraduationCap, Car, Code, Trophy, Bell, Settings, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { useAuth } from '@/hooks/useAuth';
 
-export default function DashboardPage() {
-  // Mock data - in real app, this would come from auth context
-  const user = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    memberSince: 'January 2024',
-  };
+function DashboardContent() {
+  const { user, platformUser } = useAuth();
 
   const products = [
     {
@@ -92,9 +89,9 @@ export default function DashboardPage() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-2">Welcome back, {user.name}!</h1>
+          <h1 className="text-4xl font-bold mb-2">Welcome back, {user?.displayName || platformUser?.displayName || 'User'}!</h1>
           <p className="text-lg text-muted-foreground">
-            Member since {user.memberSince} • {user.email}
+            Member since {platformUser?.createdAt ? new Date(platformUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently'} • {user?.email}
           </p>
         </div>
 
@@ -297,5 +294,13 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 }

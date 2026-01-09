@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@allied-impact/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
 import { Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,8 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,15 +23,34 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // TODO: Implement platform auth login
-      // const { signIn } = await import('@allied-impact/auth');
-      // await signIn(email, password);
+      await signIn(email, password);
       
-      // For now, simulate login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      router.push('/dashboard');
+      // Redirect to return URL or dashboard
+      const returnUrl = searchParams.get('returnUrl');
+      router.push(returnUrl ? decodeURIComponent(returnUrl) : '/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      console.error('Login error:', err);
+      
+      // Handle Firebase auth errors
+      switch (err.code) {
+        case 'auth/invalid-email':
+          setError('Invalid email address.');
+          break;
+        case 'auth/user-disabled':
+          setError('This account has been disabled.');
+          break;
+        case 'auth/user-not-found':
+          setError('No account found with this email.');
+          break;
+        case 'auth/wrong-password':
+          setError('Incorrect password.');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many failed attempts. Please try again later.');
+          break;
+        default:
+          setError(err.message || 'Login failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }
