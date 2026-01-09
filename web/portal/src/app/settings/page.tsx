@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { User, Lock, Bell, CreditCard, Camera, Mail, Save, Loader2 } from 'lucide-react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
+import { getAuthInstance, getDbInstance } from '@/lib/firebase';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { doc, updateDoc } from 'firebase/firestore';
 
 type TabType = 'profile' | 'security' | 'notifications' | 'billing';
 
@@ -67,13 +70,32 @@ function SettingsContent() {
     }
 
     try {
-      // TODO: Implement password change with Firebase reauthentication
+      const auth = getAuthInstance();
+      const currentUser = auth.currentUser;
+      
+      if (!currentUser || !currentUser.email) {
+        throw new Error('No authenticated user found');
+      }
+
+      // Reauthenticate user before password change
+      const credential = EmailAuthProvider.credential(
+        currentUser.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(currentUser, credential);
+
+      // Update password
+      await updatePassword(currentUser, newPassword);
+      
       setMessage({ type: 'success', text: 'Password changed successfully!' });
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to change password. Please verify your current password.' });
+    } catch (error: any) {
+      const errorMessage = error.code === 'auth/wrong-password' 
+        ? 'Current password is incorrect.'
+        : 'Failed to change password. Please try again.';
+      setMessage({ type: 'error', text: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -84,9 +106,25 @@ function SettingsContent() {
     setMessage(null);
 
     try {
-      // TODO: Save notification preferences to Firestore
+      if (!user?.uid) {
+        throw new Error('No authenticated user');
+      }
+
+      const db = getDbInstance();
+      const userDocRef = doc(db, 'platform_users', user.uid);
+      
+      await updateDoc(userDocRef, {
+        'preferences.notifications': {
+          email: emailNotifications,
+          push: pushNotifications,
+          marketing: marketingEmails,
+          updatedAt: new Date().toISOString(),
+        },
+      });
+      
       setMessage({ type: 'success', text: 'Notification preferences updated!' });
     } catch (error) {
+      console.error('Error updating notification preferences:', error);
       setMessage({ type: 'error', text: 'Failed to update preferences. Please try again.' });
     } finally {
       setLoading(false);

@@ -2,7 +2,7 @@
 
 import { Cookie, Calendar, Mail, Settings, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function CookiesPage() {
   const lastUpdated = 'January 15, 2024';
@@ -13,9 +13,31 @@ export default function CookiesPage() {
     marketing: false,
   });
 
+  // Load saved preferences on mount
+  useEffect(() => {
+    const savedPreferences = localStorage.getItem('cookiePreferences');
+    if (savedPreferences) {
+      try {
+        const parsed = JSON.parse(savedPreferences);
+        setPreferences({
+          ...preferences,
+          ...parsed,
+          necessary: true, // Always true
+        });
+      } catch (error) {
+        console.error('Error loading cookie preferences:', error);
+      }
+    }
+  }, []);
+
   const handleSavePreferences = () => {
-    // TODO: Implement saving cookie preferences to local storage or backend
-    alert('Cookie preferences saved successfully!');
+    try {
+      localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+      alert('Cookie preferences saved successfully!');
+    } catch (error) {
+      console.error('Error saving cookie preferences:', error);
+      alert('Failed to save preferences. Please try again.');
+    }
   };
 
   return (
