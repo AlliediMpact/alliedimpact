@@ -472,6 +472,103 @@ export const PRODUCTS: Record<string, Product> = {
       'Multi-sport competitions',
     ],
   },
+  careerbox: {
+    id: 'careerbox',
+    name: 'CareerBox',
+    slug: 'careerbox',
+    tagline: 'AI-Powered Career Matching Platform',
+    description: 'Connect job seekers with employers through intelligent matching',
+    longDescription: 'CareerBox is an intelligent career mobility platform that uses AI-powered matching to connect job seekers with the right opportunities. Our sophisticated algorithm considers role fit, location preferences, industry expertise, skills overlap, and availability to create meaningful connections between talent and employers.',
+    status: 'active',
+    launchDate: '2026-01-10',
+    url: 'http://localhost:3006',
+    iconName: 'Briefcase',
+    colorFrom: 'from-blue-500',
+    colorTo: 'to-indigo-600',
+    features: [
+      {
+        icon: 'Target',
+        title: 'Intelligent Matching',
+        description: 'AI-powered algorithm with 5-factor weighted scoring',
+      },
+      {
+        icon: 'MapPin',
+        title: 'Location-Smart',
+        description: 'Considers location preferences and relocation willingness',
+      },
+      {
+        icon: 'MessageSquare',
+        title: 'Direct Messaging',
+        description: 'In-app messaging between candidates and companies',
+      },
+      {
+        icon: 'Briefcase',
+        title: 'Profile Management',
+        description: 'Comprehensive profiles for individuals and companies',
+      },
+      {
+        icon: 'Shield',
+        title: 'Content Moderation',
+        description: 'AI-powered flagging of inappropriate content',
+      },
+      {
+        icon: 'TrendingUp',
+        title: 'Success Tracking',
+        description: 'Monitor placements, interviews, and match quality',
+      },
+    ],
+    useCases: [
+      'Job seekers finding ideal roles',
+      'Companies recruiting top talent',
+      'Career mobility and transitions',
+      'Skills-based hiring',
+      'Remote work opportunities',
+      'Executive placements',
+    ],
+    pricing: [
+      {
+        tier: 'Free',
+        price: 'R0',
+        features: [
+          'See match count',
+          'View names only',
+          'No messaging',
+          'Limited profile visibility',
+        ],
+        cta: 'Get Started',
+      },
+      {
+        tier: 'Entry',
+        price: 'R1,000/month',
+        features: [
+          'Up to 10 matches per month',
+          '5 messages per month',
+          'City/province location',
+          'Full profile access',
+        ],
+        cta: 'Start Entry Plan',
+        popular: true,
+      },
+      {
+        tier: 'Classic',
+        price: 'R5,000/month',
+        features: [
+          'Unlimited matches',
+          'Unlimited messaging',
+          'Exact location details',
+          'Priority matching',
+          'Advanced filters',
+          'Team member access (companies)',
+        ],
+        cta: 'Go Premium',
+      },
+    ],
+    stats: {
+      users: '10,000+',
+      transactions: '50,000+',
+      rating: '4.8/5',
+    },
+  },
 };
 
 export const getProduct = (slug: string): Product | undefined => {
