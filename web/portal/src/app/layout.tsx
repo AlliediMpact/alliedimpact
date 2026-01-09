@@ -4,6 +4,8 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AnalyticsProvider } from '@/components/AnalyticsProvider';
+import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 
 export const metadata: Metadata = {
   title: {
@@ -73,13 +75,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <ErrorBoundary>
-          <AuthProvider>
-            <Header />
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
-          </AuthProvider>
+          <AnalyticsProvider>
+            <AuWebVitalsReporter />
+              <thProvider>
+              <Header />
+              <main className="min-h-screen">
+                {children}
+              </main>
+              <Footer />
+            </AuthProvider>
+          </AnalyticsProvider>
         </ErrorBoundary>
       </body>
     </html>

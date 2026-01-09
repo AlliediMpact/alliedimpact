@@ -1,0 +1,133 @@
+name: Portal CI
+
+on:
+  pull_request:
+    paths:
+      - 'web/portal/**'
+      - '.github/workflows/portal-ci.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'web/portal/**'
+
+defaults:
+  run:
+    working-directory: web/portal
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Run ESLint
+        run: pnpm lint
+        continue-on-error: true
+      
+      - name: Run TypeScript type check
+        run: pnpm tsc --noEmit
+        continue-on-error: true
+      
+      - name: Run tests
+        run: pnpm test --coverage
+        env:
+          CI: true
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        if: matrix.node-version == '20.x'
+        with:
+          files: ./web/portal/coverage/lcov.info
+          flags: portal
+          name: portal-coverage
+      
+      - name: Comment test coverage
+        if: github.event_name == 'pull_request' && matrix.node-version == '20.x'
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          lcov-file: ./web/portal/coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=test" >> .env.local
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=test" >> .env.local
+          echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=test" >> .env.local
+          echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=test" >> .env.local
+          echo "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=test" >> .env.local
+          echo "NEXT_PUBLIC_FIREBASE_APP_ID=test" >> .env.local
+      
+      - name: Build application
+        run: pnpm build
+        env:
+          NODE_ENV: production
+      
+      - name: Check build size
+        run: |
+          du -sh .next/
+          echo "Build completed successfully"
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+      
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
