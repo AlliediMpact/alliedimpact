@@ -1,0 +1,33 @@
+{
+  "scripts": {
+    "deploy:indexes": "firebase deploy --only firestore:indexes",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:all": "firebase deploy",
+    "build:production": "NODE_ENV=production next build",
+    "start:production": "NODE_ENV=production next start -p 3005"
+  },
+  "deployment": {
+    "platform": "vercel",
+    "framework": "nextjs",
+    "buildCommand": "pnpm build",
+    "outputDirectory": ".next",
+    "installCommand": "pnpm install --frozen-lockfile",
+    "devCommand": "pnpm dev"
+  },
+  "environments": {
+    "production": {
+      "url": "https://portal.alliedimpact.com",
+      "branch": "main"
+    },
+    "staging": {
+      "url": "https://staging-portal.alliedimpact.com",
+      "branch": "staging"
+    },
+    "preview": {
+      "url": "https://preview-*.alliedimpact.com",
+      "branch": "feature/*"
+    }
+  }
+}
