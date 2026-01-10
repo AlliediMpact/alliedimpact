@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { MatchCardSkeleton } from '@/components/ui/loading-skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 import { getInitials } from '@/lib/utils';
 
 interface Match {
@@ -419,19 +421,33 @@ export default function IndividualMatchesPage() {
         </div>
 
         {/* Matches Grid */}
-        {filteredMatches.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-12">
-              <Filter className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">No matches found</h2>
-              <p className="text-gray-600 mb-4">
-                Try adjusting your filters or search query
-              </p>
-              {activeFilterCount > 0 && (
-                <Button onClick={clearAllFilters}>Clear Filters</Button>
-              )}
-            </CardContent>
-          </Card>
+        {isLoading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <MatchCardSkeleton />
+            <MatchCardSkeleton />
+            <MatchCardSkeleton />
+            <MatchCardSkeleton />
+          </div>
+        ) : filteredMatches.length === 0 && matches.length === 0 ? (
+          <EmptyState
+            icon={TrendingUp}
+            title="No matches yet"
+            description="Complete your profile and set your preferences to start receiving personalized job matches."
+            action={{
+              label: "Complete Profile",
+              onClick: () => router.push(`/${locale}/dashboard/individual/profile`)
+            }}
+          />
+        ) : filteredMatches.length === 0 ? (
+          <EmptyState
+            icon={Filter}
+            title="No matches found"
+            description="Try adjusting your filters or search query to see more results."
+            action={{
+              label: "Clear Filters",
+              onClick: clearFilters
+            }}
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredMatches.map(match => (

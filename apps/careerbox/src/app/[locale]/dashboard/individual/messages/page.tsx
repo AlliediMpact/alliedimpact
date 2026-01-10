@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { MessageListSkeleton, LoadingSkeleton } from '@/components/ui/loading-skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 import { formatRelativeTime, getInitials } from '@/lib/utils';
 
 interface Conversation {
@@ -237,10 +239,43 @@ export default function IndividualMessagesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading conversations...</p>
+      <div className="h-screen bg-gray-50 flex flex-col">
+        {/* Header */}
+        <div className="bg-white border-b px-6 py-4">
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <MessageCircle className="h-6 w-6" />
+            Messages
+          </h1>
+        </div>
+
+        <div className="flex-1 flex overflow-hidden">
+          {/* Conversations List Skeleton */}
+          <div className="w-80 bg-white border-r flex flex-col">
+            <div className="p-4 border-b">
+              <LoadingSkeleton variant="rectangular" className="w-full h-10" />
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <MessageListSkeleton />
+            </div>
+          </div>
+
+          {/* Chat Area Skeleton */}
+          <div className="flex-1 flex flex-col">
+            <div className="bg-white border-b p-4">
+              <div className="flex items-center space-x-3">
+                <LoadingSkeleton variant="avatar" className="w-10 h-10" />
+                <div className="flex-1 space-y-2">
+                  <LoadingSkeleton variant="text" className="w-40 h-4" />
+                  <LoadingSkeleton variant="text" className="w-24 h-3" />
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 p-6 space-y-4">
+              <LoadingSkeleton variant="rectangular" className="w-3/4 h-16" />
+              <LoadingSkeleton variant="rectangular" className="w-2/3 h-16 ml-auto" />
+              <LoadingSkeleton variant="rectangular" className="w-3/4 h-16" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -274,7 +309,19 @@ export default function IndividualMessagesPage() {
 
           {/* Conversation List */}
           <div className="flex-1 overflow-y-auto">
-            {filteredConversations.length === 0 ? (
+            {filteredConversations.length === 0 && conversations.length === 0 ? (
+              <div className="h-full flex items-center justify-center px-4">
+                <EmptyState
+                  icon={MessageCircle}
+                  title="No messages yet"
+                  description="When companies reach out or you start a conversation, you'll see them here."
+                  action={{
+                    label: "Browse Matches",
+                    onClick: () => router.push(`/${locale}/dashboard/individual/matches`)
+                  }}
+                />
+              </div>
+            ) : filteredConversations.length === 0 ? (
               <div className="p-8 text-center">
                 <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-3" />
                 <p className="text-gray-600">No conversations yet</p>

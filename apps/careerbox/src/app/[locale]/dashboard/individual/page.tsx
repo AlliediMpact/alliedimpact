@@ -4,15 +4,29 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { User, Briefcase, MessageSquare, Settings, Heart, TrendingUp, MapPin, Clock, Check } from 'lucide-react';
+import { DashboardStatsSkeleton, MatchCardSkeleton } from '@/components/ui/loading-skeleton';
+import { EmptyState } from '@/components/ui/empty-state';
 
 export default function IndividualDashboardPage() {
   const params = useParams();
   const router = useRouter();
   const locale = params?.locale as string || 'en';
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [profileComplete, setProfileComplete] = useState(false);
   const [matchCount, setMatchCount] = useState(37); // Mock data
   const [tier, setTier] = useState<'free' | 'entry' | 'classic'>('free');
+
+  // Simulate loading dashboard data
+  useEffect(() => {
+    // TODO: Fetch user profile and match data from Firestore
+    const loadDashboard = async () => {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setIsLoading(false);
+    };
+    loadDashboard();
+  }, []);
 
   // Mock data for matches
   const recentMatches = [
@@ -105,6 +119,9 @@ export default function IndividualDashboardPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Stats Cards */}
+            {isLoading ? (
+              <DashboardStatsSkeleton />
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-2">
@@ -143,6 +160,7 @@ export default function IndividualDashboardPage() {
                 )}
               </div>
             </div>
+            )}
 
             {/* Recent Matches */}
             <div className="bg-white rounded-lg shadow-sm">
@@ -158,6 +176,13 @@ export default function IndividualDashboardPage() {
                 </div>
               </div>
 
+              {isLoading ? (
+                <div className="p-6 space-y-4">
+                  <MatchCardSkeleton />
+                  <MatchCardSkeleton />
+                  <MatchCardSkeleton />
+                </div>
+              ) : (
               <div className="divide-y">
                 {tier === 'free' ? (
                   <div className="p-6 text-center">
@@ -208,6 +233,7 @@ export default function IndividualDashboardPage() {
                   ))
                 )}
               </div>
+              )}
             </div>
           </div>
 
