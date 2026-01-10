@@ -68,7 +68,7 @@ importers:
         version: 0.395.0(react@18.3.1)
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -150,7 +150,7 @@ importers:
         version: 0.395.0(react@18.3.1)
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -285,6 +285,12 @@ importers:
       '@testing-library/react':
         specifier: ^14.0.0
         version: 14.3.1(@types/react@18.3.27)(react-dom@18.3.1)(react@18.3.1)
+      '@testing-library/user-event':
+        specifier: ^14.5.0
+        version: 14.6.1(@testing-library/dom@9.3.4)
+      '@types/jest':
+        specifier: ^29.5.0
+        version: 29.5.14
       '@types/node':
         specifier: ^20
         version: 20.19.27
@@ -306,6 +312,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.27)
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
       postcss:
         specifier: ^8.4.32
         version: 8.5.6
@@ -338,7 +347,7 @@ importers:
         version: 10.14.1
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -408,7 +417,7 @@ importers:
         version: 12.7.0
       next:
         specifier: ^14.2.0
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: ^3.0.0
         version: 3.26.5(next@14.2.35)(react@18.3.1)
@@ -472,7 +481,7 @@ importers:
         version: 10.14.1
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -545,7 +554,7 @@ importers:
         version: 10.14.1
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -648,7 +657,7 @@ importers:
         version: 0.395.0(react@18.3.1)
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -736,7 +745,7 @@ importers:
         version: 10.14.1
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -898,7 +907,7 @@ importers:
         version: 12.7.0
       next:
         specifier: ^14.0.4
-        version: 14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
+        version: 14.2.35(@babel/core@7.28.5)(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1)
       zod:
         specifier: ^3.22.4
         version: 3.25.76
@@ -8615,7 +8624,7 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /next@14.2.35(@playwright/test@1.57.0)(react-dom@18.3.1)(react@18.3.1):
+  /next@14.2.35(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-KhYd2Hjt/O1/1aZVX3dCwGXM1QmOV4eNM2UTacK5gipDdPN/oHHK/4oVGy7X8GMfPMsUTUEmGlsy0EY1YGAkig==}
     engines: {node: '>=18.17.0'}
     hasBin: true
@@ -8634,7 +8643,6 @@ packages:
         optional: true
     dependencies:
       '@next/env': 14.2.35
-      '@playwright/test': 1.57.0
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
       caniuse-lite: 1.0.30001762

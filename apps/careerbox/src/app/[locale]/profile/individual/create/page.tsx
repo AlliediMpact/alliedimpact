@@ -2,12 +2,20 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Briefcase, MapPin, Settings, User, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Briefcase, MapPin, Settings, User, CheckCircle, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { ProgressStepper } from '@/components/ui/progress-stepper';
 import { Button } from '@/components/ui/button';
 import { Input, Textarea } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToastHelpers } from '@/components/ui/toast';
+import {
+  validateRequired,
+  validateEmail,
+  validatePhone,
+  validateMinLength,
+  validateNumber,
+} from '@/utils/validation';
 
 // Steps configuration
 const STEPS = [
@@ -43,6 +51,7 @@ export default function IndividualProfileWizard() {
   const router = useRouter();
   const params = useParams();
   const locale = params?.locale as string || 'en';
+  const { error: showError, success: showSuccess } = useToastHelpers();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +72,10 @@ export default function IndividualProfileWizard() {
     expectedSalary: '',
   });
 
+  // Validation errors and touched fields
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
   // Temp state for skills input
   const [skillInput, setSkillInput] = useState('');
 
@@ -70,9 +83,100 @@ export default function IndividualProfileWizard() {
     setProfileData(prev => ({ ...prev, ...updates }));
   };
 
+  // Validation functions
+  const validateField = (field: string, value: any): string | null => {
+    switch (field) {
+      case 'displayName':
+        const nameValidation = validateRequired(value, 'Full name');
+        if (!nameValidation.isValid) return nameValidation.error!;
+        const minLengthValidation = validateMinLength(value, 2, 'Full name');
+        if (!minLengthValidation.isValid) return minLengthValidation.error!;
+        return null;
+      
+      case 'email':
+        const emailValidation = validateEmail(value);
+        return emailValidation.isValid ? null : emailValidation.error!;
+      
+      case 'phone':
+        if (!value) return null; // Optional field
+        const phoneValidation = validatePhone(value);
+        return phoneValidation.isValid ? null : phoneValidation.error!;
+      
+      case 'bio':
+        const bioValidation = validateRequired(value, 'Bio');
+        if (!bioValidation.isValid) return bioValidation.error!;
+        const bioMinLength = validateMinLength(value, 50, 'Bio');
+        if (!bioMinLength.isValid) return bioMinLength.error!;
+        return null;
+      
+      case 'currentRole':
+        const roleValidation = validateRequired(value, 'Current role');
+        return roleValidation.isValid ? null : roleValidation.error!;
+      
+      case 'yearsExperience':
+        if (!value) return null; // Optional
+        const yearsValidation = validateNumber(value, 'Years of experience');
+        return yearsValidation.isValid ? null : yearsValidation.error!;
+      
+      case 'city':
+        const cityValidation = validateRequired(value, 'City');
+        return cityValidation.isValid ? null : cityValidation.error!;
+      
+      case 'province':
+        const provinceValidation = validateRequired(value, 'Province');
+        return provinceValidation.isValid ? null : provinceValidation.error!;
+      
+      default:
+        return null;
+    }
+  };
+
+  const validateStep = (step: number): boolean => {
+    const newErrors: Record<string, string> = {};
+    
+    if (step === 1) {
+      const fields = ['displayName', 'email', 'phone', 'bio'];
+      fields.forEach(field => {
+        const error = validateField(field, profileData[field as keyof ProfileData]);
+        if (error) newErrors[field] = error;
+      });
+    } else if (step === 2) {
+      const fields = ['currentRole', 'yearsExperience'];
+      fields.forEach(field => {
+        const error = validateField(field, profileData[field as keyof ProfileData]);
+        if (error) newErrors[field] = error;
+      });
+      if (profileData.skills.length === 0) {
+        newErrors.skills = 'Please add at least one skill';
+      }
+    } else if (step === 3) {
+      const fields = ['city', 'province'];
+      fields.forEach(field => {
+        const error = validateField(field, profileData[field as keyof ProfileData]);
+        if (error) newErrors[field] = error;
+      });
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    const error = validateField(field, profileData[field as keyof ProfileData]);
+    setErrors(prev => ({
+      ...prev,
+      [field]: error || '',
+    }));
+  };
+
   const handleNext = () => {
-    if (currentStep < STEPS.length) {
-      setCurrentStep(curr => curr + 1);
+    if (validateStep(currentStep)) {
+      if (currentStep < STEPS.length) {
+        setCurrentStep(curr => curr + 1);
+      }
+    } else {
+      showError('Please fix the errors before continuing');
     }
   };
 
@@ -94,6 +198,13 @@ export default function IndividualProfileWizard() {
   };
 
   const handleSubmit = async () => {
+    // Validate all steps before submitting
+    const allStepsValid = [1, 2, 3].every(step => validateStep(step));
+    if (!allStepsValid) {
+      showError('Please complete all required fields');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       // TODO: Call API to save profile
@@ -102,11 +213,13 @@ export default function IndividualProfileWizard() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      showSuccess('Profile created successfully!');
+      
       // Redirect to dashboard
       router.push(`/${locale}/dashboard/individual`);
     } catch (error) {
       console.error('Error submitting profile:', error);
-      alert('Failed to save profile. Please try again.');
+      showError('Failed to save profile. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -119,25 +232,45 @@ export default function IndividualProfileWizard() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="displayName">Full Name *</Label>
-              <Input
-                id="displayName"
-                value={profileData.displayName}
-                onChange={(e) => updateProfileData({ displayName: e.target.value })}
-                placeholder="John Doe"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="displayName"
+                  value={profileData.displayName}
+                  onChange={(e) => updateProfileData({ displayName: e.target.value })}
+                  onBlur={() => handleBlur('displayName')}
+                  placeholder="John Doe"
+                  required
+                  className={errors.displayName && touched.displayName ? 'border-red-500' : touched.displayName && !errors.displayName ? 'border-green-500' : ''}
+                />
+                {touched.displayName && !errors.displayName && profileData.displayName && (
+                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                )}
+              </div>
+              {errors.displayName && touched.displayName && (
+                <p className="text-sm text-red-600">{errors.displayName}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email Address *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={profileData.email}
-                onChange={(e) => updateProfileData({ email: e.target.value })}
-                placeholder="john@example.com"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="email"
+                  type="email"
+                  value={profileData.email}
+                  onChange={(e) => updateProfileData({ email: e.target.value })}
+                  onBlur={() => handleBlur('email')}
+                  placeholder="john@example.com"
+                  required
+                  className={errors.email && touched.email ? 'border-red-500' : touched.email && !errors.email ? 'border-green-500' : ''}
+                />
+                {touched.email && !errors.email && profileData.email && (
+                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                )}
+              </div>
+              {errors.email && touched.email && (
+                <p className="text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
 
             <div className="space-y-2">

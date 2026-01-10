@@ -2,12 +2,20 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Building2, Briefcase, MapPin, Settings, CheckCircle, ArrowLeft, ArrowRight, Plus, X } from 'lucide-react';
+import { Building2, Briefcase, MapPin, Settings, CheckCircle, ArrowLeft, ArrowRight, Plus, X, Check } from 'lucide-react';
 import { ProgressStepper } from '@/components/ui/progress-stepper';
 import { Button } from '@/components/ui/button';
 import { Input, Textarea } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToastHelpers } from '@/components/ui/toast';
+import {
+  validateRequired,
+  validateEmail,
+  validatePhone,
+  validateUrl,
+  validateMinLength,
+} from '@/utils/validation';
 
 // Steps configuration
 const STEPS = [
@@ -47,6 +55,7 @@ export default function CompanyProfileWizard() {
   const router = useRouter();
   const params = useParams();
   const locale = params?.locale as string || 'en';
+  const { error: showError, success: showSuccess } = useToastHelpers();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,6 +75,10 @@ export default function CompanyProfileWizard() {
     teamSize: '',
   });
 
+  // Validation errors state
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
   // Temp states
   const [specializationInput, setSpecializationInput] = useState('');
   const [benefitInput, setBenefitInput] = useState('');
@@ -74,9 +87,94 @@ export default function CompanyProfileWizard() {
     setProfileData(prev => ({ ...prev, ...updates }));
   };
 
+  // Validation functions
+  const validateField = (field: string, value: any): string | null => {
+    switch (field) {
+      case 'companyName':
+        const nameValidation = validateRequired(value, 'Company name');
+        if (!nameValidation.isValid) return nameValidation.error!;
+        const minLengthValidation = validateMinLength(value, 2, 'Company name');
+        if (!minLengthValidation.isValid) return minLengthValidation.error!;
+        return null;
+      
+      case 'email':
+        const emailValidation = validateEmail(value);
+        return emailValidation.isValid ? null : emailValidation.error!;
+      
+      case 'website':
+        if (!value) return null; // Optional field
+        const urlValidation = validateUrl(value);
+        return urlValidation.isValid ? null : urlValidation.error!;
+      
+      case 'phone':
+        if (!value) return null; // Optional field
+        const phoneValidation = validatePhone(value);
+        return phoneValidation.isValid ? null : phoneValidation.error!;
+      
+      case 'companySize':
+        const sizeValidation = validateRequired(value, 'Company size');
+        return sizeValidation.isValid ? null : sizeValidation.error!;
+      
+      case 'description':
+        const descValidation = validateRequired(value, 'Company description');
+        if (!descValidation.isValid) return descValidation.error!;
+        const descMinLength = validateMinLength(value, 50, 'Company description');
+        if (!descMinLength.isValid) return descMinLength.error!;
+        return null;
+      
+      case 'industry':
+        const industryValidation = validateRequired(value, 'Industry');
+        return industryValidation.isValid ? null : industryValidation.error!;
+      
+      default:
+        return null;
+    }
+  };
+
+  const validateStep = (step: number): boolean => {
+    const newErrors: Record<string, string> = {};
+    
+    if (step === 1) {
+      const fields = ['companyName', 'email', 'website', 'phone', 'companySize', 'description'];
+      fields.forEach(field => {
+        const error = validateField(field, profileData[field as keyof ProfileData]);
+        if (error) newErrors[field] = error;
+      });
+    } else if (step === 2) {
+      const fields = ['industry'];
+      fields.forEach(field => {
+        const error = validateField(field, profileData[field as keyof ProfileData]);
+        if (error) newErrors[field] = error;
+      });
+      if (profileData.specializations.length === 0) {
+        newErrors.specializations = 'Please add at least one specialization';
+      }
+    } else if (step === 3) {
+      if (profileData.locations.some(loc => !loc.city || !loc.province)) {
+        newErrors.locations = 'Please complete all location fields';
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    const error = validateField(field, profileData[field as keyof ProfileData]);
+    setErrors(prev => ({
+      ...prev,
+      [field]: error || '',
+    }));
+  };
+
   const handleNext = () => {
-    if (currentStep < STEPS.length) {
-      setCurrentStep(curr => curr + 1);
+    if (validateStep(currentStep)) {
+      if (currentStep < STEPS.length) {
+        setCurrentStep(curr => curr + 1);
+      }
+    } else {
+      showError('Please fix the errors before continuing');
     }
   };
 
@@ -127,6 +225,13 @@ export default function CompanyProfileWizard() {
   };
 
   const handleSubmit = async () => {
+    // Validate all steps before submitting
+    const allStepsValid = [1, 2, 3].every(step => validateStep(step));
+    if (!allStepsValid) {
+      showError('Please complete all required fields');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       // TODO: Call API to save profile
@@ -135,11 +240,13 @@ export default function CompanyProfileWizard() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      showSuccess('Company profile created successfully!');
+      
       // Redirect to company dashboard
       router.push(`/${locale}/dashboard/company`);
     } catch (error) {
       console.error('Error submitting profile:', error);
-      alert('Failed to save profile. Please try again.');
+      showError('Failed to save profile. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -152,48 +259,90 @@ export default function CompanyProfileWizard() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="companyName">Company Name *</Label>
-              <Input
-                id="companyName"
-                value={profileData.companyName}
-                onChange={(e) => updateProfileData({ companyName: e.target.value })}
-                placeholder="TechCorp SA"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="companyName"
+                  value={profileData.companyName}
+                  onChange={(e) => updateProfileData({ companyName: e.target.value })}
+                  onBlur={() => handleBlur('companyName')}
+                  placeholder="TechCorp SA"
+                  required
+                  className={errors.companyName && touched.companyName ? 'border-red-500' : touched.companyName && !errors.companyName ? 'border-green-500' : ''}
+                />
+                {touched.companyName && !errors.companyName && profileData.companyName && (
+                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                )}
+              </div>
+              {errors.companyName && touched.companyName && (
+                <p className="text-sm text-red-600 flex items-center gap-1">
+                  {errors.companyName}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Company Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={profileData.email}
-                onChange={(e) => updateProfileData({ email: e.target.value })}
-                placeholder="hr@techcorp.co.za"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="email"
+                  type="email"
+                  value={profileData.email}
+                  onChange={(e) => updateProfileData({ email: e.target.value })}
+                  onBlur={() => handleBlur('email')}
+                  placeholder="hr@techcorp.co.za"
+                  required
+                  className={errors.email && touched.email ? 'border-red-500' : touched.email && !errors.email ? 'border-green-500' : ''}
+                />
+                {touched.email && !errors.email && profileData.email && (
+                  <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                )}
+              </div>
+              {errors.email && touched.email && (
+                <p className="text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  type="url"
-                  value={profileData.website}
-                  onChange={(e) => updateProfileData({ website: e.target.value })}
-                  placeholder="https://www.techcorp.co.za"
-                />
+                <div className="relative">
+                  <Input
+                    id="website"
+                    type="url"
+                    value={profileData.website}
+                    onChange={(e) => updateProfileData({ website: e.target.value })}
+                    onBlur={() => handleBlur('website')}
+                    placeholder="https://www.techcorp.co.za"
+                    className={errors.website && touched.website ? 'border-red-500' : touched.website && !errors.website && profileData.website ? 'border-green-500' : ''}
+                  />
+                  {touched.website && !errors.website && profileData.website && (
+                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                  )}
+                </div>
+                {errors.website && touched.website && (
+                  <p className="text-sm text-red-600">{errors.website}</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={profileData.phone}
-                  onChange={(e) => updateProfileData({ phone: e.target.value })}
-                  placeholder="+27 11 123 4567"
-                />
+                <div className="relative">
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={profileData.phone}
+                    onChange={(e) => updateProfileData({ phone: e.target.value })}
+                    onBlur={() => handleBlur('phone')}
+                    placeholder="+27 11 123 4567"
+                    className={errors.phone && touched.phone ? 'border-red-500' : touched.phone && !errors.phone && profileData.phone ? 'border-green-500' : ''}
+                  />
+                  {touched.phone && !errors.phone && profileData.phone && (
+                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                  )}
+                </div>
+                {errors.phone && touched.phone && (
+                  <p className="text-sm text-red-600">{errors.phone}</p>
+                )}
               </div>
             </div>
 

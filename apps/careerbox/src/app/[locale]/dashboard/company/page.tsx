@@ -1,17 +1,59 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { Building2, Briefcase, MessageSquare, Settings, Users, TrendingUp, PlusCircle, MapPin, Clock } from 'lucide-react';
+import { useRouter, useParams } from 'next/navigation';
+import { 
+  Building2, 
+  Briefcase, 
+  MessageSquare, 
+  Settings, 
+  Users, 
+  TrendingUp, 
+  PlusCircle, 
+  MapPin, 
+  Clock,
+  Eye,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  BarChart3,
+  ArrowUpRight,
+  ArrowDownRight,
+  Calendar,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { DashboardStatsSkeleton } from '@/components/ui/loading-skeleton';
 
 export default function CompanyDashboardPage() {
+  const router = useRouter();
   const params = useParams();
   const locale = params?.locale as string || 'en';
 
-  const [tier, setTier] = useState<'free' | 'entry' | 'classic'>('free');
-  const [activeListings, setActiveListings] = useState(2);
-  const [matchCount, setMatchCount] = useState(45);
+  const [isLoading, setIsLoading] = useState(true);
+  const [tier, setTier] = useState<'free' | 'entry' | 'classic'>('classic');
+  
+  // Dashboard Stats
+  const [stats, setStats] = useState({
+    activeListings: 8,
+    totalApplicants: 127,
+    newApplicants: 23,
+    profileViews: 1548,
+    profileViewsChange: 12.5,
+    interviewScheduled: 15,
+    offersExtended: 5,
+  });
+
+  useEffect(() => {
+    // Simulate loading dashboard data
+    const loadData = async () => {
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      setIsLoading(false);
+    };
+    loadData();
+  }, []);
 
   // Mock listings
   const listings = [
@@ -33,36 +75,98 @@ export default function CompanyDashboardPage() {
     },
   ];
 
-  // Mock recent matches
-  const recentMatches = [
+  // Mock recent applicants (most recent applications)
+  const recentApplicants = [
     {
-      id: '1',
-      name: 'Sarah Johnson',
-      role: 'Software Engineer',
-      experience: '5 years',
-      location: 'Johannesburg, GP',
+      id: 'app-1',
+      applicantName: 'Sarah Johnson',
+      applicantAvatar: null,
+      position: 'Senior Software Engineer',
+      appliedDate: '2026-01-10',
+      status: 'new' as const,
       matchScore: 94,
-      listingId: '1',
-    },
-    {
-      id: '2',
-      name: 'Michael Chen',
-      role: 'Full Stack Developer',
-      experience: '3 years',
+      experience: '5+ years',
       location: 'Johannesburg, GP',
-      matchScore: 89,
       listingId: '1',
     },
     {
-      id: '3',
-      name: 'Jessica Williams',
-      role: 'Frontend Developer',
+      id: 'app-2',
+      applicantName: 'Michael Chen',
+      applicantAvatar: null,
+      position: 'Senior Software Engineer',
+      appliedDate: '2026-01-10',
+      status: 'new' as const,
+      matchScore: 91,
+      experience: '6 years',
+      location: 'Pretoria, GP',
+      listingId: '1',
+    },
+    {
+      id: 'app-3',
+      applicantName: 'Jessica Williams',
+      applicantAvatar: null,
+      position: 'Full Stack Developer',
+      appliedDate: '2026-01-09',
+      status: 'reviewed' as const,
+      matchScore: 87,
       experience: '4 years',
       location: 'Cape Town, WC',
-      matchScore: 87,
       listingId: '2',
     },
+    {
+      id: 'app-4',
+      applicantName: 'David Brown',
+      applicantAvatar: null,
+      position: 'Full Stack Developer',
+      appliedDate: '2026-01-09',
+      status: 'interview' as const,
+      matchScore: 89,
+      experience: '5 years',
+      location: 'Cape Town, WC',
+      listingId: '2',
+    },
+    {
+      id: 'app-5',
+      applicantName: 'Emma Davis',
+      applicantAvatar: null,
+      position: 'Frontend Developer',
+      appliedDate: '2026-01-08',
+      status: 'reviewed' as const,
+      matchScore: 85,
+      experience: '3 years',
+      location: 'Johannesburg, GP',
+      listingId: '3',
+    },
   ];
+
+  const getStatusBadge = (status: 'new' | 'reviewed' | 'interview' | 'rejected' | 'accepted') => {
+    const configs = {
+      new: { label: 'New', variant: 'primary' as const, icon: AlertCircle },
+      reviewed: { label: 'Reviewed', variant: 'gray' as const, icon: Eye },
+      interview: { label: 'Interview', variant: 'warning' as const, icon: Calendar },
+      rejected: { label: 'Rejected', variant: 'error' as const, icon: XCircle },
+      accepted: { label: 'Accepted', variant: 'success' as const, icon: CheckCircle },
+    };
+    return configs[status];
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white border-b">
+          <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-6 w-6 text-blue-600" />
+              <span className="text-xl font-bold text-gray-900">CareerBox</span>
+            </div>
+          </nav>
+        </header>
+        <div className="container mx-auto px-4 py-8">
+          <DashboardStatsSkeleton />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

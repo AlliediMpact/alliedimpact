@@ -19,10 +19,12 @@ import {
   TrendingUp,
   Target,
   Award,
+  Send,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ApplicationModal } from '@/components/application/application-modal';
 
 export default function IndividualMatchDetailPage() {
   const router = useRouter();
@@ -33,6 +35,8 @@ export default function IndividualMatchDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
   const [matchData, setMatchData] = useState<any>(null);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     // TODO: Fetch match data from API
@@ -136,6 +140,11 @@ export default function IndividualMatchDetailPage() {
     if (confirm('Are you sure you want to hide this match?')) {
       router.push(`/${locale}/dashboard/individual`);
     }
+  };
+
+  const handleApplicationSuccess = () => {
+    setHasApplied(true);
+    // Could redirect to applications page or show success message
   };
 
   if (isLoading) {
@@ -481,7 +490,24 @@ export default function IndividualMatchDetailPage() {
                 <CardTitle>Take Action</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full" onClick={handleSendMessage}>
+                {hasApplied ? (
+                  <div className="w-full bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                    <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                    <p className="text-sm font-medium text-green-900">Application Submitted</p>
+                    <p className="text-xs text-green-700 mt-1">We'll notify you of any updates</p>
+                  </div>
+                ) : (
+                  <Button 
+                    className="w-full" 
+                    size="lg"
+                    onClick={() => setIsApplicationModalOpen(true)}
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    Apply for Position
+                  </Button>
+                )}
+
+                <Button className="w-full" variant="outline" onClick={handleSendMessage}>
                   <MessageCircle className="h-4 w-4 mr-2" />
                   Send Message
                 </Button>
@@ -508,6 +534,16 @@ export default function IndividualMatchDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Application Modal */}
+      <ApplicationModal
+        isOpen={isApplicationModalOpen}
+        onClose={() => setIsApplicationModalOpen(false)}
+        jobTitle={listing.title}
+        companyName={company.name}
+        listingId={listing.id}
+        onSubmitSuccess={handleApplicationSuccess}
+      />
     </div>
   );
 }
