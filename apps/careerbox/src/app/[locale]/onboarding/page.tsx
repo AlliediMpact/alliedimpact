@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { CheckCircle, Rocket, User, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { PageTransition, FadeIn, StaggerChildren, StaggerItem, ScaleIn } from '@/components/ui/animated';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -57,18 +58,18 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <PageTransition className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         {/* Welcome Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
+        <FadeIn className="text-center mb-12">
+          <ScaleIn className="inline-flex items-center justify-center h-20 w-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-6">
             <Rocket className="h-10 w-10 text-white" />
-          </div>
+          </ScaleIn>
           <h1 className="text-4xl font-bold text-gray-900 mb-3">Welcome to CareerBox!</h1>
           <p className="text-xl text-gray-600">
             Let's get you started on your journey to finding the perfect match
           </p>
-        </div>
+        </FadeIn>
 
         {/* User Type Selection */}
         <div className="mb-8">
@@ -190,6 +191,6 @@ export default function OnboardingPage() {
           <p>Already have a profile? This is just a demo - in production, you'd be redirected automatically.</p>
         </div>
       </div>
-    </div>
+    </PageTransition>
   );
 }
