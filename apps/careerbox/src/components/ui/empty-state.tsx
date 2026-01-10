@@ -22,7 +22,11 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={cn('flex flex-col items-center justify-center py-12 px-4 text-center', className)}>
+    <div 
+      className={cn('flex flex-col items-center justify-center py-12 px-4 text-center', className)}
+      role="status"
+      aria-label="Empty state"
+    >
       <div className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 mb-4">
         <Icon className="h-12 w-12 text-gray-400" />
       </div>

@@ -106,6 +106,9 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
 
   return (
     <div
+      role="alert"
+      aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
+      aria-atomic="true"
       className={cn(
         'flex items-start space-x-3 p-4 rounded-lg border shadow-lg animate-slide-in-right',
         colors[toast.type]
@@ -122,6 +125,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
       
       <button
         onClick={onClose}
+        aria-label="Close notification"
         className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
       >
         <X className="h-4 w-4" />

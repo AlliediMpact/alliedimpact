@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { locales } from '@/i18n/config';
 import { ToastProvider } from '@/components/ui/toast';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
+import { SkipLink } from '@/components/ui/accessibility';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -27,6 +28,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body>
+        <SkipLink />
         <ErrorBoundary>
           <ToastProvider>
             <NextIntlClientProvider messages={messages}>
