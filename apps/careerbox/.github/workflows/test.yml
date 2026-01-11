@@ -1,0 +1,84 @@
+name: CareerBox Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/careerbox/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/careerbox/**'
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Run type checking
+        run: cd apps/careerbox && pnpm type-check
+      
+      - name: Run linting
+        run: cd apps/careerbox && pnpm lint
+      
+      - name: Run unit tests
+        run: cd apps/careerbox && pnpm test:ci
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./apps/careerbox/coverage/lcov.info
+          flags: careerbox
+  
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Install Playwright browsers
+        run: cd apps/careerbox && pnpm exec playwright install --with-deps
+      
+      - name: Build application
+        run: cd apps/careerbox && pnpm build
+      
+      - name: Run E2E tests
+        run: cd apps/careerbox && pnpm test:e2e
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: apps/careerbox/playwright-report/
+          retention-days: 30
