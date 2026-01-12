@@ -1,0 +1,306 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function getUserRole(userId) {
+      return get(/databases/$(database)/documents/edutech_users/$(userId)).data.userType;
+    }
+    
+    function isFacilitator() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/edutech_users/$(request.auth.uid)) &&
+             getUserRole(request.auth.uid) == 'facilitator';
+    }
+    
+    function isContentAdmin() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/edutech_users/$(request.auth.uid)) &&
+             getUserRole(request.auth.uid) == 'content_admin';
+    }
+    
+    function isSystemAdmin() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/edutech_users/$(request.auth.uid)) &&
+             getUserRole(request.auth.uid) == 'system_admin';
+    }
+    
+    // ========================================================================
+    // PLATFORM COLLECTIONS (managed by platform services)
+    // ========================================================================
+    
+    match /platform_users/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only via platform auth service
+    }
+    
+    match /product_entitlements/{entitlementId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only via platform entitlements service
+    }
+    
+    // ========================================================================
+    // EDUTECH USER COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false; // No self-deletion
+    }
+    
+    // ========================================================================
+    // COURSE COLLECTIONS (platform-owned, managed by Content Admins)
+    // ========================================================================
+    
+    match /edutech_courses/{courseId} {
+      // Anyone authenticated can browse courses
+      allow read: if isAuthenticated();
+      
+      // Only Content Admins and System Admins can create/update/delete courses
+      allow create: if isContentAdmin() || isSystemAdmin();
+      allow update: if isContentAdmin() || isSystemAdmin();
+      allow delete: if isSystemAdmin();
+    }
+    
+    // ========================================================================
+    // CLASS MANAGEMENT (System Admin only)
+    // ========================================================================
+    
+    match /edutech_classes/{classId} {
+      // Authenticated users can read (facilitators need to see their classes)
+      allow read: if isAuthenticated();
+      
+      // Only System Admins can manage classes
+      allow create: if isSystemAdmin();
+      allow update: if isSystemAdmin();
+      allow delete: if isSystemAdmin();
+    }
+    
+    // ========================================================================
+    // ATTENDANCE & PERFORMANCE NOTES (Facilitators and Admins)
+    // ========================================================================
+    
+    match /edutech_attendance/{recordId} {
+      // Anyone authenticated can read attendance
+      allow read: if isAuthenticated();
+      
+      // Facilitators and System Admins can mark attendance
+      allow create: if isFacilitator() || isSystemAdmin();
+      allow update: if isFacilitator() || isSystemAdmin();
+      allow delete: if isSystemAdmin();
+    }
+    
+    match /edutech_performance_notes/{noteId} {
+      // Anyone authenticated can read notes
+      allow read: if isAuthenticated();
+      
+      // Facilitators and System Admins can add notes
+      allow create: if isFacilitator() || isSystemAdmin();
+      allow update: if isFacilitator() || isSystemAdmin();
+      allow delete: if isSystemAdmin();
+    }
+    
+    // ========================================================================
+    // SUBSCRIPTIONS (User can read own, Admin can manage)
+    // ========================================================================
+    
+    match /edutech_subscriptions/{subscriptionId} {
+      // User can read their own subscription, admins can read all
+      allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || isSystemAdmin());
+      
+      // Only System Admins can manage subscriptions
+      allow create: if isSystemAdmin();
+      allow update: if isSystemAdmin();
+      allow delete: if isSystemAdmin();
+    }
+    
+    // ========================================================================
+    // ENROLLMENT COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_enrollments/{userId}/courses/{courseId} {
+      // User can read their own enrollments
+      allow read: if isOwner(userId);
+      
+      // User can create/update their own enrollments
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      
+      // No deletion (keep enrollment history)
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // CERTIFICATE COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_certificates/{certificateId} {
+      // User can read their own certificates, anyone can verify
+      allow read: if isAuthenticated();
+      
+      // Only system can create certificates (via Cloud Functions)
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // ASSESSMENT COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_assessments/{assessmentId} {
+      // Enrolled users can read assessments
+      allow read: if isAuthenticated();
+      
+      // Only instructors/admins can manage assessments
+      allow create, update, delete: if isInstructor() || isAdmin();
+    }
+    
+    match /edutech_submissions/{userId}/assessments/{assessmentId} {
+      // User can read their own submissions
+      allow read: if isOwner(userId) || isInstructor() || isAdmin();
+      
+      // User can create their own submissions
+      allow create: if isOwner(userId);
+      
+      // Only instructors/admins can update (for grading)
+      allow update: if isInstructor() || isAdmin();
+      
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // FORUM COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_forum_posts/{postId} {
+      // Anyone authenticated can read posts
+      allow read: if isAuthenticated();
+      
+      // Authenticated users can create posts
+      allow create: if isAuthenticated();
+      
+      // Only author can update their posts
+      allow update: if isAuthenticated() && 
+                      request.auth.uid == resource.data.authorId;
+      
+      // Author or admin can delete
+      allow delete: if isAuthenticated() && 
+                      (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+    
+    match /edutech_forum_replies/{replyId} {
+      // Anyone authenticated can read replies
+      allow read: if isAuthenticated();
+      
+      // Authenticated users can create replies
+      allow create: if isAuthenticated();
+      
+      // Only author can update their replies
+      allow update: if isAuthenticated() && 
+                      request.auth.uid == resource.data.authorId;
+      
+      // Author or admin can delete
+      allow delete: if isAuthenticated() && 
+                      (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+    
+    // ========================================================================
+    // PROGRESS & ANALYTICS COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_learning_stats/{userId} {
+      // User can read their own stats
+      allow read: if isOwner(userId);
+      
+      // System manages stats (via Cloud Functions)
+      allow create, update: if false;
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // INSTRUCTOR COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_instructors/{instructorId} {
+      // Anyone can read instructor profiles
+      allow read: if isAuthenticated();
+      
+      // Only instructor themselves or admin can update
+      allow create: if isInstructor() || isAdmin();
+      allow update: if isOwner(instructorId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // CERTIFICATE COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_certificates/{certificateId} {
+      // Anyone can read certificates (for verification)
+      allow read: if true;
+      
+      // Only Cloud Functions can write
+      allow create, update, delete: if false;
+    }
+    
+    // ========================================================================
+    // FORUM/COMMUNITY COLLECTIONS
+    // ========================================================================
+    
+    match /edutech_forum_posts/{postId} {
+      // Anyone authenticated can read posts
+      allow read: if true;
+      
+      // Any authenticated user can create posts
+      allow create: if isAuthenticated() && 
+                      request.resource.data.authorId == request.auth.uid;
+      
+      // Author or admin can update
+      allow update: if isAuthenticated() && 
+                      (request.auth.uid == resource.data.authorId || isAdmin());
+      
+      // Author or admin can delete (soft delete)
+      allow delete: if isAuthenticated() && 
+                      (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+    
+    match /edutech_forum_replies/{replyId} {
+      // Anyone authenticated can read replies
+      allow read: if true;
+      
+      // Any authenticated user can create replies
+      allow create: if isAuthenticated() && 
+                      request.resource.data.authorId == request.auth.uid;
+      
+      // Author or admin can update
+      allow update: if isAuthenticated() && 
+                      (request.auth.uid == resource.data.authorId || isAdmin());
+      
+      // Author or admin can delete (soft delete)
+      allow delete: if isAuthenticated() && 
+                      (request.auth.uid == resource.data.authorId || isAdmin());
+    }
+    
+    match /edutech_user_reputation/{userId} {
+      // Anyone can read reputation
+      allow read: if true;
+      
+      // System manages reputation (via Cloud Functions or forumService)
+      allow create, update: if isAuthenticated();
+      allow delete: if false;
+    }
+  }
+}

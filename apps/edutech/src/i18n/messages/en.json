@@ -1,0 +1,25 @@
+{
+  "appName": "EduTech",
+  "tagline": "Learn, Grow, Succeed",
+  "navigation": {
+    "home": "Home",
+    "courses": "Courses",
+    "dashboard": "Dashboard",
+    "about": "About",
+    "pricing": "Pricing"
+  },
+  "tracks": {
+    "computerSkills": "Computer Skills",
+    "coding": "Coding"
+  },
+  "common": {
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "free": "FREE",
+    "premium": "Premium",
+    "enterprise": "Enterprise"
+  }
+}
