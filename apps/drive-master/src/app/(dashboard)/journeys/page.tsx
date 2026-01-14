@@ -4,17 +4,18 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { GameEngine } from '@/lib/services/GameEngine';
+import { GamificationService } from '@/lib/services/GamificationService';
 import { Journey, Stage } from '@/lib/types/game';
 import { Button } from '@allied-impact/ui';
 import Link from 'next/link';
+import BankruptcyModal from '@/components/BankruptcyModal';
 
 export default function JourneysPage() {
   const { user, userProfile, loading } = useAuth();
   const router = useRouter();
   const [journeys, setJourneys] = useState<Journey[]>([]);
   const [loadingJourneys, setLoadingJourneys] = useState(true);
-  const [selectedStage, setSelectedStage] = useState<Stage>('beginner');
-
+  const [selectedStage, setSelectedStage] = useState<Stage>('beginner');  const [showBankruptcy, setShowBankruptcy] = useState(false);
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth/login');
@@ -24,6 +25,7 @@ export default function JourneysPage() {
   useEffect(() => {
     if (userProfile) {
       loadJourneys(userProfile.currentStage);
+      checkBankruptcy();
     }
   }, [userProfile]);
 
@@ -37,6 +39,21 @@ export default function JourneysPage() {
       console.error('Error loading journeys:', error);
     } finally {
       setLoadingJourneys(false);
+    }
+  };
+
+  const checkBankruptcy = async () => {
+    if (!user || !userProfile) return;
+
+    const gamificationService = new GamificationService(user.uid);
+    const isBankrupt = await gamificationService.isBankrupt();
+    setShowBankruptcy(isBankrupt);
+  };
+
+  const handleBankruptcyRecovered = () => {
+    setShowBankruptcy(false);
+    window.location.reload(); // Refresh to update credits
+  };
     }
   };
 
@@ -71,6 +88,11 @@ export default function JourneysPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Bankruptcy Modal */}
+      {showBankruptcy && user && (
+        <BankruptcyModal userId={user.uid} onRecovered={handleBankruptcyRecovered} />
+      )}
+
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

@@ -2,19 +2,43 @@
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@allied-impact/ui';
 import { logoutUser } from '@/lib/firebase/auth';
+import { GamificationService } from '@/lib/services/GamificationService';
 
 export default function DashboardPage() {
   const { user, userProfile, loading } = useAuth();
   const router = useRouter();
+  
+  const [streakInfo, setStreakInfo] = useState<any>(null);
+  const [streakBonus, setStreakBonus] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth/login');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (user) {
+      checkStreak();
+    }
+  }, [user]);
+
+  const checkStreak = async () => {
+    if (!user) return;
+    
+    const gamificationService = new GamificationService(user.uid);
+    const streak = await gamificationService.checkDailyStreak();
+    setStreakInfo(streak);
+    
+    if (streak.streakBonusEarned) {
+      setStreakBonus(true);
+      // Auto-hide after 5 seconds
+      setTimeout(() => setStreakBonus(false), 5000);
+    }
+  };
 
   if (loading) {
     return (
@@ -39,6 +63,19 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Streak Bonus Toast */}
+      {streakBonus && (
+        <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-4 rounded-lg shadow-2xl animate-bounce">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🔥</span>
+            <div>
+              <div className="font-bold">Daily Streak Bonus!</div>
+              <div className="text-sm">+20 credits earned</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -77,8 +114,9 @@ export default function DashboardPage() {
             />
             <StatCard
               label="Streak"
-              value={`${userProfile.streak} days`}
+              value={streakInfo?.currentStreak || 0}
               icon="🔥"
+              suffix="days"
             />
             <StatCard
               label="Journeys"
@@ -176,10 +214,22 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ label, value, icon }: { label: string; value: string | number; icon: string }) {
+  label, 
+  value, 
+  icon, 
+  suffix 
+}: { 
+  label: string; 
+  value: string | number; 
+  icon: string;
+  suffix?: string;
+}) {
   return (
     <div className="bg-gray-50 rounded-lg p-4">
       <div className="text-3xl mb-2">{icon}</div>
+      <div className="text-2xl font-bold text-gray-900">
+        {value}{suffix ? ` ${suffix}` : ''}
+      
       <div className="text-2xl font-bold text-gray-900">{value}</div>
       <div className="text-sm text-gray-600">{label}</div>
     </div>
