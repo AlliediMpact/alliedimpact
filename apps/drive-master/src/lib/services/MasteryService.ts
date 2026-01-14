@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { Stage, MASTERY_THRESHOLDS } from '@/lib/types/game';
+import { CertificateService } from './CertificateService';
 
 export interface StageProgress {
   stage: Stage;
@@ -281,6 +282,22 @@ export class MasteryService {
 
       // Award mastery badge
       await this.awardBadge(`${currentStage}-master`);
+
+      // Issue certificate for the completed stage
+      try {
+        const certificateService = new CertificateService();
+        const progress = await this.getStageProgress(currentStage);
+        await certificateService.issueCertificate(
+          this.userId,
+          userData.displayName || userData.email || 'Learner',
+          currentStage,
+          Math.round(progress.averageScore)
+        );
+        console.log(`Certificate issued for ${currentStage} stage`);
+      } catch (error) {
+        console.error('Failed to issue certificate:', error);
+        // Don't fail the unlock if certificate generation fails
+      }
 
       return true;
     }

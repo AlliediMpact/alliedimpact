@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { GamificationService } from '@/lib/services/GamificationService';
 import { MasteryService, Badge, StageProgress } from '@/lib/services/MasteryService';
+import { CertificateService, Certificate } from '@/lib/services/CertificateService';
 import { Button } from '@allied-impact/ui';
 import Link from 'next/link';
 
@@ -17,6 +18,7 @@ export default function ProfilePage() {
   const [streakInfo, setStreakInfo] = useState<any>(null);
   const [badges, setBadges] = useState<Badge[]>([]);
   const [stagesProgress, setStagesProgress] = useState<StageProgress[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -33,18 +35,21 @@ export default function ProfilePage() {
     try {
       const gamificationService = new GamificationService(user.uid);
       const masteryService = new MasteryService(user.uid);
+      const certificateService = new CertificateService();
 
-      const [gamificationStats, streak, earnedBadges, stages] = await Promise.all([
+      const [gamificationStats, streak, earnedBadges, stages, userCertificates] = await Promise.all([
         gamificationService.getGamificationStats(),
         gamificationService.getStreakInfo(),
         masteryService.getEarnedBadges(),
         masteryService.getAllStagesProgress(),
+        certificateService.getUserCertificates(user.uid),
       ]);
 
       setStats(gamificationStats);
       setStreakInfo(streak);
       setBadges(earnedBadges);
       setStagesProgress(stages);
+      setCertificates(userCertificates);
     } catch (error) {
       console.error('Error loading profile:', error);
     } finally {
@@ -92,11 +97,11 @@ export default function ProfilePage() {
               <div className="flex gap-4">
                 <div className="bg-primary-100 px-4 py-2 rounded-lg">
                   <div className="text-sm text-primary-600 font-semibold">Subscription</div>
-                  <div className="text-lg font-bold capitalize">{userProfile.subscriptionTier}</div>
+                  <div className="text-lg font-bold capitalize">{userProfile?.tier || 'free'}</div>
                 </div>
                 <div className="bg-green-100 px-4 py-2 rounded-lg">
                   <div className="text-sm text-green-600 font-semibold">Current Stage</div>
-                  <div className="text-lg font-bold capitalize">{userProfile.currentStage}</div>
+                  <div className="text-lg font-bold capitalize">{userProfile?.currentStage || 'beginner'}</div>
                 </div>
               </div>
             </div>
@@ -237,7 +242,57 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-      </main>
+        {/* Certificates Section */}
+        {certificates.length > 0 && (
+          <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
+            <h2 className="text-xl font-bold mb-6">🏆 My Certificates</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {certificates.map((cert) => (
+                <div key={cert.certificateNumber} className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border-2 border-blue-300">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="font-bold text-lg capitalize text-blue-700">{cert.stage} Stage</h3>
+                      <p className="text-sm text-gray-600">Certificate #{cert.certificateNumber}</p>
+                    </div>
+                    <div className="text-3xl">🎓</div>
+                  </div>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-700">Score:</span>
+                      <span className="font-semibold text-blue-900">{cert.score}%</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-700">Completed:</span>
+                      <span className="font-semibold text-blue-900">
+                        {new Date(cert.completionDate).toLocaleDateString('en-ZA', { 
+                          day: 'numeric', 
+                          month: 'long', 
+                          year: 'numeric' 
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="default"
+                      onClick={() => window.open(cert.pdfUrl, '_blank')}
+                      className="flex-1"
+                    >
+                      📄 Download PDF
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open(cert.verificationUrl, '_blank')}
+                      className="flex-1"
+                    >
+                      🔍 Verify
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}      </main>
     </div>
   );
 }
