@@ -8,6 +8,7 @@ import { logoutUser } from '@/lib/firebase/auth';
 import { GamificationService } from '@/lib/services/GamificationService';
 import { SubscriptionService } from '@/lib/services/SubscriptionService';
 import { SchoolAdCarousel } from '@/components/SchoolAdCarousel';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 export default function DashboardPage() {
   const { user, userProfile, loading } = useAuth();
@@ -76,6 +77,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Offline Indicator */}
+      <OfflineIndicator />
+      
       {/* Streak Bonus Toast */}
       {streakBonus && (
         <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-4 rounded-lg shadow-2xl animate-bounce">
