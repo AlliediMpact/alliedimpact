@@ -22,6 +22,7 @@ import {
   CREDIT_RULES,
   Stage,
 } from '@/lib/types/game';
+import { MasteryService } from './MasteryService';
 
 /**
  * Game Engine Service
@@ -381,6 +382,11 @@ export class GameEngine {
       // Update credits
       const newCredits = userData.credits + result.creditsEarned;
 
+      // Track perfect journeys for badge
+      const perfectJourneys = result.score === 100 
+        ? (userData.perfectJourneys || 0) + 1 
+        : (userData.perfectJourneys || 0);
+
       await updateDoc(userRef, {
         totalJourneysCompleted: totalJourneys,
         totalQuestionsAnswered: totalQuestions,
@@ -388,9 +394,22 @@ export class GameEngine {
         totalIncorrectAnswers: totalIncorrect,
         averageScore: newAvgScore,
         credits: newCredits,
+        perfectJourneys,
         lastActiveDate: Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
       });
+
+      // Check and award badges
+      const masteryService = new MasteryService(this.userId);
+      await masteryService.checkAndAwardBadges();
+
+      // Check if user can unlock next stage
+      if (result.passed && this.gameState) {
+        const advancement = await masteryService.checkAdvancement(this.gameState.journey.stage);
+        if (advancement.canAdvance) {
+          await masteryService.unlockNextStage(this.gameState.journey.stage);
+        }
+      }
     } catch (error) {
       console.error('Error updating user stats:', error);
     }

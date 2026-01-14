@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { GameEngine } from '@/lib/services/GameEngine';
+import { MasteryService } from '@/lib/services/MasteryService';
 import {
   GameState,
   Question,
@@ -30,6 +31,8 @@ export default function JourneyPlayPage() {
   const [answerStartTime, setAnswerStartTime] = useState<number>(Date.now());
   const [journeyComplete, setJourneyComplete] = useState(false);
   const [journeyResult, setJourneyResult] = useState<JourneyResult | null>(null);
+  const [unlockedStage, setUnlockedStage] = useState<string | null>(null);
+  const [newBadges, setNewBadges] = useState<string[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -99,6 +102,21 @@ export default function JourneyPlayPage() {
       // Journey complete
       const result = await gameEngine.endJourney();
       setJourneyResult(result);
+
+      // Check for unlocked stages and new badges
+      if (user && result.passed) {
+        const masteryService = new MasteryService(user.uid);
+        const newlyAwardedBadges = await masteryService.checkAndAwardBadges();
+        setNewBadges(newlyAwardedBadges);
+
+        // Check if new stage was unlocked
+        if (gameState) {
+          const advancement = await masteryService.checkAdvancement(gameState.journey.stage);
+          if (advancement.canAdvance && advancement.nextStage) {
+            setUnlockedStage(advancement.nextStage);
+          }
+        }
+      }
       setJourneyComplete(true);
     }
   };
@@ -107,7 +125,15 @@ export default function JourneyPlayPage() {
     router.push(`/journeys/${journeyId}/start`);
   };
 
-  const handleBackToJourneys = () => {
+  const han(
+      <JourneyResultScreen
+        result={journeyResult}
+        onRetry={handleRetry}
+        onExit={handleBackToJourneys}
+        unlockedStage={unlockedStage}
+        newBadges={newBadges}
+      />
+    )
     router.push('/journeys');
   };
 
@@ -267,26 +293,50 @@ function AnswerFeedback({
           {result.isCorrect ? 'Correct!' : 'Incorrect'}
         </h2>
         <div className="text-xl">
-          {result.creditsAwarded > 0 ? '+' : ''}{result.creditsAwarded} credits
-        </div>
-      </div>
+  unlockedStage,
+  newBadges,
+}: {
+  result: JourneyResult;
+  onRetry: () => void;
+  onExit: () => void;
+  unlockedStage: string | null;
+  newBadges: string[];
+}) {
+  return (
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="container mx-auto px-4 max-w-2xl">
+        <div className="bg-gray-800 rounded-lg p-8 text-center">
+          <div className="text-6xl mb-6">{result.passed ? '🎉' : '😔'}</div>
+          
+          <h1 className="text-4xl font-bold mb-4">
+            {result.passed ? 'Journey Complete!' : 'Not Quite There Yet'}
+          </h1>
 
-      <div className="bg-black bg-opacity-30 rounded-lg p-6 mb-6">
-        <h3 className="font-semibold mb-2">Explanation:</h3>
-        <p className="text-gray-300">{result.explanation}</p>
-      </div>
+          <div className="text-6xl font-bold mb-6">
+            {result.score.toFixed(1)}%
+          </div>
 
-      <div className="text-center text-sm text-gray-400 mb-6">
-        Time taken: {result.timeToAnswer} seconds
-      </div>
+          <p className="text-gray-300 mb-8">{result.feedback}</p>
 
-      <Button onClick={onContinue} className="w-full" size="lg">
-        Continue
-      </Button>
-    </div>
-  );
-}
+          {/* Unlocked Stage Alert */}
+          {unlockedStage && (
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-6 mb-6 animate-pulse">
+              <div className="text-3xl mb-2">🎊</div>
+              <div className="text-xl font-bold mb-2">New Stage Unlocked!</div>
+              <div className="text-lg capitalize">{unlockedStage} is now available</div>
+            </div>
+          )}
 
+          {/* New Badges */}
+          {newBadges.length > 0 && (
+            <div className="bg-yellow-900 bg-opacity-50 border-2 border-yellow-500 rounded-lg p-4 mb-6">
+              <div className="text-2xl mb-2">🏅</div>
+              <div className="font-bold mb-2">New Badge{newBadges.length > 1 ? 's' : ''} Earned!</div>
+              <div className="text-sm text-yellow-300">
+                {newBadges.join(', ')}
+              </div>
+            </div>
+          )}
 function JourneyResultScreen({
   result,
   onRetry,
