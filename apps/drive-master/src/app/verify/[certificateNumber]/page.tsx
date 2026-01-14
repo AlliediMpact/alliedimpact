@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import { CertificateService, Certificate } from '@/lib/services/CertificateService';
 import { Button } from '@allied-impact/ui';
 import Link from 'next/link';
+import { CertificateShare } from '@/components/SocialShare';
+import '@/styles/print.css';
 
 export default function VerifyCertificatePage() {
   const params = useParams();
@@ -104,13 +106,26 @@ export default function VerifyCertificatePage() {
             />
           </div>
 
-          {/* Download Button */}
-          <div className="mt-8 text-center">
+          {/* Download, Share, and Print Buttons */}
+          <div className="mt-8 flex flex-wrap gap-4 justify-center no-print">
             <a href={certificate.pdfUrl} target="_blank" rel="noopener noreferrer">
               <Button className="w-full md:w-auto">
                 📄 View Certificate PDF
               </Button>
             </a>
+            
+            <button
+              onClick={() => window.print()}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+            >
+              🖨️ Print Certificate
+            </button>
+            
+            <CertificateShare
+              certificateNumber={certificate.certificateNumber}
+              stageName={certificate.stage.charAt(0).toUpperCase() + certificate.stage.slice(1)}
+              userName={certificate.userName}
+            />
           </div>
         </div>
 

@@ -1,0 +1,236 @@
+/**
+ * Print-Friendly Certificate Styles
+ * Optimizes certificate page for A4 printing
+ */
+
+@media print {
+  /* Hide navigation, footer, and non-essential elements */
+  header,
+  nav,
+  footer,
+  .no-print,
+  button,
+  [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Reset page layout */
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  /* Certificate container */
+  .certificate-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    page-break-inside: avoid;
+  }
+
+  /* A4 page setup */
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* Certificate card */
+  .certificate-card {
+    width: 100%;
+    max-width: none;
+    margin: 0 auto;
+    padding: 20mm;
+    border: 3px solid #10b981;
+    border-radius: 0;
+    box-shadow: none;
+    background: white;
+    page-break-inside: avoid;
+  }
+
+  /* Typography adjustments */
+  .certificate-title {
+    font-size: 28pt;
+    margin-bottom: 15pt;
+    color: #000;
+  }
+
+  .certificate-subtitle {
+    font-size: 18pt;
+    margin-bottom: 10pt;
+    color: #333;
+  }
+
+  .certificate-text {
+    font-size: 12pt;
+    line-height: 1.6;
+    color: #000;
+  }
+
+  /* QR Code */
+  .certificate-qr {
+    width: 60mm;
+    height: 60mm;
+    margin: 15mm auto;
+  }
+
+  /* Signature section */
+  .certificate-signature {
+    margin-top: 20mm;
+    padding-top: 10mm;
+    border-top: 2px solid #e5e7eb;
+  }
+
+  /* Certificate number */
+  .certificate-number {
+    font-size: 10pt;
+    color: #666;
+    margin-top: 10mm;
+  }
+
+  /* Remove shadows and animations */
+  * {
+    box-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Ensure colors print */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  /* Logo */
+  .certificate-logo {
+    max-width: 150px;
+    height: auto;
+  }
+
+  /* Badges and icons */
+  .certificate-badge {
+    width: 50px;
+    height: 50px;
+  }
+
+  /* Verification link */
+  .certificate-verify-link {
+    font-size: 9pt;
+    color: #10b981;
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  /* Print only verification URL */
+  .certificate-verify-link::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #666;
+  }
+
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  /* Prevent orphans and widows */
+  p, h1, h2, h3, h4, h5, h6 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Headings should not be separated from content */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  /* Lists should stay together */
+  ul, ol {
+    page-break-inside: avoid;
+  }
+
+  /* Table of achievements (if any) */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    page-break-inside: avoid;
+  }
+
+  table th,
+  table td {
+    border: 1px solid #ddd;
+    padding: 8pt;
+    text-align: left;
+  }
+
+  table th {
+    background-color: #f3f4f6 !important;
+    font-weight: bold;
+  }
+
+  /* Ensure proper spacing */
+  .certificate-section {
+    margin-bottom: 15mm;
+  }
+
+  /* Date formatting */
+  .certificate-date {
+    font-size: 11pt;
+    color: #333;
+  }
+
+  /* Achievement details */
+  .certificate-achievement {
+    padding: 10mm;
+    border: 1px solid #e5e7eb;
+    border-radius: 0;
+    background: #f9fafb !important;
+    page-break-inside: avoid;
+  }
+
+  /* Watermark (optional) */
+  .certificate-watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 72pt;
+    color: rgba(16, 185, 129, 0.05);
+    z-index: -1;
+    font-weight: bold;
+  }
+}
+
+/* Screen-only print button */
+@media screen {
+  .print-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  .print-button:hover {
+    background: #059669;
+  }
+}
+
+@media print {
+  .print-button {
+    display: none;
+  }
+}

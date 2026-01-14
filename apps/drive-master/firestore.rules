@@ -1,0 +1,122 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return get(/databases/$(database)/documents/drivemaster_users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // User profiles - users can only read/write their own
+    match /drivemaster_users/{userId} {
+      allow read: if request.auth.uid == userId || isAdmin();
+      allow create: if request.auth.uid == userId;
+      allow update: if request.auth.uid == userId || isAdmin();
+      allow delete: if false; // Never allow deletion
+    }
+    
+    // Journey attempts - users can only create/read their own
+    match /drivemaster_journey_attempts/{attemptId} {
+      allow read: if request.auth.uid == resource.data.userId || isAdmin();
+      allow create: if isAuthenticated() && 
+                      request.auth.uid == request.resource.data.userId &&
+                      request.resource.data.score >= 0 &&
+                      request.resource.data.score <= 100;
+      allow update, delete: if false; // Immutable after creation
+    }
+    
+    // Journeys - public read, admin write
+    match /drivemaster_journeys/{journeyId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Questions - public read, admin write
+    match /drivemaster_questions/{questionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Certificates - users can read their own, public can verify, system creates
+    match /drivemaster_certificates/{certificateNumber} {
+      allow read: if true; // Public verification via QR code
+      allow create: if isAuthenticated() && 
+                      request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // Immutable
+    }
+    
+    // Certificate counter - system only
+    match /drivemaster_system/certificate_counter {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated(); // Managed by transaction
+    }
+    
+    // Subscriptions - users can read their own, system creates
+    match /drivemaster_subscriptions/{subscriptionId} {
+      allow read: if request.auth.uid == resource.data.userId || isAdmin();
+      allow create: if isAuthenticated() && 
+                      request.auth.uid == request.resource.data.userId;
+      allow update: if request.auth.uid == resource.data.userId || isAdmin();
+      allow delete: if false;
+    }
+    
+    // Payment records - users can read their own
+    match /drivemaster_payments/{paymentId} {
+      allow read: if request.auth.uid == resource.data.userId || isAdmin();
+      allow create: if isAuthenticated();
+      allow update: if isAdmin(); // Only admin can update payment status
+      allow delete: if false;
+    }
+    
+    // Driving schools - public read, owners write their own
+    match /drivemaster_schools/{schoolId} {
+      allow read: if true; // Public discovery
+      allow create: if isAuthenticated();
+      allow update: if request.auth.uid == resource.data.ownerId || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // School subscriptions - owners read their own
+    match /drivemaster_school_subscriptions/{subscriptionId} {
+      allow read: if request.auth.uid == resource.data.schoolOwnerId || isAdmin();
+      allow create: if isAuthenticated();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+    
+    // School leads - schools read their own, learners create
+    match /drivemaster_school_leads/{leadId} {
+      allow read: if request.auth.uid == resource.data.schoolOwnerId || 
+                     request.auth.uid == resource.data.userId ||
+                     isAdmin();
+      allow create: if isAuthenticated() && 
+                      request.auth.uid == request.resource.data.userId;
+      allow update: if request.auth.uid == resource.data.schoolOwnerId || isAdmin();
+      allow delete: if false;
+    }
+    
+    // Commission statements - schools read their own, admin manages
+    match /drivemaster_commissions/{statementId} {
+      allow read: if request.auth.uid == resource.data.schoolOwnerId || isAdmin();
+      allow write: if isAdmin();
+    }
+    
+    // Admin dashboard data
+    match /drivemaster_admin/{doc} {
+      allow read, write: if isAdmin();
+    }
+    
+    // User feedback
+    match /drivemaster_feedback/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated() && 
+                      request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false;
+    }
+  }
+}

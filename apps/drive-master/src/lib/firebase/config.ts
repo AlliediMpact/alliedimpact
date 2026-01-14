@@ -32,10 +32,13 @@ const missingEnvVars = requiredEnvVars.filter(
 );
 
 if (missingEnvVars.length > 0) {
-  console.error(
-    `Missing required environment variables: ${missingEnvVars.join(', ')}`
-  );
-  console.error('Please check your .env.local file');
+  const errorMessage = `Missing required environment variables: ${missingEnvVars.join(', ')}. Please check your .env.local file.`;
+  console.error(errorMessage);
+  
+  // Throw error to prevent app from starting with missing config
+  if (typeof window !== 'undefined') {
+    throw new Error(errorMessage);
+  }
 }
 
 // Initialize Firebase (singleton pattern)

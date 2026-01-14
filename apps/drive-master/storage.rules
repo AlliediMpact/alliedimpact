@@ -1,0 +1,36 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Certificates - users can upload their own, public can read
+    match /certificates/{userId}/{certificateNumber} {
+      allow read: if true; // Public verification via QR code
+      allow write: if request.auth.uid == userId &&
+                     request.resource.size < 5 * 1024 * 1024 && // Max 5MB
+                     request.resource.contentType == 'application/pdf';
+    }
+    
+    // User avatars
+    match /avatars/{userId}/{fileName} {
+      allow read: if true; // Public profile pictures
+      allow write: if request.auth.uid == userId &&
+                     request.resource.size < 2 * 1024 * 1024 && // Max 2MB
+                     request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth.uid == userId;
+    }
+    
+    // School logos
+    match /schools/{schoolId}/logo.{extension} {
+      allow read: if true; // Public school branding
+      allow write: if request.auth != null &&
+                     request.resource.size < 2 * 1024 * 1024 && // Max 2MB
+                     request.resource.contentType.matches('image/.*');
+    }
+    
+    // Admin only - journey assets
+    match /journeys/{journeyId}/{file} {
+      allow read: if true; // Public access for game assets
+      allow write: if request.auth != null; // Only authenticated users (admin)
+    }
+  }
+}

@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { DrivingSchoolService, DrivingSchool } from '@/lib/services/DrivingSchoolService';
 import { Button } from '@allied-impact/ui';
 import Link from 'next/link';
+import { Search } from 'lucide-react';
+import { debounce } from '@/lib/utils/rateLimiting';
 
 export default function SchoolsDiscoveryPage() {
   const { user } = useAuth();
@@ -14,6 +16,7 @@ export default function SchoolsDiscoveryPage() {
   const [schools, setSchools] = useState<DrivingSchool[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     loadSchools();
@@ -47,6 +50,19 @@ export default function SchoolsDiscoveryPage() {
     'Limpopo',
   ];
 
+  // Filter schools based on search query
+  const filteredSchools = useMemo(() => {
+    if (!searchQuery.trim()) return schools;
+    
+    const query = searchQuery.toLowerCase();
+    return schools.filter((school) => 
+      school.name.toLowerCase().includes(query) ||
+      school.description.toLowerCase().includes(query) ||
+      school.regions.some(region => region.toLowerCase().includes(query)) ||
+      school.contactEmail.toLowerCase().includes(query)
+    );
+  }, [schools, searchQuery]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -66,6 +82,25 @@ export default function SchoolsDiscoveryPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search schools by name, region, or description..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            />
+          </div>
+          {searchQuery && (
+            <p className="mt-2 text-sm text-gray-600">
+              Found {filteredSchools.length} school{filteredSchools.length !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
+
         {/* Region Filter */}
         <div className="mb-8">
           <div className="flex gap-2 overflow-x-auto pb-2">
@@ -91,19 +126,21 @@ export default function SchoolsDiscoveryPage() {
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
-        ) : schools.length === 0 ? (
+        ) : filteredSchools.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">🏫</div>
             <h2 className="text-2xl font-bold mb-2">No Schools Found</h2>
             <p className="text-gray-600">
-              {selectedRegion === 'all'
+              {searchQuery 
+                ? `No schools match "${searchQuery}"` 
+                : selectedRegion === 'all'
                 ? 'No driving schools available yet.'
                 : `No driving schools found in ${selectedRegion}.`}
             </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {schools.map((school) => (
+            {filteredSchools.map((school) => (
               <SchoolCard key={school.schoolId} school={school} />
             ))}
           </div>

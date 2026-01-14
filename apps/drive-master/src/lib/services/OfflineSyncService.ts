@@ -91,18 +91,8 @@ export class OfflineSyncService {
             continue;
           }
 
-          // Sync based on type
-          switch (item.type) {
-            case 'journey_attempt':
-              await this.syncJourneyAttempt(item.data);
-              break;
-            case 'credit_update':
-              await this.syncCreditUpdate(item.data);
-              break;
-            case 'progress_update':
-              await this.syncProgressUpdate(item.data);
-              break;
-          }
+          // Sync with retry logic (exponential backoff)
+          await this.syncItemWithRetry(item);
 
           // Mark as synced
           await offlineStorage.markSyncComplete(item.id);
@@ -133,6 +123,54 @@ export class OfflineSyncService {
     }
 
     return result;
+  }
+
+  /**
+   * Sync item with exponential backoff retry
+   */
+  private async syncItemWithRetry(item: any, maxRetries: number = 3): Promise<void> {
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // Sync based on type
+        switch (item.type) {
+          case 'journey_attempt':
+            await this.syncJourneyAttempt(item.data);
+            break;
+          case 'credit_update':
+            await this.syncCreditUpdate(item.data);
+            break;
+          case 'progress_update':
+            await this.syncProgressUpdate(item.data);
+            break;
+        }
+
+        // Success - exit retry loop
+        return;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown sync error');
+        console.warn(`Sync attempt ${attempt}/${maxRetries} failed for ${item.id}:`, lastError.message);
+
+        // If this was the last attempt, throw the error
+        if (attempt === maxRetries) {
+          throw lastError;
+        }
+
+        // Exponential backoff: wait 2^attempt seconds (2s, 4s, 8s)
+        const delayMs = Math.pow(2, attempt) * 1000;
+        console.log(`Retrying in ${delayMs / 1000}s...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+
+        // Check if still online before retrying
+        if (!this.isOnline()) {
+          throw new Error('Device went offline during retry');
+        }
+      }
+    }
+
+    // This should never be reached, but TypeScript doesn't know that
+    throw lastError || new Error('Sync failed after all retries');
   }
 
   /**

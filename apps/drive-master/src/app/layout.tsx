@@ -2,20 +2,12 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/contexts/AuthContext';
+import { Toaster } from '@/components/Toaster';
+import { homeMetadata } from '@/lib/utils/metadata';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: 'DriveMaster - Learn by Living the Journey',
-  description: 'Master your K53 learner\'s license with journey-based learning. Beginner to Expert progression with 95%+ mastery requirements.',
-  keywords: ['K53', 'learners license', 'driving test', 'South Africa', 'driving school'],
-  authors: [{ name: 'Allied iMpact' }],
-  openGraph: {
-    title: 'DriveMaster - K53 Learner\'s License Training',
-    description: 'Journey-based learning platform for South African learner drivers',
-    type: 'website',
-  },
-};
+export const metadata: Metadata = homeMetadata;
 
 export default function RootLayout({
   children,
@@ -27,6 +19,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           {children}
+          <Toaster />
         </AuthProvider>
       </body>
     </html>
