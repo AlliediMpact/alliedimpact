@@ -34,7 +34,10 @@ export enum ProductId {
   DRIVE_MASTER = 'drivemaster',
   CODE_TECH = 'codetech',
   CUP_FINAL = 'cupfinal',
-  UMKHANYAKUDE = 'umkhanyakude'
+  UMKHANYAKUDE = 'umkhanyakude',
+  EDUTECH = 'edutech',
+  CAREER_BOX = 'careerbox',
+  MY_PROJECTS = 'myprojects'
 }
 
 export enum SubscriptionTier {

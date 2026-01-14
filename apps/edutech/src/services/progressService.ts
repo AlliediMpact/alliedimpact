@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import type { Enrollment, EduTechUser, CourseLesson } from '@/types';
+import { awardXPForLessonCompletion, checkAndAwardBadges } from '@/services/gamificationService';
 
 /**
  * Progress Tracking Service
@@ -139,6 +140,9 @@ export async function completeLesson(
 
     // Update user stats
     await updateUserStats(userId, newProgress === 100);
+
+    // Award XP for completing a lesson
+    await awardXPForLessonCompletion(userId);
   } catch (error) {
     console.error('Error completing lesson:', error);
     throw error;
@@ -215,6 +219,9 @@ async function updateUserStats(userId: string, courseCompleted: boolean): Promis
       longestStreak: newLongestStreak,
       updatedAt: serverTimestamp(),
     });
+
+    // After stats update, re-check badge achievements
+    await checkAndAwardBadges(userId);
   } catch (error) {
     console.error('Error updating user stats:', error);
     throw error;

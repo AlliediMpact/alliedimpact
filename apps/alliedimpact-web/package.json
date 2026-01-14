@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@allied-impact/auth": "workspace:*",
+    "@allied-impact/config": "workspace:*",
     "@allied-impact/entitlements": "workspace:*",
     "@allied-impact/billing": "workspace:*",
     "@allied-impact/types": "workspace:*",

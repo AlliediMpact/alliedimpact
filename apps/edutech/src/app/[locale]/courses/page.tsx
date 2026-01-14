@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Filter, Clock, Users, Star, BookOpen, Code } from 'lucide-react';
-import type { CourseTrack, CourseLevel } from '@/types';
+import { Search, Clock, Users, Star, BookOpen, Code } from 'lucide-react';
+import { Spinner } from '@allied-impact/ui';
+import type { CourseTrack, CourseLevel, Course } from '@/types';
+import { searchCourses } from '@/services/searchService';
+import { getTrendingCourses } from '@/services/recommendationService';
 
 // Mock courses data - will be replaced with Firestore data
 const mockCourses = [
@@ -113,14 +116,48 @@ export default function CoursesPage({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTrack, setSelectedTrack] = useState<string>(searchParams.track || 'all');
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Load courses based on filters
+  useEffect(() => {
+    async function loadCourses() {
+      setLoading(true);
+      try {
+        const results = await searchCourses({
+          filters: {
+            track: selectedTrack === 'all' ? undefined : selectedTrack as CourseTrack,
+            level: selectedLevel === 'all' ? undefined : selectedLevel as CourseLevel,
+            searchTerm: searchTerm || undefined,
+          },
+          sortBy: 'enrollmentCount',
+          sortOrder: 'desc',
+          limit: 50,
+        });
+        setCourses(results);
+      } catch (error) {
+        console.error('Error loading courses:', error);
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Debounce search
+    const timer = setTimeout(() => {
+      loadCourses();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, selectedTrack, selectedLevel]);
+
+  // Filter courses based on selections
   const filteredCourses = mockCourses.filter((course) => {
-    const matchesSearch =
+    const matchesSearch = !searchTerm || 
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTrack = selectedTrack === 'all' || course.track === selectedTrack;
     const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
-
     return matchesSearch && matchesTrack && matchesLevel;
   });
 
@@ -160,7 +197,7 @@ export default function CoursesPage({
             >
               <option value="all">All Tracks</option>
               <option value="computer-skills">Computer Skills</option>
-              <option value="coding">Coding</option>
+              <option value="coding">Coding Track</option>
             </select>
           </div>
 
@@ -180,85 +217,94 @@ export default function CoursesPage({
         </div>
       </div>
 
-      {/* Results */}
+      {/* Results Count */}
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           Showing {filteredCourses.length} courses
         </p>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <Spinner size="lg" />
+        </div>
+      )}
+
       {/* Course Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCourses.map((course) => (
-          <Link
-            key={course.courseId}
-            href={`/en/courses/${course.courseId}`}
-            className="group"
-          >
-            <div className="bg-background border rounded-xl overflow-hidden hover:border-primary-blue transition-colors h-full flex flex-col">
-              {/* Thumbnail */}
-              <div className="h-48 bg-gradient-to-br from-primary-blue/10 to-primary-purple/10 flex items-center justify-center">
-                {course.track === 'coding' ? (
-                  <Code className="h-16 w-16 text-primary-blue/40" />
-                ) : (
-                  <BookOpen className="h-16 w-16 text-green-600/40" />
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="p-6 flex-1 flex flex-col">
-                {/* Badges */}
-                <div className="flex items-center space-x-2 mb-3">
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      course.tier === 'FREE'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-primary-blue/10 text-primary-blue'
-                    }`}
-                  >
-                    {course.tier}
-                  </span>
-                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-muted text-muted-foreground capitalize">
-                    {course.level}
-                  </span>
+      {!loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCourses.map((course) => (
+            <Link
+              key={course.courseId}
+              href={`/en/courses/${course.courseId}`}
+              className="group"
+            >
+              <div className="bg-background border rounded-xl overflow-hidden hover:border-primary-blue transition-colors h-full flex flex-col">
+                {/* Thumbnail */}
+                <div className="h-48 bg-gradient-to-br from-primary-blue/10 to-primary-purple/10 flex items-center justify-center">
+                  {course.track === 'coding' ? (
+                    <Code className="h-16 w-16 text-primary-blue/40" />
+                  ) : (
+                    <BookOpen className="h-16 w-16 text-green-600/40" />
+                  )}
                 </div>
 
-                {/* Title */}
-                <h3 className="text-lg font-semibold mb-2 group-hover:text-primary-blue transition-colors">
-                  {course.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-sm text-muted-foreground mb-4 flex-1">
-                  {course.shortDescription}
-                </p>
-
-                {/* Instructor */}
-                <p className="text-sm font-medium mb-4">{course.instructorName}</p>
-
-                {/* Stats */}
-                <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t">
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{course.estimatedHours}h</span>
+                {/* Content */}
+                <div className="p-6 flex-1 flex flex-col">
+                  {/* Badges */}
+                  <div className="flex items-center space-x-2 mb-3">
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        course.tier === 'FREE'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-primary-blue/10 text-primary-blue'
+                      }`}
+                    >
+                      {course.tier}
+                    </span>
+                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-muted text-muted-foreground capitalize">
+                      {course.level}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <Users className="h-4 w-4" />
-                    <span>{course.enrollmentCount.toLocaleString()}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span>{course.rating}</span>
+
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold mb-2 group-hover:text-primary-blue transition-colors">
+                    {course.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground mb-4 flex-1">
+                    {course.shortDescription}
+                  </p>
+
+                  {/* Instructor */}
+                  <p className="text-sm font-medium mb-4">{course.instructorName}</p>
+
+                  {/* Stats */}
+                  <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t">
+                    <div className="flex items-center space-x-1">
+                      <Clock className="h-4 w-4" />
+                      <span>{course.estimatedHours}h</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Users className="h-4 w-4" />
+                      <span>{course.enrollmentCount.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span>{course.rating}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Empty State */}
-      {filteredCourses.length === 0 && (
+      {!loading && filteredCourses.length === 0 && (
         <div className="text-center py-12">
           <BookOpen className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">No courses found</h3>

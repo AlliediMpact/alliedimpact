@@ -1,4 +1,4 @@
-# Drive Master
+# DriveMaster
 
 South African Learner License & Driver Education Platform
 

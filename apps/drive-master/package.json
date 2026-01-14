@@ -1,5 +1,5 @@
 {
-  "name": "@allied-impact/drive-master",
+  "name": "@allied-impact/drivemaster",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@allied-impact/auth": "workspace:*",
+    "@allied-impact/config": "workspace:*",
     "@allied-impact/entitlements": "workspace:*",
     "@allied-impact/billing": "workspace:*",
     "@allied-impact/types": "workspace:*",

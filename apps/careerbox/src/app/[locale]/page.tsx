@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { Briefcase, Users, Building2, TrendingUp, MessageSquare, MapPin, ArrowRight, Check } from 'lucide-react';
+import { useRouter, useParams } from 'next/navigation';
+import { Users, Building2, TrendingUp, MessageSquare, MapPin, ArrowRight, Check } from 'lucide-react';
+import { Logo } from '@allied-impact/ui';
 
 export default function HomePage() {
   const params = useParams();
+  const router = useRouter();
   const locale = params?.locale as string || 'en';
 
   return (
@@ -13,10 +15,11 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b">
         <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Briefcase className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">CareerBox</span>
-          </div>
+          <Logo 
+            appName="CareerBox" 
+            onClick={() => router.push(`/${locale}`)}
+            size="lg"
+          />
           <div className="flex items-center gap-4">
             <Link href={`/${locale}/pricing`} className="text-gray-600 hover:text-gray-900">
               Pricing

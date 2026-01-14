@@ -11,15 +11,118 @@ import {
   deleteDoc,
   Timestamp,
   limit,
+  startAfter,
+  DocumentSnapshot,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import type { Course, CourseModule } from '@/types';
+import { EduTechError } from '@/lib/errors';
+import { retryWithBackoff } from '@/lib/retry';
 
 // Collection name
 const COURSES_COLLECTION = 'edutech_courses';
 
 /**
- * Get all courses with optional filtering
+ * Paginated course result
+ */
+export interface PaginatedCourses {
+  courses: Course[];
+  lastDoc: QueryDocumentSnapshot | null;
+  hasMore: boolean;
+}
+
+/**
+ * Get courses with pagination support
+ */
+export async function getCoursesPaginated(
+  filters?: {
+    track?: string;
+    level?: string;
+    category?: string;
+    tier?: string;
+    published?: boolean;
+    searchQuery?: string;
+  },
+  pageSize: number = 12,
+  lastDoc?: QueryDocumentSnapshot | null
+): Promise<PaginatedCourses> {
+  try {
+    return await retryWithBackoff(async () => {
+      const coursesRef = collection(db, COURSES_COLLECTION);
+      let q = query(
+        coursesRef,
+        where('published', '==', filters?.published ?? true),
+        orderBy('createdAt', 'desc'),
+        limit(pageSize + 1) // Fetch one extra to check if there are more
+      );
+
+      // Apply filters
+      if (filters?.track) {
+        q = query(q, where('track', '==', filters.track));
+      }
+      if (filters?.level) {
+        q = query(q, where('level', '==', filters.level));
+      }
+      if (filters?.tier) {
+        q = query(q, where('tier', '==', filters.tier));
+      }
+
+      // Add pagination cursor
+      if (lastDoc) {
+        q = query(q, startAfter(lastDoc));
+      }
+
+      const querySnapshot = await getDocs(q);
+      const courses: Course[] = [];
+      let newLastDoc: QueryDocumentSnapshot | null = null;
+      let hasMore = false;
+
+      querySnapshot.forEach((doc, index) => {
+        if (index < pageSize) {
+          const data = doc.data();
+          courses.push({
+            courseId: doc.id,
+            ...data,
+            createdAt: data.createdAt || Timestamp.now(),
+            updatedAt: data.updatedAt || Timestamp.now(),
+          } as Course);
+          newLastDoc = doc as QueryDocumentSnapshot;
+        } else {
+          hasMore = true;
+        }
+      });
+
+      // Client-side search filter (for now - will upgrade to Algolia later)
+      let filteredCourses = courses;
+      if (filters?.searchQuery) {
+        const searchLower = filters.searchQuery.toLowerCase();
+        filteredCourses = courses.filter(
+          (course) =>
+            course.title.toLowerCase().includes(searchLower) ||
+            course.description.toLowerCase().includes(searchLower) ||
+            course.tags?.some((tag) => tag.toLowerCase().includes(searchLower))
+        );
+      }
+
+      return {
+        courses: filteredCourses,
+        lastDoc: newLastDoc,
+        hasMore,
+      };
+    });
+  } catch (error) {
+    throw new EduTechError(
+      'COURSES_FETCH_FAILED',
+      'Unable to load courses. Please try again.',
+      error
+    );
+  }
+}
+
+/**
+ * Get all courses with optional filtering (legacy - use getCoursesPaginated instead)
+ * @deprecated Use getCoursesPaginated for better performance
  */
 export async function getCourses(filters?: {
   track?: string;
@@ -28,42 +131,8 @@ export async function getCourses(filters?: {
   tier?: string;
   published?: boolean;
 }): Promise<Course[]> {
-  try {
-    const coursesRef = collection(db, COURSES_COLLECTION);
-    let q = query(coursesRef, orderBy('createdAt', 'desc'));
-
-    // Apply filters
-    if (filters?.track) {
-      q = query(coursesRef, where('track', '==', filters.track));
-    }
-    if (filters?.level) {
-      q = query(coursesRef, where('level', '==', filters.level));
-    }
-    if (filters?.tier) {
-      q = query(coursesRef, where('tier', '==', filters.tier));
-    }
-    if (filters?.published !== undefined) {
-      q = query(coursesRef, where('published', '==', filters.published));
-    }
-
-    const querySnapshot = await getDocs(q);
-    const courses: Course[] = [];
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      courses.push({
-        courseId: doc.id,
-        ...data,
-        createdAt: data.createdAt || Timestamp.now(),
-        updatedAt: data.updatedAt || Timestamp.now(),
-      } as Course);
-    });
-
-    return courses;
-  } catch (error) {
-    console.error('Error fetching courses:', error);
-    throw error;
-  }
+  const result = await getCoursesPaginated(filters, 1000);
+  return result.courses;
 }
 
 /**
@@ -71,23 +140,28 @@ export async function getCourses(filters?: {
  */
 export async function getCourse(courseId: string): Promise<Course | null> {
   try {
-    const courseRef = doc(db, COURSES_COLLECTION, courseId);
-    const courseSnap = await getDoc(courseRef);
+    return await retryWithBackoff(async () => {
+      const courseRef = doc(db, COURSES_COLLECTION, courseId);
+      const courseSnap = await getDoc(courseRef);
 
-    if (!courseSnap.exists()) {
-      return null;
-    }
+      if (!courseSnap.exists()) {
+        return null;
+      }
 
-    const data = courseSnap.data();
-    return {
-      courseId: courseSnap.id,
-      ...data,
-      createdAt: data.createdAt || Timestamp.now(),
-      updatedAt: data.updatedAt || Timestamp.now(),
-    } as Course;
+      const data = courseSnap.data();
+      return {
+        courseId: courseSnap.id,
+        ...data,
+        createdAt: data.createdAt || Timestamp.now(),
+        updatedAt: data.updatedAt || Timestamp.now(),
+      } as Course;
+    });
   } catch (error) {
-    console.error('Error fetching course:', error);
-    throw error;
+    throw new EduTechError(
+      'COURSE_FETCH_FAILED',
+      'Unable to load course details. Please try again.',
+      error
+    );
   }
 }
 

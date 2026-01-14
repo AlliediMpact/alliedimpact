@@ -2,10 +2,37 @@
   "name": "@allied-impact/config",
   "version": "0.1.0",
   "private": true,
-  "main": "./index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./tailwind": {
+      "import": "./dist/tailwind.config.js",
+      "require": "./dist/tailwind.config.js",
+      "types": "./dist/tailwind.config.d.ts"
+    },
+    "./tokens": {
+      "import": "./dist/design-tokens.js",
+      "require": "./dist/design-tokens.js",
+      "types": "./dist/design-tokens.d.ts"
+    }
+  },
   "files": [
+    "dist",
     "eslint-preset.js",
-    "tsconfig.base.json",
-    "tailwind.config.js"
-  ]
+    "tsconfig.base.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5"
+  }
 }

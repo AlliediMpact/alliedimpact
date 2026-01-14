@@ -24,6 +24,14 @@ export interface EduTechUser {
   totalHoursLearned?: number;
   currentStreak?: number;
   longestStreak?: number;
+
+  // Gamification (for learners)
+  totalXP?: number;
+  unlockedBadges?: string[];
+
+  // Onboarding (per user, cross-device)
+  onboardingCompleted?: boolean;
+  onboardingStepsCompleted?: string[];
   
   // Role-specific data
   assignedClassIds?: string[]; // for facilitators

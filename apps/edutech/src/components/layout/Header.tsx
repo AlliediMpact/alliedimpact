@@ -1,15 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { GraduationCap, Menu, X, User, LogOut, MessageSquare, Award, BookOpen, Users, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, Award, BookOpen, Users, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { NotificationCenter } from '@/components/notifications/NotificationCenter';
+import { Logo } from '@allied-impact/ui';
 
 export default function Header() {
   const t = useTranslations();
   const pathname = usePathname();
+  const router = useRouter();
   const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -25,10 +28,11 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link href="/en" className="flex items-center space-x-2">
-          <GraduationCap className="h-6 w-6 text-primary-blue" />
-          <span className="font-bold text-xl">{t('appName')}</span>
+        {/ogo 
+          appName="EduTech" 
+          onClick={() => router.push('/en')}
+          size="md"
+        /n className="font-bold text-xl">{t('appName')}</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -51,14 +55,18 @@ export default function Header() {
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center space-x-4">
           {user ? (
-            <div className="relative">
-              <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center space-x-2 text-sm font-medium"
-              >
-                <User className="h-5 w-5" />
-                <span>{user.displayName || user.email}</span>
-              </button>
+            <>
+              {/* Notification Center */}
+              <NotificationCenter />
+              
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center space-x-2 text-sm font-medium"
+                >
+                  <User className="h-5 w-5" />
+                  <span>{user.displayName || user.email}</span>
+                </button>
               
               {userMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-background border rounded-lg shadow-lg">

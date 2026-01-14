@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@allied-impact/auth": "workspace:*",
+    "@allied-impact/config": "workspace:*",
     "@allied-impact/entitlements": "workspace:*",
     "@allied-impact/projects": "workspace:*",
     "@allied-impact/shared": "workspace:*",

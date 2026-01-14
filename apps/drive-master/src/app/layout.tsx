@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Drive Master - Learner License & Driver Education',
+  title: 'DriveMaster - Learner License & Driver Education',
   description: 'South African learner license preparation and driver education platform',
 }
 

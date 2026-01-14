@@ -23,6 +23,7 @@
     "@allied-impact/billing": "workspace:*",
     "@allied-impact/shared": "workspace:*",
     "@allied-impact/types": "workspace:*",
+    "@allied-impact/config": "workspace:*",
     "@allied-impact/ui": "workspace:*",
     "@allied-impact/utils": "workspace:*",
     "next": "^14.0.4",
