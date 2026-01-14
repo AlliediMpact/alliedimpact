@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { GameEngine } from '@/lib/services/GameEngine';
 import { GamificationService } from '@/lib/services/GamificationService';
+import { SubscriptionService } from '@/lib/services/SubscriptionService';
 import { Journey, Stage } from '@/lib/types/game';
 import { Button } from '@allied-impact/ui';
 import Link from 'next/link';
@@ -14,8 +15,11 @@ export default function JourneysPage() {
   const { user, userProfile, loading } = useAuth();
   const router = useRouter();
   const [journeys, setJourneys] = useState<Journey[]>([]);
-  const [loadingJourneys, setLoadingJourneys] = useState(true);
-  const [selectedStage, setSelectedStage] = useState<Stage>('beginner');  const [showBankruptcy, setShowBankruptcy] = useState(false);
+  const [loadingJourneys, setLoadingJourneys] = useState(false);
+  const [selectedStage, setSelectedStage] = useState<Stage>('beginner');
+  const [showBankruptcy, setShowBankruptcy] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [dailyLimitReached, setDailyLimitReached] = useState(false);
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth/login');
@@ -23,6 +27,7 @@ export default function JourneysPage() {
   }, [user, loading, router]);
 
   useEffect(() => {
+      checkDailyLimit();
     if (userProfile) {
       loadJourneys(userProfile.currentStage);
       checkBankruptcy();
@@ -46,9 +51,32 @@ export default function JourneysPage() {
     if (!user || !userProfile) return;
 
     const gamificationService = new GamificationService(user.uid);
-    const isBankrupt = await gamificationService.isBankrupt();
-    setShowBankruptcy(isBankrupt);
+    conscheckDailyLimit = async () => {
+    if (!user || !userProfile) return;
+
+    const subscriptionService = new SubscriptionService(user.uid);
+    const canStart = await subscriptionService.canStartJourney();
+    setDailyLimitReached(!canStart.allowed);
   };
+
+  const handleBankruptcyRecovered = () => {
+    setShowBankruptcy(false);
+    window.location.reload(); // Refresh to update credits
+  };
+
+  const canAccessStage = (stage: Stage): boolean => {
+    if (!userProfile) return false;
+
+    const tier = userProfile.subscriptionTier || 'free';
+    
+    // Free users: Beginner only
+    if (tier === 'free') {
+      return stage === 'beginner';
+    }
+
+    // Trial and Paid: Based on progression
+    const unlockedStages = userProfile.unlockedStages || ['beginner'];
+    return unlockedStages.includes(stage);
 
   const handleBankruptcyRecovered = () => {
     setShowBankruptcy(false);
@@ -66,7 +94,25 @@ export default function JourneysPage() {
     if (!userProfile) return false;
 
     // Free users can only access Beginner
-    if (userProfile.tier === 'free') {
+    if (usUpgrade Modal */}
+      {showUpgradeModal && (
+        <UpgradeModal onClose={() => setShowUpgradeModal(false)} />
+      )}
+
+      {/* Daily Limit Banner */}
+      {dailyLimitReached && userProfile?.subscriptionTier === 'free' && (
+        <div className="bg-orange-600 text-white py-3">
+          <div className="container mx-auto px-4 text-center">
+            <span className="font-semibold">Daily limit reached (3 journeys)</span>
+            {' • '}
+            <Link href="/subscription" className="underline hover:text-orange-100">
+              Upgrade for unlimited access
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* erProfile.tier === 'free') {
       return stage === 'beginner';
     }
 
@@ -282,6 +328,43 @@ function JourneyCard({
         <Button onClick={handleStart} className="w-full">
           Start Journey
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function UpgradeModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-8">
+        <div className="text-center mb-6">
+          <div className="text-6xl mb-4">🔒</div>
+          <h2 className="text-3xl font-bold mb-2">Upgrade to Continue</h2>
+          <p className="text-gray-600">
+            This stage is locked for Free users. Upgrade to unlock all stages!
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200 rounded-lg p-4 mb-6">
+          <h3 className="font-bold text-primary-900 mb-2">✨ Unlock Full Access</h3>
+          <ul className="text-sm text-primary-800 space-y-2">
+            <li>• All 4 stages unlocked</li>
+            <li>• Unlimited journeys per day</li>
+            <li>• Lifetime access for R99</li>
+            <li>• Or try 7-day free trial first</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <Link href="/subscription">
+            <Button className="w-full" size="lg">
+              View Upgrade Options
+            </Button>
+          </Link>
+          <Button variant="outline" className="w-full" onClick={onClose}>
+            Maybe Later
+          </Button>
+        </div>
       </div>
     </div>
   );
