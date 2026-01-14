@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { Button } from '@allied-impact/ui';
 import { logoutUser } from '@/lib/firebase/auth';
 import { GamificationService } from '@/lib/services/GamificationService';
+import { SubscriptionService } from '@/lib/services/SubscriptionService';
+import { SchoolAdCarousel } from '@/components/SchoolAdCarousel';
 
 export default function DashboardPage() {
   const { user, userProfile, loading } = useAuth();
@@ -13,6 +15,7 @@ export default function DashboardPage() {
   
   const [streakInfo, setStreakInfo] = useState<any>(null);
   const [streakBonus, setStreakBonus] = useState(false);
+  const [showAds, setShowAds] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -23,8 +26,18 @@ export default function DashboardPage() {
   useEffect(() => {
     if (user) {
       checkStreak();
+      checkSubscription();
     }
   }, [user]);
+
+  const checkSubscription = async () => {
+    if (!user) return;
+    
+    const subscriptionService = new SubscriptionService(user.uid);
+    const subInfo = await subscriptionService.getSubscriptionInfo();
+    // Show ads for Free and Trial users only
+    setShowAds(subInfo.tier === 'free' || subInfo.tier === 'trial');
+  };
 
   const checkStreak = async () => {
     if (!user) return;
@@ -135,6 +148,13 @@ export default function DashboardPage() {
                 {userProfile.tier === 'trial' && '⏰ Trial Active'}
                 {userProfile.tier === 'paid' && '⭐ Lifetime Member'}
               </h3>
+
+        {/* School Ad Carousel - Show for Free and Trial users */}
+        {showAds && (
+          <div className="mb-8">
+            <SchoolAdCarousel />
+          </div>
+        )}
               <p className="text-primary-100">
                 {userProfile.tier === 'free' && 'Upgrade to unlock all stages'}
                 {userProfile.tier === 'trial' && 'Trial expires in X days'}
