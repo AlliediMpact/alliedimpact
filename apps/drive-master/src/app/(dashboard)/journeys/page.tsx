@@ -10,6 +10,9 @@ import { Journey, Stage } from '@/lib/types/game';
 import { Button } from '@allied-impact/ui';
 import Link from 'next/link';
 import BankruptcyModal from '@/components/BankruptcyModal';
+import { useBulkDifficultyData } from '@/hooks/useDifficultyData';
+import { DifficultyBadge } from '@/components/DifficultyBadge';
+import { Bookmark } from 'lucide-react';
 
 export default function JourneysPage() {
   const { user, userProfile, loading } = useAuth();
@@ -20,6 +23,13 @@ export default function JourneysPage() {
   const [showBankruptcy, setShowBankruptcy] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [dailyLimitReached, setDailyLimitReached] = useState(false);
+  const [bookmarkedJourneys, setBookmarkedJourneys] = useState<string[]>([]);
+  const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
+
+  // Fetch difficulty data for all journeys
+  const journeyIds = journeys.map((j) => j.journeyId);
+  const { difficulties } = useBulkDifficultyData(journeyIds);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth/login');
@@ -27,12 +37,49 @@ export default function JourneysPage() {
   }, [user, loading, router]);
 
   useEffect(() => {
-      checkDailyLimit();
+    checkDailyLimit();
     if (userProfile) {
       loadJourneys(userProfile.currentStage);
       checkBankruptcy();
+      loadBookmarks();
     }
   }, [userProfile]);
+
+  const loadBookmarks = async () => {
+    if (!user) return;
+    try {
+      const { doc, getDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase/config');
+      const userDoc = await getDoc(doc(db, 'users', user.uid, 'bookmarks', 'journeys'));
+      if (userDoc.exists()) {
+        setBookmarkedJourneys(userDoc.data().journeyIds || []);
+      }
+    } catch (error) {
+      console.error('Error loading bookmarks:', error);
+    }
+  };
+
+  const toggleBookmark = async (journeyId: string) => {
+    if (!user) return;
+
+    try {
+      const { doc, setDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase/config');
+
+      const newBookmarks = bookmarkedJourneys.includes(journeyId)
+        ? bookmarkedJourneys.filter((id) => id !== journeyId)
+        : [...bookmarkedJourneys, journeyId];
+
+      await setDoc(doc(db, 'users', user.uid, 'bookmarks', 'journeys'), {
+        journeyIds: newBookmarks,
+        updatedAt: new Date().toISOString(),
+      });
+
+      setBookmarkedJourneys(newBookmarks);
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    }
+  };
 
   const loadJourneys = async (stage: Stage) => {
     setLoadingJourneys(true);
@@ -133,7 +180,27 @@ export default function JourneysPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div cldiv className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">Select Stage</h2>
+            <button
+              onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                showBookmarkedOnly
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <Bookmark className={`w-4 h-4 ${showBookmarkedOnly ? 'fill-current' : ''}`} />
+              <span className="text-sm font-medium">
+                {showBookmarkedOnly ? 'Show All' : 'Bookmarks Only'}
+              </span>
+              {bookmarkedJourneys.length > 0 && (
+                <span className="bg-white text-primary-600 px-2 py-0.5 rounded-full text-xs font-bold">
+                  {bookmarkedJourneys.length}
+                </span>
+              )}
+            </button>
+          </div
       {/* Bankruptcy Modal */}
       {showBankruptcy && user && (
         <BankruptcyModal userId={user.uid} onRecovered={handleBankruptcyRecovered} />
@@ -167,12 +234,19 @@ export default function JourneysPage() {
             Select a journey from your current stage to begin learning
           </p>
         </div>
-
-        {/* Stage Selector */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-bold mb-4">Select Stage</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StageButton
+              .filter((journey) =>
+                showBookmarkedOnly ? bookmarkedJourneys.includes(journey.journeyId) : true
+              )
+              .map((journey) => (
+                <JourneyCard
+                  key={journey.journeyId}
+                  journey={journey}
+                  userProfile={userProfile}
+                  difficulty={difficulties[journey.journeyId]}
+                  isBookmarked={bookmarkedJourneys.includes(journey.journeyId)}
+                  onToggleBookmark={toggleBookmark}
+                />
+              <StageButton
               stage="beginner"
               label="Beginner"
               threshold="95-100%"
@@ -210,23 +284,55 @@ export default function JourneysPage() {
         {/* Journeys Grid */}
         {loadingJourneys ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="text-gray-600 mt-4">Loading journeys...</p>
+  difficulty,
+  isBookmarked,
+  onToggleBookmark,
+}: {
+  journey: Journey;
+  userProfile: any;
+  difficulty?: any;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (journeyId: string) => void;
+}) {
+  const router = useRouter();
+
+  const handleStart = () => {
+    router.push(`/journeys/${journey.journeyId}/start`);
+  };
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleBookmark?.(journey.journeyId);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow relative">
+      {/* Bookmark Button */}
+      {onToggleBookmark && (
+        <button
+          onClick={handleBookmarkClick}
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md transition-colors"
+        >
+          <Bookmark
+            className={`w-5 h-5 transition-colors ${
+              isBookmarked ? 'fill-primary-600 text-primary-600' : 'text-gray-400'
+            }`}
+          />
+        </button>
+      )}
+
+      {/* Thumbnail */}
+      <div
+        className="h-48 bg-cover bg-center relative"
+        style={{ backgroundImage: `url(${journey.thumbnailUrl})` }}
+      >
+        {/* Difficulty Badge Overlay */}
+        {difficulty && (
+          <div className="absolute bottom-3 left-3">
+            <DifficultyBadge difficulty={difficulty} variant="compact" showPercentage={false} />
           </div>
-        ) : journeys.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-            <div className="text-6xl mb-4">🚗</div>
-            <h3 className="text-2xl font-bold mb-2">No Journeys Available</h3>
-            <p className="text-gray-600">
-              Journeys for this stage are coming soon!
-            </p>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {journeys.map((journey) => (
-              <JourneyCard
-                key={journey.journeyId}
-                journey={journey}
+        )}
+      </div         journey={journey}
                 userProfile={userProfile}
               />
             ))}

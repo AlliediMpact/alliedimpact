@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/contexts/AuthContext';
 import { AdminService } from '@/lib/services/AdminService';
 import { Button } from '@allied-impact/ui';
 import Link from 'next/link';
+import { AdminCharts, generateMockChartData } from '@/components/AdminCharts';
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [stats, setStats] = useState<any>(null);
+  const [chartData, setChartData] = useState<any>(null);
 
   useEffect(() => {
     if (!user) {
@@ -39,6 +41,10 @@ export default function AdminDashboardPage() {
       setIsAdmin(true);
       const dashboardStats = await adminService.getDashboardStats();
       setStats(dashboardStats);
+
+      // Load chart data (using mock data for now - replace with real Firestore queries)
+      const charts = generateMockChartData();
+      setChartData(charts);
     } catch (error) {
       console.error('Error loading admin data:', error);
     } finally {
@@ -195,6 +201,19 @@ export default function AdminDashboardPage() {
                 <Link href="/admin/schools">
                   <Button>Review Now</Button>
                 </Link>
+
+        {/* Analytics Charts */}
+        {chartData && (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Analytics & Insights</h2>
+            <AdminCharts
+              revenueData={chartData.revenueData}
+              registrationData={chartData.registrationData}
+              completionData={chartData.completionData}
+              topSchools={chartData.topSchools}
+            />
+          </div>
+        )}
               </div>
             </div>
           </div>
