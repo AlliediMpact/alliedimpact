@@ -1,0 +1,213 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================================================
+    // HELPER FUNCTIONS (Enhanced for Production Security)
+    // ========================================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Enhanced: Check admin status from custom claims (more secure than Firestore lookup)
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+             ('sportshub_super_admin' in request.auth.token) && 
+             request.auth.token.sportshub_super_admin == true;
+    }
+    
+    // Support role for read-only access
+    function isSupport() {
+      return isAuthenticated() && 
+             (isSuperAdmin() || 
+              ('sportshub_support' in request.auth.token && request.auth.token.sportshub_support == true));
+    }
+    
+    // Validate timestamp on creation
+    function hasValidTimestamp() {
+      return request.resource.data.createdAt == request.time;
+    }
+    
+    // Check if data is immutable (for audit trail)
+    function isImmutable() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([]);
+    }
+    
+    // Get user's global role from Firestore (fallback for complex queries)
+    function getUserGlobalRole(userId) {
+      let userDoc = get(/databases/$(database)/documents/sportshub_users/$(userId));
+      return userDoc != null ? userDoc.data.globalRole : 'user';
+    }
+    
+    function hasProjectRole(userId, projectId, requiredRole) {
+      // Check if user has required role for a project
+      let roleDoc = getAfter(/databases/$(database)/documents/sportshub_project_roles/$(userId + '_' + projectId));
+      return roleDoc != null && roleDoc.data.role in requiredRole;
+    }
+    
+    function isProjectAdmin(projectId) {
+      return isSuperAdmin() || hasProjectRole(request.auth.uid, projectId, ['admin', 'super_admin']);
+    }
+    
+    function hasWalletBalance(userId, requiredAmount) {
+      let wallet = get(/databases/$(database)/documents/sportshub_wallets/$(userId));
+      return wallet.data.balance >= requiredAmount;
+    }
+    
+    function votingWindowOpen(projectId, tournamentId, votingItemId) {
+      let tournament = get(/databases/$(database)/documents/sportshub_projects/$(projectId)/tournaments/$(tournamentId));
+      let votingItem = tournament.data.votingItems[votingItemId];
+      let now = request.time;
+      return now >= votingItem.votingWindow.opens && now <= votingItem.votingWindow.closes;
+    }
+    
+    // ========================================================================
+    // PROJECTS COLLECTION (NEW - Phase 1.5)
+    // ========================================================================
+    
+    match /sportshub_projects/{projectId} {
+      // Anyone can read published projects
+      allow read: if resource.data.status in ['published', 'archived'] || isSuperAdmin();
+      
+      // Only ControlBox super admins can create projects
+      allow create: if isSuperAdmin() && 
+                       request.resource.data.status == 'draft' &&
+                       request.resource.data.createdBy == request.auth.uid;
+      
+      // Only super admins or project admins can update
+      allow update: if isSuperAdmin() || isProjectAdmin(projectId);
+      
+      // Only super admins can delete/archive projects
+      allow delete: if isSuperAdmin();
+      
+      // ======================================================================
+      // PROJECT TOURNAMENTS SUB-COLLECTION
+      // ======================================================================
+      
+      match /tournaments/{tournamentId} {
+        // Anyone can read published tournaments
+        allow read: if resource.data.status != 'draft' || isProjectAdmin(projectId);
+        
+        // Only project admins can create tournaments
+        allow create: if isProjectAdmin(projectId) && 
+                         request.resource.data.status == 'draft' &&
+                         request.resource.data.createdBy == request.auth.uid;
+        
+        // Only project admins can update tournaments
+        allow update: if isProjectAdmin(projectId);
+        
+        // Only super admins can delete tournaments
+        allow delete: if isSuperAdmin();
+      }
+      
+      // ======================================================================
+      // PROJECT VOTES SUB-COLLECTION (IMMUTABLE AUDIT TRAIL)
+      // ======================================================================
+      
+      match /votes/{voteId} {
+        // Users can read own votes, admins/support can read all
+        allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isSuperAdmin() || isSupport());
+        
+        // Create: Must include userId matching auth, valid timestamp, required fields
+        allow create: if isAuthenticated() && 
+                        request.resource.data.userId == request.auth.uid &&
+                        request.resource.data.projectId == projectId &&
+                        request.resource.data.tournamentId is string &&
+                        request.resource.data.votingItemId is string &&
+                        request.resource.data.option is string &&
+                        hasValidTimestamp();
+        
+        // ⚠️ CRITICAL: IMMUTABLE - No updates or deletes (votes are permanent audit trail)
+        allow update, delete: if false;
+      }
+      
+      // ======================================================================
+      // PROJECT VOTE TALLIES SUB-COLLECTION
+      // ======================================================================
+      
+      match /vote_tallies/{tallyId} {
+        // Anyone can read vote tallies
+        allow read: if true;
+        
+        // Only Cloud Functions can update tallies (distributed counter pattern)
+        allow write: if false;
+      }
+    }
+    
+    // ========================================================================
+    // PROJECT ROLES COLLECTION (NEW - Phase 1.5)
+    // ========================================================================
+    
+    match /sportshub_project_roles/{roleId} {
+      // Users can read own roles, admins can view all roles in their projects
+      allow read: if isOwner(resource.data.userId) || isSuperAdmin();
+      
+      // Only super admins can grant project roles
+      allow create, update, delete: if isSuperAdmin();
+    }
+    
+    // ========================================================================
+    // USERS COLLECTION
+    // ========================================================================
+    
+    match /sportshub_users/{userId} {
+      // Users can read own profile, admins can read all
+      allow read: if isOwner(userId) || isSuperAdmin();
+      
+      // Users can create own profile (on first login)
+      allow create: if isOwner(userId) && 
+                       request.resource.data.globalRole == 'user' &&
+                       request.resource.data.emailVerified == true;
+      
+      // Users can update own profile (limited fields)
+      allow update: if isOwner(userId) && 
+                       request.resource.data.globalRole == resource.data.globalRole && // Cannot change role
+                       request.resource.data.userId == resource.data.userId; // Cannot change ID
+      
+      // Only super admins can delete users
+      allow delete: if isSuperAdmin();
+    }
+    
+    // ========================================================================
+    // WALLETS COLLECTION (GLOBAL - Shared Across All Projects)
+    // ========================================================================
+    
+    match /sportshub_wallets/{userId} {
+      // Users can read own wallet, admins can read all
+      allow read: if isOwner(userId) || isSuperAdmin();
+      
+      // Only Cloud Functions can modify wallets (using Admin SDK, bypasses rules)
+      // Users and admins CANNOT directly modify wallets
+      allow write: if false;
+    }
+    
+    // ========================================================================
+    // PAYMENTS COLLECTION (GLOBAL)
+    // ========================================================================
+    
+    match /sportshub_payments/{paymentId} {
+      // Users can read own payments, admins can read all
+      allow read: if isOwner(resource.data.userId) || isSuperAdmin();
+      
+      // Only Cloud Functions can create/update payments (webhook handler)
+      allow write: if false;
+    }
+    
+    // ========================================================================
+    // ADMIN LOGS COLLECTION (PLATFORM-WIDE)
+    // ========================================================================
+    
+    match /sportshub_admin_logs/{logId} {
+      // Only admins can read logs
+      allow read: if isSuperAdmin();
+      
+      // Only Cloud Functions can write logs (automatic logging)
+      allow write: if false;
+    }
+  }
+}
