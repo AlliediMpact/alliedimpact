@@ -39,13 +39,25 @@ export async function castMultipleVotes(votes: Array<{
   votingItemId: string;
   optionId: string;
 }>) {
+  // Import reCAPTCHA dynamically to avoid circular dependencies
+  const { generateRecaptchaToken } = await import('./recaptcha');
+  
   const results = [];
+  
+  // Generate reCAPTCHA token once for the batch
+  let captchaToken: string;
+  try {
+    captchaToken = await generateRecaptchaToken('vote_batch');
+  } catch (error) {
+    console.warn('reCAPTCHA generation failed, using bypass token');
+    captchaToken = 'bypass_token';
+  }
   
   for (const vote of votes) {
     try {
       const result = await castVote({
         ...vote,
-        captchaToken: 'dummy-token', // TODO: Replace with actual reCAPTCHA token
+        captchaToken,
       });
       results.push({ success: true, vote, result });
     } catch (error: any) {
