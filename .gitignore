@@ -60,3 +60,10 @@ ui-debug.log
 
 # Turbo
 .turbo/
+
+# Secrets & Credentials
+secrets/
+*.key
+*.p12
+firebase-admin*.json
+service-account*.json
