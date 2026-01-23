@@ -1,0 +1,96 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+             ('controlhub_super_admin' in request.auth.token) && 
+             request.auth.token.controlhub_super_admin == true;
+    }
+    
+    function isSecurityTeam() {
+      return isAuthenticated() && 
+             ('controlhub_security' in request.auth.token) && 
+             request.auth.token.controlhub_security == true;
+    }
+    
+    function isSupportTeam() {
+      return isAuthenticated() && 
+             ('controlhub_support' in request.auth.token) && 
+             request.auth.token.controlhub_support == true;
+    }
+    
+    function isAuditor() {
+      return isAuthenticated() && 
+             ('controlhub_auditor' in request.auth.token) && 
+             request.auth.token.controlhub_auditor == true;
+    }
+    
+    function hasAnyRole() {
+      return isSuperAdmin() || isSecurityTeam() || isSupportTeam() || isAuditor();
+    }
+    
+    // ===== APP HEALTH STATUS =====
+    // Only super admins can read
+    match /controlhub_app_health/{appId} {
+      allow read: if isSuperAdmin();
+      allow write: if false; // Only API writes via service account
+    }
+    
+    // ===== AUTH EVENTS =====
+    // Super admins and security team can read
+    match /controlhub_auth_events/{eventId} {
+      allow read: if isSuperAdmin() || isSecurityTeam();
+      allow write: if false; // Only API writes via service account
+    }
+    
+    // ===== AUDIT LOGS (IMMUTABLE) =====
+    // All authenticated ControlHub users can read
+    // NO ONE can update or delete (immutable for compliance)
+    match /controlhub_audit_logs/{logId} {
+      allow read: if hasAnyRole();
+      allow create: if false; // Only API creates via service account
+      allow update, delete: if false; // IMMUTABLE
+    }
+    
+    // ===== ALERTS =====
+    // Super admins and security team can read and update (acknowledge/resolve)
+    match /controlhub_alerts/{alertId} {
+      allow read: if isSuperAdmin() || isSecurityTeam();
+      allow update: if isSuperAdmin() || isSecurityTeam(); // Can acknowledge/resolve
+      allow create, delete: if false; // Only API creates via service account
+    }
+    
+    // ===== SUPPORT METRICS =====
+    // Super admins and support team can read
+    match /controlhub_support_metrics/{appId} {
+      allow read: if isSuperAdmin() || isSupportTeam();
+      allow write: if false; // Only API writes via service account
+    }
+    
+    // ===== USERS (MINIMAL METADATA) =====
+    // Super admins can read user metadata
+    match /controlhub_users/{userId} {
+      allow read: if isSuperAdmin();
+      allow write: if false; // Managed by admin functions
+    }
+    
+    // ===== APP CONFIG =====
+    // All authenticated users can read app configuration
+    match /controlhub_app_config/{appId} {
+      allow read: if hasAnyRole();
+      allow write: if isSuperAdmin(); // Only super admins can modify
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
