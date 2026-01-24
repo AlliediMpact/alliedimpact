@@ -1,16 +1,14 @@
 import Link from 'next/link';
 import { Shield, Activity } from 'lucide-react';
+import { Logo, Button } from '@allied-impact/ui';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/20 to-background">
       <div className="max-w-2xl mx-auto p-8 text-center">
         {/* Logo & Title */}
         <div className="flex items-center justify-center gap-4 mb-8">
-          <div className="relative">
-            <Shield className="h-16 w-16 text-blue-500" />
-            <Activity className="h-6 w-6 text-green-500 absolute -bottom-1 -right-1" />
-          </div>
+          <Logo appName="ControlHub" variant="full" size="lg" />
         </div>
         
         <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
@@ -43,12 +41,11 @@ export default function HomePage() {
         </div>
 
         {/* CTA Button */}
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-blue-500/50"
-        >
-          <Shield className="h-5 w-5" />
-          Access Dashboard
+        <Link href="/dashboard">
+          <Button size="lg" className="gap-2">
+            <Shield className="h-5 w-5" />
+            Access Dashboard
+          </Button>
         </Link>
 
         {/* Footer Note */}

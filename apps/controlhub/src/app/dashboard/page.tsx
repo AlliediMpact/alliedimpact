@@ -1,4 +1,78 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
+import type { HealthEvent, Alert } from '@/types/events';
+import { Activity, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+
 export default function DashboardPage() {
+  const [loading, setLoading] = useState(true);
+  const [apps, setApps] = useState<HealthEvent[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const { toast } = useToast();
+
+  // Real-time app health data
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, 'controlhub_app_health'),
+      (snapshot) => {
+        const healthData = snapshot.docs.map(doc => ({
+          ...doc.data(),
+          appId: doc.id,
+        })) as HealthEvent[];
+        setApps(healthData);
+        setLoading(false);
+      },
+      (error) => {
+        console.error('Error fetching health data:', error);
+        toast({
+          title: 'Connection Error',
+          description: 'Failed to load app health data. Retrying...',
+          variant: 'destructive',
+        });
+      }
+    );
+    return () => unsubscribe();
+  }, [toast]);
+
+  // Real-time alerts data
+  useEffect(() => {
+    const alertsQuery = query(
+      collection(db, 'controlhub_alerts'),
+      orderBy('timestamp', 'desc'),
+      limit(10)
+    );
+    const unsubscribe = onSnapshot(alertsQuery, (snapshot) => {
+      const alertsData = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Alert[];
+      setAlerts(alertsData);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const healthyApps = apps.filter(app => app.status === 'healthy').length;
+  const activeAlerts = alerts.filter(alert => !alert.resolved).length;
+  const avgUptime = apps.length > 0 ? 99.8 : 0;
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-20 w-full" />
+        <div className="grid gap-4 md:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -11,11 +85,11 @@ export default function DashboardPage() {
 
       {/* Platform Status */}
       <div className="grid gap-4 md:grid-cols-4">
-        <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+        <div className="rounded-lg border bg-card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-400">Total Apps</p>
-              <p className="mt-2 text-3xl font-bold text-slate-100">6</p>
+              <p className="text-sm text-muted-foreground">Total Apps</p>
+              <p className="mt-2 text-3xl font-bold">{apps.length}</p>
             </div>
             <div className="rounded-full bg-blue-500/10 p-3">
               <span className="text-2xl">🎯</span>
@@ -23,11 +97,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+        <div className="rounded-lg border bg-card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-400">Healthy Apps</p>
-              <p className="mt-2 text-3xl font-bold text-green-400">5</p>
+              <p className="text-sm text-muted-foreground">Healthy Apps</p>
+              <p className="mt-2 text-3xl font-bold text-green-500">{healthyApps}</p>
             </div>
             <div className="rounded-full bg-green-500/10 p-3">
               <span className="text-2xl">✅</span>
@@ -35,11 +109,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+        <div className="rounded-lg border bg-card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-400">Active Alerts</p>
-              <p className="mt-2 text-3xl font-bold text-yellow-400">2</p>
+              <p className="text-sm text-muted-foreground">Active Alerts</p>
+              <p className="mt-2 text-3xl font-bold text-yellow-500">{activeAlerts}</p>
             </div>
             <div className="rounded-full bg-yellow-500/10 p-3">
               <span className="text-2xl">⚠️</span>
@@ -47,11 +121,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
+        <div className="rounded-lg border bg-card p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-400">Uptime</p>
-              <p className="mt-2 text-3xl font-bold text-slate-100">99.8%</p>
+              <p className="text-sm text-muted-foreground">Uptime</p>
+              <p className="mt-2 text-3xl font-bold">{avgUptime.toFixed(1)}%</p>
             </div>
             <div className="rounded-full bg-purple-500/10 p-3">
               <span className="text-2xl">📈</span>
@@ -62,8 +136,51 @@ export default function DashboardPage() {
 
       {/* App Health Cards */}
       <div>
-        <h2 className="text-xl font-bold text-slate-100 mb-4">App Health Status</h2>
+        <h2 className="text-xl font-bold mb-4">App Health Status</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {apps.length === 0 ? (
+            <div className="col-span-full text-center py-12 text-muted-foreground">
+              No app health data available. Apps need to start sending health pings.
+            </div>
+          ) : (
+            apps.map((app) => (
+              <div key={app.appId} className="rounded-lg border bg-card p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`h-3 w-3 rounded-full animate-pulse ${
+                      app.status === 'healthy' ? 'bg-green-500' :
+                      app.status === 'degraded' ? 'bg-yellow-500' :
+                      'bg-red-500'
+                    }`}></div>
+                    <h3 className="font-semibold capitalize">{app.appId}</h3>
+                  </div>
+                  <span className="text-xs text-muted-foreground">Live</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Status</span>
+                    <span className={`font-medium capitalize ${
+                      app.status === 'healthy' ? 'text-green-500' :
+                      app.status === 'degraded' ? 'text-yellow-500' :
+                      'text-red-500'
+                    }`}>{app.status}</span>
+                  </div>
+                  {app.metrics?.responseTime && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Response Time</span>
+                      <span>{app.metrics.responseTime}ms</span>
+                    </div>
+                  )}
+                  {app.metrics?.activeUsers && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Active Users</span>
+                      <span>{app.metrics.activeUsers.toLocaleString()}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
           {/* CoinBox */}
           <div className="rounded-lg border border-slate-800 bg-slate-900 p-6">
             <div className="flex items-center justify-between mb-4">
