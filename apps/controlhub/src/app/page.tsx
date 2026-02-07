@@ -1,3 +1,4 @@
+jk
 import Link from 'next/link';
 import { Shield, Activity } from 'lucide-react';
 import { Logo, Button } from '@allied-impact/ui';

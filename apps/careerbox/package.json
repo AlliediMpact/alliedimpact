@@ -4,7 +4,7 @@
   "private": true,
   "description": "CareerBox - Career Matching Platform (Job Seekers & Employers)",
   "scripts": {
-    "dev": "next dev -p 3006",
+    "dev": "next dev -p 3003",
     "build": "next build",
     "start": "next start -p 3006",
     "lint": "next lint",
