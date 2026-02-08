@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user has product access using platform entitlements package
-    const hasAccess = await hasProductAccess(userId, productId);
+    const hasAccess = await hasProductAccess(userId, productId as any);
 
     return NextResponse.json({
       success: true,

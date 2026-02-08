@@ -99,15 +99,15 @@ export async function GET(request: NextRequest) {
     }
 
     const enrollmentDoc = enrollmentDocs.docs[0];
-    const enrollmentData = {
-      id: enrollmentDoc.id,
-      ...enrollmentDoc.data(),
-    };
+    const enrollmentData = enrollmentDoc.data();
 
     return NextResponse.json({
       success: true,
-      enrollment: enrollmentData,
-      lastAccessedLessonId: enrollmentData.lastAccessedLessonId,
+      enrollment: {
+        id: enrollmentDoc.id,
+        ...enrollmentData,
+      },
+      lastAccessedLessonId: enrollmentData.lastAccessedLessonId || null,
     });
   } catch (error) {
     console.error('Error getting enrollment:', error);

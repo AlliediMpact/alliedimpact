@@ -43,8 +43,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize billing service
-    const billingService = new BillingService('stripe'); // or 'payfast' based on config
+    // Initialize billing service (using getBillingService singleton)
+    const { getBillingService } = await import('@allied-impact/billing');
+    const billingService = getBillingService();
 
     // Create payment intent
     const payment = await billingService.createPayment({
