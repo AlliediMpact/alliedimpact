@@ -42,9 +42,28 @@ export default function PricingPage({ params }: { params: { locale: string } }) 
       // Redirect to courses (already have free access)
       router.push(`/${params.locale}/courses?track=computer-skills`);
     } else {
-      // Redirect to billing platform (will integrate with Billing service)
-      // TODO: Integrate with @allied-impact/billing
-      alert('Premium subscription coming soon! Integration with billing platform in progress.');
+      // Integrate with @allied-impact/billing
+      fetch('/ api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.uid,
+          plan: 'premium',
+          productId: 'edu-tech',
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.checkoutUrl) {
+            window.location.href = data.checkoutUrl;
+          } else {
+            alert('Premium subscription coming soon! Integration with billing platform in progress.');
+          }
+        })
+        .catch((error) => {
+          console.error('Billing error:', error);
+          alert('Premium subscription coming soon! Integration with billing platform in progress.');
+        });
     }
   };
 

@@ -1,14 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Trophy } from 'lucide-react';
+import { Trophy, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { createUserWithEmailAndPassword, updateProfile, doc, setDoc, serverTimestamp } from 'firebase/auth';
+import { auth, db } from '@/config/firebase';
 
 export default function SignUpPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     displayName: '',
     email: '',
@@ -16,23 +20,69 @@ export default function SignUpPage() {
     confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long');
       return;
     }
 
     setLoading(true);
     
     try {
-      // TODO: Implement Allied iMpact SSO integration (Phase 1)
-      console.log('Sign up:', formData);
-      alert('Sign up functionality will be implemented in Phase 1');
-    } catch (error) {
+      // Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      const user = userCredential.user;
+      
+      // Update profile with display name
+      await updateProfile(user, {
+        displayName: formData.displayName,
+      });
+      
+      // Create user profile in Firestore
+      await setDoc(doc(db, 'cupfinal_users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: formData.displayName,
+        role: 'user',
+        balance: 0,
+        totalVotes: 0,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      
+      // Redirect to dashboard
+      router.push('/dashboard');
+    } catch (error: any) {
       console.error('Sign up error:', error);
+      
+      // Handle Firebase errors
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          setError('An account with this email already exists.');
+          break;
+        case 'auth/invalid-email':
+          setError('Invalid email address.');
+          break;
+        case 'auth/weak-password':
+          setError('Password is too weak. Use at least 8 characters.');
+          break;
+        default:
+          setError('Sign up failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -62,6 +112,12 @@ export default function SignUpPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="displayName">Display Name</Label>
               <Input

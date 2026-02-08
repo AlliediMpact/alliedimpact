@@ -211,7 +211,18 @@ function LessonContent({
     if (currentLesson && !completedLessons.includes(currentLesson.lessonId)) {
       setCompletedLessons([...completedLessons, currentLesson.lessonId]);
       setLessonCompleted(true);
-      // TODO: Save to Firestore
+      // Save to Firestore
+      fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.uid,
+          courseId: params.courseId,
+          lessonId: currentLesson.lessonId,
+          progress: 100,
+          completedAt: new Date().toISOString(),
+        }),
+      }).catch((error) => console.error('Error saving progress:', error));
     }
   };
 

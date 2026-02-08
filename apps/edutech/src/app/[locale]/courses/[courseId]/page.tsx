@@ -178,20 +178,39 @@ export default function CourseDetailPage({
 
     // Check if premium course and user has entitlement
     if (course?.tier === 'PREMIUM') {
-      // TODO: Check ProductEntitlement for EDUTECH
-      // For now, redirect to pricing
-      router.push(`/${params.locale}/pricing?course=${params.courseId}`);
-      return;
+      // Check ProductEntitlement for EDUTECH
+      try {
+        const hasAccess = await fetch(`/api/check-entitlement?userId=${user.uid}&productId=edu-tech`);
+        const { has Access: hasAccessResult } = await hasAccess.json();
+        
+        if (!hasAccessResult) {
+          router.push(`/${params.locale}/pricing?course=${params.courseId}`);
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking entitlement:', error);
+        router.push(`/${params.locale}/pricing?course=${params.courseId}`);
+        return;
+      }
     }
 
     setIsEnrolling(true);
 
     try {
-      // TODO: Create enrollment in Firestore
-      // const enrollment = await createEnrollment(user.uid, course.courseId);
-
-      // Mock enrollment
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Create enrollment in Firestore
+      const enrollmentResponse = await fetch('/api/enrollments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.uid,
+          courseId: course.courseId,
+          tier: course.tier,
+        }),
+      });
+      
+      if (!enrollmentResponse.ok) {
+        throw new Error('Failed to create enrollment');
+      }
 
       // Redirect to first lesson
       const firstLesson = course?.modules[0]?.lessons[0];
@@ -208,13 +227,30 @@ export default function CourseDetailPage({
     }
   };
 
-  const handleContinueLearning = () => {
-    // TODO: Get last accessed lesson from enrollment
-    const firstLesson = course?.modules[0]?.lessons[0];
-    if (firstLesson) {
-      router.push(
-        `/${params.locale}/learn/${course.courseId}/${firstLesson.lessonId}`
-      );
+  const handleContinueLearning = async () => {
+    // Get last accessed lesson from enrollment
+    try {
+      const response = await fetch(`/api/enrollments?userId=${user?.uid}&courseId=${course?.courseId}`);
+      const { enrollment: enrollmentData } = await response.json();
+      
+      const lastLessonId = enrollmentData?.lastAccessedLessonId;
+      const firstLesson = course?.modules[0]?.lessons[0];
+      const targetLesson = lastLessonId || firstLesson?.lessonId;
+      
+      if (targetLesson) {
+        router.push(
+          `/${params.locale}/learn/${course.courseId}/${targetLesson}`
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching enrollment:', error);
+      // Fallback to first lesson
+      const firstLesson = course?.modules[0]?.lessons[0];
+      if (firstLesson) {
+        router.push(
+          `/${params.locale}/learn/${course.courseId}/${firstLesson.lessonId}`
+        );
+      }
     }
   };
 

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp, getDoc, doc, updateDoc, setDoc } from 'firebase/firestore';
-import { findMatchesForIndividual } from '@/lib/matching-engine';
-import type { IndividualProfile } from '@/types';
+import { getDoc, doc, updateDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import type { CompanyProfile } from '@/types';
 
 /**
- * GET /api/profiles/individual/[uid]
- * Get individual profile
+ * GET /api/profiles/company/[uid]
+ * Get company profile
  */
 export async function GET(
   request: NextRequest,
@@ -16,7 +15,7 @@ export async function GET(
     const { uid } = params;
 
     // Get profile from Firestore
-    const profileDoc = await getDoc(doc(db, 'careerbox_individuals', uid));
+    const profileDoc = await getDoc(doc(db, 'careerbox_companies', uid));
 
     if (!profileDoc.exists()) {
       return NextResponse.json(
@@ -33,7 +32,7 @@ export async function GET(
       }
     });
   } catch (error) {
-    console.error('Error getting profile:', error);
+    console.error('Error getting company profile:', error);
     return NextResponse.json(
       { error: 'Failed to get profile' },
       { status: 500 }
@@ -42,8 +41,8 @@ export async function GET(
 }
 
 /**
- * PUT /api/profiles/individual/[uid]
- * Create or update individual profile
+ * PUT /api/profiles/company/[uid]
+ * Create or update company profile
  */
 export async function PUT(
   request: NextRequest,
@@ -53,7 +52,7 @@ export async function PUT(
     const { uid } = params;
     const body = await request.json();
 
-    const profileRef = doc(db, 'careerbox_individuals', uid);
+    const profileRef = doc(db, 'careerbox_companies', uid);
     const { uid: _uid, ...profileData } = body; // Remove uid from data
     
     // Check if profile exists
@@ -77,17 +76,12 @@ export async function PUT(
       });
     }
 
-    // If profile is now complete, trigger matching
-    if (body.profileComplete) {
-      await findMatchesForIndividual(uid);
-    }
-
     return NextResponse.json({ 
       success: true,
-      message: profileDoc.exists() ? 'Profile updated successfully' : 'Profile created successfully'
+      message: profileDoc.exists() ? 'Company profile updated successfully' : 'Company profile created successfully'
     });
   } catch (error) {
-    console.error('Error saving profile:', error);
+    console.error('Error saving company profile:', error);
     return NextResponse.json(
       { error: 'Failed to save profile' },
       { status: 500 }

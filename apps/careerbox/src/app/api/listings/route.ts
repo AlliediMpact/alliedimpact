@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { findMatchesForListing } from '@/lib/matching-engine';
 
 /**
@@ -56,11 +56,35 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const companyUid = searchParams.get('companyUid');
 
-    // TODO: Get listings from Firestore with filters
+    const listingsRef = collection(db, 'careerbox_listings');
+    let listingsQuery;
+
+    if (companyUid) {
+      // Get listings for a specific company
+      listingsQuery = query(
+        listingsRef,
+        where('companyUid', '==', companyUid),
+        orderBy('createdAt', 'desc')
+      );
+    } else {
+      // Get all active listings
+      listingsQuery = query(
+        listingsRef,
+        where('isActive', '==', true),
+        where('isPaused', '==', false),
+        orderBy('createdAt', 'desc')
+      );
+    }
+
+    const listingsSnap = await getDocs(listingsQuery);
+    const listings = listingsSnap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
     return NextResponse.json({
       success: true,
-      listings: [],
+      listings,
     });
   } catch (error) {
     console.error('Error getting listings:', error);

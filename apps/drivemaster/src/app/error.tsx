@@ -15,10 +15,21 @@ export default function Error({
     // Log error to console in development
     console.error('Application error:', error);
 
-    // TODO: Log to Sentry in production
-    // if (process.env.NODE_ENV === 'production') {
-    //   Sentry.captureException(error);
-    // }
+    // Log to Sentry in production (optional - requires NEXT_PUBLIC_SENTRY_DSN in .env)
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      // Sentry integration would be initialized in instrumentation.ts
+      // For now, log to external service if configured
+      fetch('/api/log-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: error.message,
+          stack: error.stack,
+          digest: error.digest,
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch(console.error);
+    }
   }, [error]);
 
   return (
