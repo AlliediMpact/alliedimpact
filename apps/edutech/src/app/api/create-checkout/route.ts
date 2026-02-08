@@ -43,12 +43,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize billing service (using getBillingService singleton)
+    // Initialize billing service
+    // NOTE: Requires initializeBilling() to be called at app startup
+    // For now, return placeholder until billing is fully configured
     const { getBillingService } = await import('@allied-impact/billing');
-    const billingService = getBillingService();
-
-    // Create payment intent
-    const payment = await billingService.createPayment({
+    
+    try {
+      const billingService = getBillingService();
+      
+      // Create payment intent
+      const payment = await billingService.createPayment({
       userId,
       amount: config.amount,
       currency: config.currency,
@@ -61,12 +65,21 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Return checkout URL
-    return NextResponse.json({
-      success: true,
-      checkoutUrl: payment.paymentUrl || payment.checkoutUrl,
-      paymentId: payment.paymentId,
-    });
+      // Return checkout URL
+      return NextResponse.json({
+        success: true,
+        checkoutUrl: payment.paymentUrl || payment.checkoutUrl,
+        paymentId: payment.paymentId,
+      });
+    } catch (billingError) {
+      console.error('Billing service error:', billingError);
+      // Return placeholder response until billing is fully configured
+      return NextResponse.json({
+        success: false,
+        error: 'Billing service not yet configured. Please initialize in app startup.',
+        checkoutUrl: null,
+      });
+    }
   } catch (error) {
     console.error('Error creating checkout:', error);
     return NextResponse.json(

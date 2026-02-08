@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    const productId = searchParams.get('productId') || 'edu-tech';
+    const productId = searchParams.get('productId') || 'edutech'; // Default to EduTech product
 
     if (!userId) {
       return NextResponse.json(

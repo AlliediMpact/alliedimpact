@@ -180,10 +180,10 @@ export default function CourseDetailPage({
     if (course?.tier === 'PREMIUM') {
       // Check ProductEntitlement for EDUTECH
       try {
-        const hasAccess = await fetch(`/api/check-entitlement?userId=${user.uid}&productId=edu-tech`);
-        const { has Access: hasAccessResult } = await hasAccess.json();
+        const response = await fetch(`/api/check-entitlement?userId=${user.uid}&productId=edutech`);
+        const { hasAccess } = await response.json();
         
-        if (!hasAccessResult) {
+        if (!hasAccess) {
           router.push(`/${params.locale}/pricing?course=${params.courseId}`);
           return;
         }
