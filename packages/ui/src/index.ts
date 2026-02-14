@@ -9,6 +9,8 @@ export * from './alert';
 // ==================== Layout Components ====================
 export { Logo, type LogoProps } from './layout/Logo';
 export { Footer, type FooterProps, type FooterSection, type FooterLink, type SocialLink } from './layout/Footer';
+export { LegalPageLayout } from './LegalPageLayout';
+export { CookieConsentBanner } from './CookieConsentBanner';
 
 // ==================== Loading Components ====================
 export {

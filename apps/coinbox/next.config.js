@@ -138,6 +138,8 @@ const nextConfig = {
     }
     
     // Provide Node.js modules for client-side code that expects them
+    // Temporarily disabled for development - install browserify packages if needed
+    /*
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -165,6 +167,7 @@ const nextConfig = {
         })
       );
     }
+    */
     
     return config;
   },

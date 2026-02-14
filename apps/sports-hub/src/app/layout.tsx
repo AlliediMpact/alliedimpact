@@ -4,6 +4,7 @@ import './globals.css';
 import PlatformFooter from '@/components/PlatformFooter';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { CookieConsentBanner } from '@alliedimpact/ui';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -84,8 +85,13 @@ export default function RootLayout({
               <main className="flex-1">
                 {children}
               </main>
-              <PlatformFooter />
+              <PlatformFooter currentApp="sportshub" />
             </div>
+            <CookieConsentBanner 
+              appName="SportsHub" 
+              privacyLink="/privacy" 
+              cookieLink="/cookies" 
+            />
           </ErrorBoundary>
         </ThemeProvider>
       </body>

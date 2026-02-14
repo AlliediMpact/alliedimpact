@@ -58,6 +58,21 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(self), interest-cohort=()',
           },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https: blob:",
+              "font-src 'self' data:",
+              "connect-src 'self' https: wss: https://firebasestorage.googleapis.com https://www.google-analytics.com",
+              "media-src 'self' https:",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
         ],
       },
     ];
@@ -87,22 +102,24 @@ const nextConfig = {
 };
 
 // Wrap with Sentry for error monitoring
-const { withSentryConfig } = require('@sentry/nextjs');
+// const { withSentryConfig } = require('@sentry/nextjs');
 
-module.exports = withSentryConfig(
-  nextConfig,
-  {
-    // Sentry Webpack Plugin Options
-    silent: true,
-    org: process.env.SENTRY_ORG,
-    project: process.env.SENTRY_PROJECT,
-  },
-  {
-    // Upload source maps in production only
-    widenClientFileUpload: true,
-    transpileClientSDK: true,
-    tunnelRoute: '/monitoring',
-    hideSourceMaps: true,
-    disableLogger: true,
-  }
-);
+// module.exports = withSentryConfig(
+//   nextConfig,
+//   {
+//     // Sentry Webpack Plugin Options
+//     silent: true,
+//     org: process.env.SENTRY_ORG,
+//     project: process.env.SENTRY_PROJECT,
+//   },
+//   {
+//     // Upload source maps in production only
+//     widenClientFileUpload: true,
+//     transpileClientSDK: true,
+//     tunnelRoute: '/monitoring',
+//     hideSourceMaps: true,
+//     disableLogger: true,
+//   }
+// );
+
+module.exports = nextConfig;

@@ -1,4 +1,4 @@
-const { withSentryConfig } = require('@sentry/nextjs');
+// const { withSentryConfig } = require('@sentry/nextjs');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -66,6 +66,25 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://firebasestorage.googleapis.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https: blob:",
+              "font-src 'self' data:",
+              "connect-src 'self' https: wss: https://firebasestorage.googleapis.com",
+              "media-src 'self' https:",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; '),
+          },
         ],
       },
     ];
@@ -104,6 +123,8 @@ const sentryOptions = {
 };
 
 // Export with Sentry configuration
-module.exports = process.env.NEXT_PUBLIC_SENTRY_DSN
-  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions, sentryOptions)
-  : nextConfig;
+// module.exports = process.env.NEXT_PUBLIC_SENTRY_DSN
+//   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions, sentryOptions)
+//   : nextConfig;
+
+module.exports = nextConfig;

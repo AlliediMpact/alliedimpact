@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import AppHeader from './AppHeader';
 import AppSidebar from './AppSidebar';
+import PlatformFooter from './PlatformFooter';
 import { useProject } from '@/contexts/ProjectContext';
 
 interface AppLayoutProps {
@@ -98,6 +99,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <main className="pt-16 min-h-screen">
           {children}
         </main>
+
+        {/* Footer */}
+        <PlatformFooter currentApp="myprojects" />
       </div>
     </div>
   );

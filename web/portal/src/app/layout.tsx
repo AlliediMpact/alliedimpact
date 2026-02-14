@@ -7,6 +7,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AnalyticsProvider } from '@/components/AnalyticsProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { AccessibilityMonitor } from '@/components/AccessibilityMonitor';
+import { CookieConsentBanner } from '@alliedimpact/ui';
 
 export const metadata: Metadata = {
   title: {
@@ -85,6 +86,11 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+              <CookieConsentBanner 
+                appName="Allied iMpact" 
+                privacyLink="/legal/privacy" 
+                cookieLink="/legal/cookies" 
+              />
             </AuthProvider>
           </AnalyticsProvider>
         </ErrorBoundary>

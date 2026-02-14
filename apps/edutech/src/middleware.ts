@@ -146,6 +146,12 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-RateLimit-Remaining', rateLimit.remaining.toString());
   response.headers.set('X-RateLimit-Reset', rateLimit.resetAt.toString());
   
+  // Add security headers
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  
   // Generate and set CSRF token for GET requests
   if (request.method === 'GET' && !request.cookies.get('csrf-token')) {
     const csrfToken = generateCsrfToken();

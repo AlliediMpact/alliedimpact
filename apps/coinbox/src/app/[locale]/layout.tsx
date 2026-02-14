@@ -11,6 +11,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { SkipToMainContent } from '@/hooks/use-accessibility';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import OnlineStatus from '@/components/OnlineStatus';
+import { CookieConsentBanner } from '@alliedimpact/ui';
 import Script from 'next/script';
 import '../globals.css';
 
@@ -95,6 +96,11 @@ export default function LocaleLayout({ children, params: { locale } }: Props) {
                       {children}
                     </HeaderSidebarLayout>
                     <Toaster />
+                    <CookieConsentBanner 
+                      appName="CoinBox" 
+                      privacyLink={`/${locale}/privacy`} 
+                      cookieLink={`/${locale}/cookies`} 
+                    />
                 </OnboardingProvider>
               </AuthProvider>
             </NextIntlClientProvider>
