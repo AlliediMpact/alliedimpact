@@ -11,7 +11,7 @@ EduTech is Allied iMpact's comprehensive education platform offering dual learni
 - **Computer Skills Track** (FREE - Sponsored) - Digital literacy, office skills, financial education
 - **Coding Track** (PREMIUM - Subscription) - Software development from beginner to job-ready
 
-**Status**: Active Development | Target Launch: Q2 2026  
+**Status**: Active Development | Target Launch: February 25, 2026  
 **Port**: 3007  
 **URL**: edutech.alliedimpact.com (staging)
 
@@ -223,7 +223,7 @@ All UI text uses next-intl for translations.
 
 ## 📈 Success Metrics
 
-### Launch (Q2 2026)
+### Launch (February 25, 2026)
 - 100% feature parity
 - 80%+ test coverage
 - <2s page load time
