@@ -1,0 +1,204 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================================================
+    // HELPER FUNCTIONS
+    // ============================================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/platform_users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/platform_users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // ============================================================================
+    // PLATFORM USERS (User Profiles)
+    // ============================================================================
+    
+    match /platform_users/{userId} {
+      // Users can read their own profile
+      allow read: if isOwner(userId);
+      
+      // Users can create their own profile during signup
+      allow create: if isOwner(userId) && 
+                       request.resource.data.uid == request.auth.uid &&
+                       request.resource.data.email == request.auth.token.email;
+      
+      // Users can update their own profile (except role and status)
+      allow update: if isOwner(userId) && 
+                       !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status', 'uid']);
+      
+      // Admins can read all users
+      allow read: if isAdmin();
+      
+      // Admins can update user roles and status
+      allow update: if isAdmin();
+    }
+    
+    // ============================================================================
+    // ENTITLEMENTS (App Access Control)
+    // ============================================================================
+    
+    match /platform_entitlements/{entitlementId} {
+      // Users can read their own entitlements
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      
+      // Admins can read all entitlements
+      allow read: if isAdmin();
+      
+      // Admins can create/update entitlements
+      allow create, update: if isAdmin();
+      
+      // No one can delete entitlements (audit trail)
+      allow delete: if false;
+    }
+    
+    // ============================================================================
+    // SUBSCRIPTIONS (Billing Data)
+    // ============================================================================
+    
+    match /platform_subscriptions/{subscriptionId} {
+      // Users can read their own subscriptions
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      
+      // Admins can read all subscriptions
+      allow read: if isAdmin();
+      
+      // System/Admins can create subscriptions
+      allow create: if isAdmin() || 
+                       (isAuthenticated() && request.resource.data.userId == request.auth.uid);
+      
+      // System can update subscription status
+      allow update: if isAdmin();
+      
+      // No deletes (audit trail)
+      allow delete: if false;
+    }
+    
+    // ============================================================================
+    // NOTIFICATIONS (Cross-App Notifications)
+    // ============================================================================
+    
+    match /platform_notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      
+      // Users can mark their own notifications as read
+      allow update: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+      
+      // System can create notifications
+      allow create: if isAdmin();
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // ============================================================================
+    // CONTACT SUBMISSIONS (Public Contact Form)
+    // ============================================================================
+    
+    match /contact_submissions/{submissionId} {
+      // Anyone can create a contact submission
+      allow create: if request.resource.data.email is string &&
+                       request.resource.data.message is string &&
+                       request.resource.data.name is string;
+      
+      // Admins can read all submissions
+      allow read: if isAdmin();
+      
+      // Admins can update status
+      allow update: if isAdmin();
+    }
+    
+    // ============================================================================
+    // MY PROJECTS COLLECTIONS (Sharing Platform Firebase Project)
+    // ============================================================================
+    
+    // Helper function for project access
+    function hasProjectAccess(projectData) {
+      return isAuthenticated() && 
+             (request.auth.uid == projectData.clientId || 
+              request.auth.uid in projectData.teamMembers);
+    }
+    
+    match /myprojects_projects/{projectId} {
+      allow read: if hasProjectAccess(resource.data);
+      allow create: if isAuthenticated() && request.resource.data.clientId == request.auth.uid;
+      allow update: if hasProjectAccess(resource.data);
+      allow delete: if isAuthenticated() && resource.data.clientId == request.auth.uid;
+    }
+    
+    match /myprojects_milestones/{milestoneId} {
+      function getProject() {
+        return get(/databases/$(database)/documents/myprojects_projects/$(resource.data.projectId)).data;
+      }
+      
+      allow read: if hasProjectAccess(getProject());
+      allow create: if isAuthenticated() && 
+                       hasProjectAccess(get(/databases/$(database)/documents/myprojects_projects/$(request.resource.data.projectId)).data);
+      allow update: if hasProjectAccess(getProject());
+      allow delete: if hasProjectAccess(getProject());
+    }
+    
+    match /myprojects_deliverables/{deliverableId} {
+      function getProject() {
+        return get(/databases/$(database)/documents/myprojects_projects/$(resource.data.projectId)).data;
+      }
+      
+      allow read: if hasProjectAccess(getProject());
+      allow create: if isAuthenticated() && 
+                       hasProjectAccess(get(/databases/$(database)/documents/myprojects_projects/$(request.resource.data.projectId)).data);
+      allow update: if hasProjectAccess(getProject());
+      allow delete: if hasProjectAccess(getProject());
+    }
+    
+    match /myprojects_tickets/{ticketId} {
+      function getProject() {
+        return get(/databases/$(database)/documents/myprojects_projects/$(resource.data.projectId)).data;
+      }
+      
+      allow read: if hasProjectAccess(getProject());
+      allow create: if isAuthenticated() && 
+                       hasProjectAccess(get(/databases/$(database)/documents/myprojects_projects/$(request.resource.data.projectId)).data);
+      allow update: if hasProjectAccess(getProject());
+    }
+    
+    match /myprojects_comments/{commentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.authorId == request.auth.uid;
+    }
+    
+    match /myprojects_activities/{activityId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+    
+    // ============================================================================
+    // DEFAULT DENY ALL (Security First)
+    // ============================================================================
+    
+    // Explicitly deny access to any undefined collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

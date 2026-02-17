@@ -4,7 +4,7 @@ import './globals.css';
 import PlatformFooter from '@/components/PlatformFooter';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { CookieConsentBanner } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -63,7 +63,8 @@ export const metadata: Metadata = {
   },
   verification: {
     google: 'your-google-verification-code',
-  }
+  },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -92,6 +93,8 @@ export default function RootLayout({
               privacyLink="/privacy" 
               cookieLink="/cookies" 
             />
+            <PWAInstaller appName="SportsHub" />
+            <ServiceWorkerRegistration />
           </ErrorBoundary>
         </ThemeProvider>
       </body>

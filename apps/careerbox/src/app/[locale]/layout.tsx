@@ -6,7 +6,7 @@ import { locales } from '@/i18n/config';
 import { ToastProvider } from '@/components/ui/toast';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { SkipLink } from '@/components/ui/accessibility';
-import { CookieConsentBanner } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
 import PlatformFooter from '@/components/PlatformFooter';
 import '../globals.css';
 
@@ -68,6 +68,7 @@ export const metadata: Metadata = {
   verification: {
     google: 'google-verification-code',
   },
+  manifest: '/manifest.json',
 };
 
 export function generateStaticParams() {
@@ -106,6 +107,8 @@ export default async function LocaleLayout({
                 privacyLink={`/${locale}/privacy`} 
                 cookieLink={`/${locale}/cookies`} 
               />
+              <PWAInstaller appName="CareerBox" />
+              <ServiceWorkerRegistration />
             </NextIntlClientProvider>
           </ToastProvider>
         </ErrorBoundary>

@@ -7,7 +7,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AnalyticsProvider } from '@/components/AnalyticsProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { AccessibilityMonitor } from '@/components/AccessibilityMonitor';
-import { CookieConsentBanner } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
 
 export const metadata: Metadata = {
   title: {
@@ -66,6 +66,7 @@ export const metadata: Metadata = {
   verification: {
     google: 'google-site-verification-code',
   },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -91,6 +92,8 @@ export default function RootLayout({
                 privacyLink="/legal/privacy" 
                 cookieLink="/legal/cookies" 
               />
+              <PWAInstaller appName="Allied iMpact" />
+              <ServiceWorkerRegistration />
             </AuthProvider>
           </AnalyticsProvider>
         </ErrorBoundary>

@@ -4,7 +4,7 @@ import './globals.css';
 import { AuthProvider } from '@/lib/contexts/AuthContext';
 import { Toaster } from '@/components/Toaster';
 import { FeedbackWidget } from '@/components/FeedbackWidget';
-import { CookieConsentBanner } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
 import PlatformFooter from '@/components/PlatformFooter';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -54,6 +54,7 @@ export const metadata: Metadata = {
   verification: {
     google: 'your-google-verification-code',
   },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -78,6 +79,8 @@ export default function RootLayout({
             privacyLink="/privacy" 
             cookieLink="/cookies" 
           />
+          <PWAInstaller appName="DriveMaster" />
+          <ServiceWorkerRegistration />
         </AuthProvider>
       </body>
     </html>

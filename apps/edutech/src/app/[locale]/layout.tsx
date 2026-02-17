@@ -11,7 +11,7 @@ import Header from '@/components/layout/Header';
 import PlatformFooter from '@/components/PlatformFooter';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
-import { CookieConsentBanner } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -144,6 +144,8 @@ export default async function LocaleLayout({
                     privacyLink={`/${locale}/privacy`} 
                     cookieLink={`/${locale}/cookies`} 
                   />
+                  <PWAInstaller appName="EduTech" />
+                  <ServiceWorkerRegistration />
                 </ToastProvider>
               </ProgressProvider>
             </AuthProvider>

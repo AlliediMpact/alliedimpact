@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "allied-impact-platform",
+    "platform": "allied-impact-platform",
+    "coinbox": "coinbox-ddc10",
+    "edutech": "edutech-4f548",
+    "drivemaster": "drivemaster-513d9",
+    "careerbox": "careerbox-64e54",
+    "controlhub": "controlhub-6376f",
+    "sportshub": "sportshub-526df"
+  },
+  "targets": {},
+  "etags": {}
+}

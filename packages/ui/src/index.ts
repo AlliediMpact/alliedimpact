@@ -12,6 +12,10 @@ export { Footer, type FooterProps, type FooterSection, type FooterLink, type Soc
 export { LegalPageLayout } from './LegalPageLayout';
 export { CookieConsentBanner } from './CookieConsentBanner';
 
+// ==================== PWA Components ====================
+export { PWAInstaller } from './components/PWAInstaller';
+export { ServiceWorkerRegistration } from './components/ServiceWorkerRegistration';
+
 // ==================== Loading Components ====================
 export {
   Skeleton,
