@@ -1,99 +1,144 @@
 # 🏢 Allied iMpact Platform
 
-> **One Identity. Multiple Products. Built for Scale.**
+> **One Identity. Eight Products. Built for Scale.**
 
-**Production-Ready | January 2026 | Enterprise Platform**
+**🚀 Launching February 25, 2026 | All 8 Apps Production-Ready**  
+**📅 Last Updated**: February 17, 2026 | **🎯 Launch Countdown**: 8 Days
 
-Allied iMpact is a **multi-product digital platform** that delivers independent applications under a unified identity system. This monorepo contains the complete platform: shared services, 6+ production apps, and central dashboard.
+Allied iMpact is a **multi-product digital platform ecosystem** delivering 8 independent applications under a unified identity and entitlements system. This monorepo powers the complete platform: shared services, production apps, and unified dashboard.
+
+**✅ Latest**: PWA implementation complete across all apps (Feb 17, 2026) - all apps now installable to home screen on Android/iOS/Desktop without app store approval!
 
 ---
 
-## 🎯 What Allied iMpact Is
+## 🎯 Platform Vision
 
-Allied iMpact operates on **two parallel value streams**:
+Allied iMpact operates as a **unified digital ecosystem** providing:
 
-### 1. **Ready-Made Digital Products**
+### **Ready-Made Digital Products**
 Revenue-generating applications available via subscription or usage-based pricing:
-- **Coin Box** - P2P Financial Platform (Loans, Investments, Crypto Trading)
-- **Drive Master** - Driver Training & Certification  
-- **CodeTech** - Software Development Learning Platform
-- **Cup Final** - Sports Tournament Management
-- **uMkhanyakude** - High Schools Information Portal
+- **CoinBox** - P2P Financial Platform (Loans, Investments, Crypto Trading)
+- **CareerBox** - Job Matching & Recruitment Platform
+- **DriveMaster** - Driver Training & Certification Platform
+- **EduTech** - Educational Courses with Premium Plans
+- **SportsHub** - Sports Predictions & Voting Platform
 
-### 2. **Custom Solutions & Services**
-Project-based development for businesses, NGOs, and institutions:
-- **My Projects** - Custom software project management
-- **Client Platforms** - Bespoke applications
-- **Licensed IP** - White-label solutions
+### **Custom Solutions & Services**
+Project-based development for businesses and institutions:
+- **MyProjects** - Custom Software Project Management
+- **ControlHub** - Internal Observability Dashboard
+- **Portal** - Main Platform Entry & Unified Dashboard
 
 ---
 
-## 🌍 Platform Architecture Overview
+## 🚀 Production Applications
+
+### All 8 Apps Ready for February 25, 2026 Launch
+
+| Application | Port | Firebase Project | Status | Description |
+|------------|------|-----------------|--------|-------------|
+| **Portal** | 3005 | allied-impact-platform | ✅ Production Ready | Main platform entry, unified dashboard, legal pages |
+| **CoinBox** | 3000 | coinbox-ddc10 | ✅ Production Ready | P2P loans, investments, crypto trading (385+ tests) |
+| **MyProjects** | 3006 | allied-impact-platform | ✅ Production Ready | Custom solution client portal, project management |
+| **CareerBox** | 3003 | careerbox-64e54 | ✅ Production Ready | Job matching, recruitment, messaging platform |
+| **DriveMaster** | 3001 | drivemaster-513d9 | ✅ Production Ready | Learner's license training, theory tests, scheduling |
+| **EduTech** | 3007 | edutech-4f548 | ✅ Production Ready | Educational courses, enrollments, premium plans |
+| **SportsHub** | 3008 | sportshub-526df | ✅ Production Ready | Sports predictions, voting, leaderboards |
+| **ControlHub** | 3010 | controlhub-6376f | ✅ Production Ready | Internal observability, app health monitoring |
+
+**Launch Status**: ✅ **ALL 8 APPS 100% READY** (verified February 17, 2026)  
+**PWA Status**: ✅ **ALL APPS SUPPORT OFFLINE & HOME SCREEN INSTALLATION** (implemented February 17, 2026)
+
+---
+
+## 📁 Project Structure
 
 ```
-alliedimpact/ (MONOREPO)
-├── platform/              # Shared platform services
-│   ├── auth/             # Firebase Auth wrapper + user management
-│   ├── billing/          # Subscription & payment logic
-│   ├── entitlements/     # Access control & permissions
-│   ├── notifications/    # Cross-platform notifications
-│   └── shared/           # Shared types, utilities, constants
+alliedimpact/                 # Monorepo root
+├── apps/                     # 8 Production Applications
+│   ├── careerbox/           # Port 3003 | Job matching platform
+│   ├── coinbox/             # Port 3000 | Financial services (385+ tests)
+│   ├── controlhub/          # Port 3010 | Internal monitoring
+│   ├── drivemaster/         # Port 3001 | Driver training
+│   ├── edutech/             # Port 3007 | Educational courses
+│   ├── myprojects/          # Port 3006 | Project management
+│   └── sports-hub/          # Port 3008 | Sports predictions
 │
-├── apps/                 # Independent applications
-│   ├── coinbox/          # ✅ PRODUCTION (P2P Finance)
-│   ├── myprojects/       # ✅ PRODUCTION (Project Management)
-│   ├── drive-master/     # 🚧 Active Development
-│   ├── codetech/         # 🚧 Active Development
-│   ├── cup-final/        # 🚧 Active Development
-│   └── umkhanyakude/     # 🚧 Active Development
+├── web/                      # Platform Web Presence
+│   └── portal/              # Port 3005 | Main entry & dashboard
 │
-├── web/                  # Allied iMpact web presence
-│   └── portal/           # Main website + unified dashboard
+├── platform/                 # Shared Platform Services
+│   ├── auth/                # Firebase Auth wrapper + user management
+│   ├── billing/             # Subscription & payment logic
+│   ├── entitlements/        # Access control & permissions
+│   ├── notifications/       # Cross-platform notifications
+│   ├── projects/            # Project management shared logic
+│   └── shared/              # Shared types, utilities, constants
 │
-├── packages/             # Shared packages
-│   ├── types/            # TypeScript types
-│   ├── ui/               # Shared UI components
-│   └── utils/            # Shared utilities
+├── packages/                 # Shared Packages
+│   ├── config/              # Shared configuration
+│   ├── security/            # Security utilities
+│   ├── types/               # TypeScript types
+│   ├── ui/                  # Shared UI components
+│   └── utils/               # Shared utilities
 │
-└── docs/                 # Platform documentation
-    ├── README.md (this file)
+└── docs/                     # Platform Documentation
     ├── ALLIED_IMPACT_PLATFORM_MODEL.md
     ├── PLATFORM_AND_PRODUCTS.md
     ├── ARCHITECTURE_AND_SECURITY.md
-    └── DEVELOPMENT_AND_SCALING_GUIDE.md
+    ├── DEVELOPMENT_AND_SCALING_GUIDE.md
+    └── LAUNCH_READINESS_REPORT_FEB_2026.md
 ```
 
 ---
 
-## 🔐 How Users Interact with the Platform
+## 📚 Comprehensive Documentation
+**Essential Reading** (5 core documents):
 
-### Two Entry Points
-
-#### Option A: Login via Allied iMpact Platform
-```
-1. User visits alliedimpact.com
-2. Logs in once (Firebase Auth)
-3. Lands on unified dashboard
-4. Sees all apps they have access to
-5. Clicks app → navigated to app with SSO
-```
-
-#### Option B: Direct App Login
-```
-1. User visits coinbox.alliedimpact.com directly
-2. Logs in (same Firebase Auth)
-3. Enters Coin Box app
-4. Can navigate back to dashboard anytime
-```
-
-### Key Principle: **Single Sign-On (SSO)**
-- One account works across all Allied iMpact apps
-- Firebase Auth is the identity provider
-- Apps check entitlements before granting access
+| Document | Description |
+|----------|-------------|
+| **[Platform Architecture](docs/PLATFORM_ARCHITECTURE.md)** | Complete architectural reference: conceptual model, technical architecture, security, integration patterns |
+| **[Products Catalog](docs/PRODUCTS_CATALOG.md)** | All 8 apps: features, PWA support, tech stack, integration, current status |
+| **[Developer Guide](docs/DEVELOPER_GUIDE.md)** | Complete development guide: setup, adding apps, UI consistency, testing, deployment |
+| **[Launch Readiness](docs/LAUNCH_READINESS.md)** | February 25 launch status, app readiness, pre-launch checklist, monitoring plan |
+| **[PWA Implementation](docs/PWA_IMPLEMENTATION_COMPLETE.md)** | Progressive Web App setup across all platforms (Feb 17, 2026)atterns |
+| **[Launch Readiness](LAUNCH_READINESS_REPORT_FEB_2026.md)** | February 25 launch status, testing, deployment plan |
 
 ---
 
-## 🚀 Running Locally
+## 💻 Technology Stack
+
+### Frontend
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript (100% type coverage)
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI, shadcn/ui
+- **State Management**: React Hooks, Context API
+- **Internationalization**: next-intl (multi-language support)
+
+### Backend
+- **Authentication**: Firebase Auth (SSO across all apps)
+- **Database**: Firestore (per-app databases, isolated)
+- **Storage**: Firebase Storage
+- **Functions**: Firebase Cloud Functions
+- **APIs**: Next.js API Routes (serverless)
+
+### Infrastructure
+- **Hosting**: Vercel (all 8 apps + portal)
+- **Monorepo**: pnpm workspaces + Turborepo
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Firebase Crashlytics, custom logging
+- **Testing**: Jest, Playwright (CoinBox: 385+ tests)
+
+### Platform Services
+- **Billing**: Stripe integration (`@allied-impact/billing`)
+- **Entitlements**: Custom access control (`@allied-impact/entitlements`)
+- **Notifications**: Cross-platform alerts
+- **Security**: Firestore security rules, environment-based configs
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 ```bash
@@ -111,52 +156,68 @@ cd alliedimpact
 # Install all dependencies (monorepo)
 pnpm install
 
-# Copy environment templates
+# Copy environment templates for each app
 cp apps/coinbox/.env.example apps/coinbox/.env.local
+cp apps/careerbox/.env.example apps/careerbox/.env.local
 cp web/portal/.env.example web/portal/.env.local
+# ... repeat for all apps
 
-# Configure Firebase credentials
-# Edit .env.local files with your Firebase config
+# Configure Firebase credentials in each .env.local file
 ```
 
-### Running the Platform
+### Running Apps Locally
 
-#### Run Unified Dashboard
+#### Portal (Main Dashboard)
 ```bash
 cd web/portal
 pnpm dev
-# Opens on http://localhost:3000
+# Opens on http://localhost:3005
 ```
 
-#### Run Individual Apps
+#### Individual Apps
 ```bash
-# Coin Box
+# CoinBox (P2P Finance)
 cd apps/coinbox
 pnpm dev
-# Opens on http://localhost:3002
+# http://localhost:3000
 
-# My Projects
-cd apps/myprojects
+# CareerBox (Job Matching)
+cd apps/careerbox
 pnpm dev
-# Opens on http://localhost:3003
+# http://localhost:3003
 
-# Drive Master
-cd apps/drive-master
+# DriveMaster (Driver Training)
+cd apps/drivemaster
 pnpm dev
-# Opens on http://localhost:3004
+# http://localhost:3001
+
+# EduTech (Educational Courses)
+cd apps/edutech
+pnpm dev
+# http://localhost:3007
+
+# SportsHub (Sports Predictions)
+cd apps/sports-hub
+pnpm dev
+# http://localhost:3008
+
+# ControlHub (Internal Monitoring)
+cd apps/controlhub
+pnpm dev
+# http://localhost:3010
 ```
 
 #### Run Multiple Apps Simultaneously
 ```bash
-# From root
+# From monorepo root using Turborepo
 pnpm dev --filter=@allied-impact/portal
 pnpm dev --filter=@allied-impact/coinbox
-pnpm dev --filter=@allied-impact/myprojects
+pnpm dev --filter=@allied-impact/careerbox
 ```
 
 ### Firebase Emulators (Local Development)
 ```bash
-# Start Firebase emulators (Auth, Firestore, Functions)
+# Start Firebase emulators (Auth, Firestore)
 firebase emulators:start
 
 # Emulators run on:
@@ -167,273 +228,242 @@ firebase emulators:start
 
 ---
 
-## 🏗️ Deployment
+## 🔐 Authentication & Single Sign-On
 
-### Environment Structure
+### How Users Access the Platform
+
+#### Option A: Via Main Portal
 ```
-Production:   alliedimpact.com (dashboard)
-              coinbox.alliedimpact.com
-              myprojects.alliedimpact.com
-              drivemaster.alliedimpact.com
-              
-Staging:      staging.alliedimpact.com
-              coinbox-staging.alliedimpact.com
-              ...
-
-Development:  Local only (localhost)
+1. User visits alliedimpact.com
+2. Logs in once (Firebase Auth)
+3. Lands on unified dashboard
+4. Sees all apps they have entitlements to
+5. Clicks app card → navigates to app with SSO
 ```
 
-### Deployment Process
-
-#### 1. Deploy Dashboard (Vercel)
-```bash
-cd web/portal
-vercel --prod
+#### Option B: Direct App Access
+```
+1. User visits coinbox.alliedimpact.com directly
+2. Logs in with same Firebase credentials
+3. App verifies entitlements
+4. Enters app (can navigate back to dashboard)
 ```
 
-#### 2. Deploy Apps (Individual)
-```bash
-# Coin Box (Vercel)
-cd apps/coinbox
-vercel --prod
-
-# My Projects (Vercel)
-cd apps/myprojects
-vercel --prod
-```
-
-#### 3. Deploy Firebase Backend
-```bash
-# Deploy Firestore rules
-firebase deploy --only firestore:rules
-
-# Deploy Firebase Functions
-firebase deploy --only functions
-
-# Deploy all
-firebase deploy
-```
-
-### CI/CD Pipeline
-- **GitHub Actions** configured per app
-- **Auto-deploy on push** to main (staging)
-- **Manual approval** for production
-- **Automated tests** run before deployment
+### Key Security Principles
+- **One Account, All Apps**: Single Firebase identity across the ecosystem
+- **Entitlement-Based Access**: Apps verify permissions before granting access
+- **Isolated Databases**: Each app has its own Firestore collections
+- **No Cross-App Data Sharing**: Apps cannot access each other's data
+- **Defensive Security Rules**: Firestore rules prevent unauthorized access
 
 ---
 
-## 🧠 Where Logic Lives
+## 🏗️ Deployment
+
+### Production Environment
+```
+Production URLs:
+- alliedimpact.com                    (Portal)
+- coinbox.alliedimpact.com           (CoinBox)
+- myprojects.alliedimpact.com        (MyProjects)
+- careerbox.alliedimpact.com         (CareerBox)
+- drivemaster.alliedimpact.com       (DriveMaster)
+- edutech.alliedimpact.com           (EduTech)
+- sportshub.alliedimpact.com         (SportsHub)
+- controlhub.alliedimpact.com        (ControlHub - Internal)
+```
+
+### Deployment Process (Per App)
+```bash
+# Deploy to Vercel
+cd apps/coinbox
+vercel --prod
+
+# Deploy Firestore security rules
+firebase deploy --only firestore:rules --project coinbox-ddc10
+
+# Deploy all Firebase resources
+firebase deploy --project coinbox-ddc10
+```
+
+### CI/CD Pipeline
+- **Auto-deploy**: Push to `main` → staging deployment
+- **Production**: Manual approval required
+- **Testing**: Automated tests run before deployment
+- **Monitoring**: Post-deployment health checks
+
+---
+
+## 📅 February 25, 2026 Launch
+
+### Launch Status: ✅ **GO FOR LAUNCH**
+
+**All Critical Blockers Resolved**:
+- ✅ SportsHub authentication implemented
+- ✅ CareerBox backend APIs connected
+- ✅ EduTech billing integration complete
+- ✅ DriveMaster error logging implemented
+- ✅ All Firestore security rules deployed
+- ✅ Port conflicts resolved
+- ✅ Test routes removed from production
+
+**Launch Day Schedule** (February 25):
+```
+09:00 AM - Deploy Portal
+09:15 AM - Deploy CoinBox
+09:30 AM - Deploy MyProjects
+09:45 AM - Deploy ControlHub
+10:00 AM - Deploy DriveMaster
+10:15 AM - Deploy EduTech
+10:30 AM - Deploy SportsHub
+10:45 AM - Deploy CareerBox
+11:00 AM - Verify all apps, SSO, monitoring
+12:00 PM - Send launch announcement
+```
+
+**Post-Launch Monitoring**:
+- Real-time error tracking
+- User signup flow monitoring
+- Performance metrics (response times, bundle sizes)
+- Support ticket triage (critical bugs < 24 hours)
+
+---
+
+## 🧠 Architecture Principles
 
 ### Platform Layer (`platform/`)
-**Handles**: 
+**Responsibilities**:
 - User authentication (Firebase wrapper)
-- Subscription management
-- Entitlement checking
+- Subscription & billing management
+- Entitlement verification
 - Cross-app notifications
 - Shared types and utilities
 
-**DOES NOT**:
+**Does NOT**:
 - Contain app-specific business logic
 - Access app databases directly
 - Make app-level decisions
 
 ### App Layer (`apps/`)
-**Handles**:
+**Responsibilities**:
 - App-specific business logic
-- App-specific database schemas
+- App-specific database schemas (Firestore collections)
 - App-specific UI/UX
 - App-specific workflows
 
-**DOES NOT**:
-- Duplicate auth systems
+**Does NOT**:
+- Duplicate authentication systems
 - Bypass platform entitlements
 - Share databases with other apps
 
-### Firebase (Hybrid Model)
-**Handles**:
-- Authentication (identity provider)
-- Real-time updates (Firestore listeners)
-- File storage
-- Serverless functions
-
-**DOES NOT**:
-- Serve as source of truth for business logic
-- Enforce business rules (apps own this)
-- Act as primary backend (apps have logic)
-
 ### Key Principle: **Separation of Concerns**
 ```
-Platform = Identity + Access Control
+Platform = Identity + Access Control + Shared Services
 Apps = Business Logic + Data + UI
-Firebase = Auth + Real-time + Storage (NOT business authority)
+Firebase = Auth Provider + Real-time DB + Storage
 ```
-
----
-
-## 📋 Current Platform Status
-
-### Production Ready ✅
-- **Coin Box**: Full P2P financial platform (loans, investments, crypto)
-- **My Projects**: Project management for custom solutions
-- **Platform Auth**: SSO working across all apps
-- **Dashboard**: Unified view of all apps
-
-### Active Development 🚧
-- **Drive Master**: Driver training platform
-- **CodeTech**: Software learning platform
-- **Cup Final**: Sports tournament management
-- **uMkhanyakude**: Schools information portal
-
-### Infrastructure ✅
-- Firebase Auth (SSO)
-- Firestore (per-app databases)
-- Vercel hosting (all apps)
-- GitHub Actions CI/CD
-- Monitoring & logging
-
----
-
-## 🔒 Security & Access Control
-
-### Authentication Flow
-1. User logs in via Firebase Auth (email/password, Google, etc.)
-2. Firebase returns authenticated user (`uid`, `email`)
-3. Platform checks user's `archetypes` and `subscriptions`
-4. Dashboard shows available apps
-5. App verifies entitlement before granting access
-
-### Entitlements Model
-Access is determined by **entitlements**, not hard-coded roles:
-- **Subscription-based**: User pays → gets entitlement
-- **Sponsored**: Organization pays → users get free access
-- **Project-based**: Client contract → project team gets access
-- **Admin**: Platform-granted access
-
-### Security Principles
-- **Firebase Auth is NOT business authority**
-- **Apps own their business logic**
-- **Firestore rules are defensive** (prevent unauthorized access)
-- **No app can access another app's database**
-- **Coin Box is isolated** (financial data protection)
-
----
-
-## 🛠️ Development Principles
-
-### ✅ DO:
-- Reuse platform services (`@allied-impact/auth`, `@allied-impact/entitlements`)
-- Check entitlements before granting app access
-- Document all decisions in app README
-- Use TypeScript everywhere
-- Write tests for critical paths
-- Follow existing patterns (reference Coin Box)
-
-### ❌ DON'T:
-- Rewrite Coin Box or My Projects (production systems)
-- Create new auth systems per app
-- Duplicate entitlement logic
-- Share databases between apps
-- Bypass platform security
-- Add speculative features
-
-### Code Quality Standards
-- **TypeScript**: 100% type coverage
-- **Testing**: Unit tests for business logic
-- **Documentation**: Inline comments + README per app
-- **Git**: Feature branches, PR reviews, semantic commits
-- **CI/CD**: Auto-deploy to staging, manual prod approval
-
----
-
-## 📚 Documentation Guide
-
-This platform has **5 comprehensive documents** (no more, no less):
-
-| Document | Purpose |
-|----------|---------|
-| **README.md** (this file) | Platform overview, how to run, how to deploy, where logic lives |
-| **ALLIED_IMPACT_PLATFORM_MODEL.md** | Business model, user archetypes, platform philosophy |
-| **PLATFORM_AND_PRODUCTS.md** | List of apps, what each does, how they integrate |
-| **ARCHITECTURE_AND_SECURITY.md** | Hybrid Firebase strategy, security principles, access control |
-| **DEVELOPMENT_AND_SCALING_GUIDE.md** | How to add new apps, scaling guidelines, guardrails |
-
-**Each app** also has its own `README.md` with app-specific details.
-
----
-
-## 🎯 Quick Start for New Developers
-
-### Day 1: Setup
-1. Clone repo
-2. Install dependencies (`pnpm install`)
-3. Set up Firebase config (`.env.local`)
-4. Run dashboard locally (`cd web/portal && pnpm dev`)
-5. Run Coin Box locally (`cd apps/coinbox && pnpm dev`)
-
-### Day 2: Explore
-1. Read all 5 platform docs (this README + 4 others)
-2. Browse `platform/` folder (shared services)
-3. Study Coin Box as reference implementation
-4. Understand Firebase hybrid model
-
-### Day 3: Contribute
-1. Pick a task from project board
-2. Create feature branch
-3. Write code + tests
-4. Open PR with description
-5. Get review + merge
-
----
-
-## 🚦 Launch Readiness
-
-### Platform Status: **PRODUCTION READY** ✅
-
-**Ready for Launch**:
-- ✅ Authentication & SSO working
-- ✅ Dashboard functional
-- ✅ 2 production apps (Coin Box, My Projects)
-- ✅ Platform services operational
-- ✅ CI/CD pipelines configured
-- ✅ Documentation consolidated
-- ✅ Security audited
-
-**Pre-Launch Checklist**:
-- ✅ Final security review
-- ✅ Documentation consolidation
-- ✅ Workflow verification
-- ✅ Performance testing
-- ⏳ Beta user testing (in progress)
-- ⏳ Marketing materials
-- ⏳ Support infrastructure
 
 ---
 
 ## 🤝 Contributing
 
-1. **Read Documentation**: All 5 platform docs + app README
-2. **Follow Principles**: No rewrites, no duplication, security-first
-3. **Use Platform Services**: Don't reinvent the wheel
-4. **Write Tests**: Business logic must be tested
-5. **Document Decisions**: Update docs when changing architecture
+### Development Workflow
+1. **Read Documentation**: All platform docs + specific app README
+2. **Create Feature Branch**: `feature/app-name-description`
+3. **Follow Patterns**: Reference CoinBox as gold standard (385+ tests)
+4. **Write Tests**: Unit tests for business logic required
+5. **Open Pull Request**: Detailed description, link to issue
+6. **Code Review**: Minimum 1 approval required
+7. **Merge & Deploy**: Auto-deploy to staging
+
+### Code Quality Standards
+- **TypeScript**: 100% type coverage, no `any` types
+- **Testing**: Unit tests for critical paths, E2E for user flows
+- **Security**: Firestore rules for all collections, entitlement checks
+- **Documentation**: Inline comments, README per app
+- **Git Commits**: Semantic commit messages
+
+### ✅ DO:
+- Reuse platform services (`@allied-impact/auth`, `@allied-impact/entitlements`, `@allied-impact/billing`)
+- Check entitlements before granting app access
+- Write comprehensive tests (reference CoinBox's 385+ tests)
+- Document architectural decisions
+- Follow existing UI patterns (Tailwind + shadcn/ui)
+
+### ❌ DON'T:
+- Rewrite production apps (CoinBox, MyProjects, CareerBox, etc.)
+- Create new authentication systems per app
+- Duplicate entitlement logic
+- Share databases between apps
+- Bypass security rules
+- Add features without user validation
+
+---
+
+## 🎯 Quick Start for New Developers
+
+### Week 1: Onboarding
+**Day 1-2**: Environment Setup
+- Clone repo, install dependencies (`pnpm install`)
+- Set up Firebase configs for local development
+- Run Portal and CoinBox locally
+- Explore unified dashboard and SSO flow
+
+**Day 3-4**: Documentation Deep Dive
+- Read all 5 platform docs (README + 4 comprehensive docs)
+- Study `platform/` shared services architecture
+- Review CoinBox as reference implementation (best practices, testing)
+- Understand Firebase hybrid model (auth + Firestore + storage)
+
+**Day 5**: First Contribution
+- Pick a "good first issue" from project board
+- Create feature branch, implement change
+- Write tests, open PR with detailed description
+- Get code review, iterate, merge
+
+### Week 2: Feature Development
+- Pick app-specific task from sprint backlog
+- Implement feature using platform services
+- Write unit tests + E2E tests (if applicable)
+- Update app README if adding new functionality
+- Deploy to staging for QA review
 
 ---
 
 ## 📞 Support & Contact
 
-- **Technical Issues**: GitHub Issues
+- **Technical Issues**: GitHub Issues (label by app: `coinbox`, `careerbox`, etc.)
 - **Platform Questions**: platform@alliedimpact.com
 - **Business Inquiries**: info@alliedimpact.com
+- **Security Concerns**: security@alliedimpact.com
 
 ---
 
 ## 📄 License
 
 **Proprietary** - © 2024-2026 Allied iMpact  
-All rights reserved. Not for redistribution.
+All rights reserved. Not for public distribution.
 
 ---
 
-**Last Updated**: January 6, 2026  
-**Platform Version**: 2.0  
-**Status**: Production Ready
+## 📊 Platform Metrics
+
+**Total Applications**: 8 production-ready apps  
+**Total Tests**: 385+ (CoinBox alone)  
+**Supported Languages**: English, Zulu, Xhosa (via next-intl)  
+**Firebase Projects**: 6 isolated projects  
+**Development Ports**: 3000-3010  
+**Launch Date**: February 25, 2026  
+**Monorepo Packages**: 13 (5 platform + 8 apps)
+
+**Code Quality**:
+- TypeScript: 100% coverage
+- No critical vulnerabilities
+- All Firestore rules deployed
+- All critical TODOs resolved
+
+---
+
+**Last Updated**: February 17, 2026  
+**Platform Version**: 2.1  
+**Status**: ✅ **ALL 8 APPS PRODUCTION-READY - LAUNCHING FEBRUARY 25, 2026**
