@@ -234,7 +234,7 @@ firebase emulators:start
 
 #### Option A: Via Main Portal
 ```
-1. User visits alliedimpact.com
+1. User visits alliedimpact.co.za
 2. Logs in once (Firebase Auth)
 3. Lands on unified dashboard
 4. Sees all apps they have entitlements to
@@ -243,7 +243,7 @@ firebase emulators:start
 
 #### Option B: Direct App Access
 ```
-1. User visits coinbox.alliedimpact.com directly
+1. User visits coinbox.alliedimpact.co.za directly
 2. Logs in with same Firebase credentials
 3. App verifies entitlements
 4. Enters app (can navigate back to dashboard)
@@ -263,14 +263,14 @@ firebase emulators:start
 ### Production Environment
 ```
 Production URLs:
-- alliedimpact.com                    (Portal)
-- coinbox.alliedimpact.com           (CoinBox)
-- myprojects.alliedimpact.com        (MyProjects)
-- careerbox.alliedimpact.com         (CareerBox)
-- drivemaster.alliedimpact.com       (DriveMaster)
-- edutech.alliedimpact.com           (EduTech)
-- sportshub.alliedimpact.com         (SportsHub)
-- controlhub.alliedimpact.com        (ControlHub - Internal)
+- alliedimpact.co.za                    (Portal)
+- coinbox.alliedimpact.co.za           (CoinBox)
+- myprojects.alliedimpact.co.za        (MyProjects)
+- careerbox.alliedimpact.co.za         (CareerBox)
+- drivemaster.alliedimpact.co.za       (DriveMaster)
+- edutech.alliedimpact.co.za           (EduTech)
+- sportshub.alliedimpact.co.za         (SportsHub)
+- controlhub.alliedimpact.co.za        (ControlHub - Internal)
 ```
 
 ### Deployment Process (Per App)
@@ -433,9 +433,9 @@ Firebase = Auth Provider + Real-time DB + Storage
 ## 📞 Support & Contact
 
 - **Technical Issues**: GitHub Issues (label by app: `coinbox`, `careerbox`, etc.)
-- **Platform Questions**: platform@alliedimpact.com
-- **Business Inquiries**: info@alliedimpact.com
-- **Security Concerns**: security@alliedimpact.com
+- **Platform Questions**: platform@alliedimpact.co.za
+- **Business Inquiries**: info@alliedimpact.co.za
+- **Security Concerns**: security@alliedimpact.co.za
 
 ---
 

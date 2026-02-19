@@ -280,7 +280,7 @@ Proprietary - Allied iMpact (Pty) Ltd
 
 - Documentation: `/docs`
 - Issues: GitHub Issues
-- Email: support@alliedimpact.com
+- Email: support@alliedimpact.co.za
 
 ---
 

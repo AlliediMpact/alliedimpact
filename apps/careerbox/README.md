@@ -199,7 +199,7 @@ Proprietary - Allied iMpact Platform
 ## 📞 Support
 
 For support and questions:
-- Email: support@alliedimpact.com
+- Email: support@alliedimpact.co.za
 - Documentation: See documentation files
 - Issues: Create an issue in the repository
 

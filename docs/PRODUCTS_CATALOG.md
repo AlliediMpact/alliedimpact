@@ -59,7 +59,7 @@ All Allied iMpact products fall into **one of three categories**:
 **Firebase Project**: `allied-impact-platform`  
 **Category**: Internal/Platform  
 **Status**: ✅ **Production Ready**  
-**URL**: alliedimpact.com
+**URL**: alliedimpact.co.za
 
 #### What It Does
 Main platform entry point and unified dashboard:
@@ -104,7 +104,7 @@ Main platform entry point and unified dashboard:
 **Firebase Project**: `coinbox-ddc10`  
 **Category**: Subscription  
 **Status**: ✅ **Production Ready** | Version 2.1.0  
-**URL**: coinbox.alliedimpact.com
+**URL**: coinbox.alliedimpact.co.za
 
 #### What It Does
 Peer-to-peer financial platform with comprehensive features:
@@ -164,7 +164,7 @@ Peer-to-peer financial platform with comprehensive features:
 **Firebase Project**: `careerbox-64e54`  
 **Category**: Subscription  
 **Status**: ✅ **Production Ready** | Version 1.0  
-**URL**: careerbox.alliedimpact.com
+**URL**: careerbox.alliedimpact.co.za
 
 #### What It Does
 Comprehensive job matching and recruitment platform:
@@ -215,7 +215,7 @@ Comprehensive job matching and recruitment platform:
 **Firebase Project**: `drivemaster-513d9`  
 **Category**: Subscription  
 **Status**: ✅ **Production Ready**  
-**URL**: drivemaster.alliedimpact.com
+**URL**: drivemaster.alliedimpact.co.za
 
 #### What It Does
 Comprehensive learner's license training platform:
@@ -266,7 +266,7 @@ Comprehensive learner's license training platform:
 **Firebase Project**: `edutech-4f548`  
 **Category**: Subscription  
 **Status**: ✅ **Production Ready**  
-**URL**: edutech.alliedimpact.com
+**URL**: edutech.alliedimpact.co.za
 
 #### What It Does
 Educational courses platform with premium content:
@@ -316,7 +316,7 @@ Educational courses platform with premium content:
 **Firebase Project**: `sportshub-526df`  
 **Category**: Subscription  
 **Status**: ✅ **Production Ready** | Version 1.0  
-**URL**: sportshub.alliedimpact.com
+**URL**: sportshub.alliedimpact.co.za
 
 #### What It Does
 Sports predictions, voting, and tournament management:
@@ -361,7 +361,7 @@ Sports predictions, voting, and tournament management:
 **Firebase Project**: `allied-impact-platform` (shared)  
 **Category**: Project-Based  
 **Status**: ✅ **Production Ready** | Version 1.0  
-**URL**: myprojects.alliedimpact.com
+**URL**: myprojects.alliedimpact.co.za
 
 #### What It Does
 Project management for custom software solutions:
@@ -406,7 +406,7 @@ Project management for custom software solutions:
 **Firebase Project**: `controlhub-6376f`  
 **Category**: Internal/Platform  
 **Status**: ✅ **Production Ready** | Version 1.0  
-**URL**: controlhub.alliedimpact.com
+**URL**: controlhub.alliedimpact.co.za
 
 #### What It Does
 Internal platform monitoring and observability:
@@ -525,7 +525,7 @@ Located in: `packages/ui/src/components/`
 ### SSO Flow
 
 ```
-1. User logs in to Portal (alliedimpact.com)
+1. User logs in to Portal (alliedimpact.co.za)
 2. Firebase session saved in cookie
 3. User clicks "Open CoinBox"
 4. CoinBox validates Firebase session

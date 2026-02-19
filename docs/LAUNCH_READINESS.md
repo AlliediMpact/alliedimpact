@@ -82,7 +82,7 @@
 
 #### 🌐 Portal (Platform Hub)
 **Status**: ✅ **100% READY**  
-**URL**: alliedimpact.com  
+**URL**: alliedimpact.co.za  
 **Port**: 3005  
 **Firebase**: `allied-impact-platform` (shared with MyProjects)
 
@@ -108,7 +108,7 @@
 
 #### 🪙 CoinBox (P2P Financial Platform)
 **Status**: ✅ **100% READY**  
-**URL**: coinbox.alliedimpact.com  
+**URL**: coinbox.alliedimpact.co.za  
 **Port**: 3000  
 **Firebase**: `coinbox-ddc10` (isolated)
 
@@ -148,7 +148,7 @@
 
 #### 💼 CareerBox (Job Matching Platform)
 **Status**: ✅ **100% READY**  
-**URL**: careerbox.alliedimpact.com  
+**URL**: careerbox.alliedimpact.co.za  
 **Port**: 3003  
 **Firebase**: `careerbox-64e54` (isolated)
 
@@ -189,7 +189,7 @@
 
 #### 🚗 DriveMaster (Driver Training)
 **Status**: ✅ **100% READY**  
-**URL**: drivemaster.alliedimpact.com  
+**URL**: drivemaster.alliedimpact.co.za  
 **Port**: 3001  
 **Firebase**: `drivemaster-513d9` (isolated)
 
@@ -223,7 +223,7 @@
 
 #### 📚 EduTech (Educational Courses)
 **Status**: ✅ **100% READY**  
-**URL**: edutech.alliedimpact.com  
+**URL**: edutech.alliedimpact.co.za  
 **Port**: 3007  
 **Firebase**: `edutech-4f548` (isolated)
 
@@ -261,7 +261,7 @@
 
 #### ⚽ SportsHub (Sports Predictions & Voting)
 **Status**: ✅ **100% READY**  
-**URL**: sportshub.alliedimpact.com  
+**URL**: sportshub.alliedimpact.co.za  
 **Port**: 3008  
 **Firebase**: `sportshub-526df` (isolated)
 
@@ -298,7 +298,7 @@
 
 #### 📊 MyProjects (Project Management)
 **Status**: ✅ **100% READY**  
-**URL**: myprojects.alliedimpact.com  
+**URL**: myprojects.alliedimpact.co.za  
 **Port**: 3006  
 **Firebase**: `allied-impact-platform` (shared with Portal)
 
@@ -331,7 +331,7 @@
 
 #### 🎛️ ControlHub (Platform Observability)
 **Status**: ✅ **100% READY**  
-**URL**: controlhub.alliedimpact.com  
+**URL**: controlhub.alliedimpact.co.za  
 **Port**: 3010  
 **Firebase**: `controlhub-6376f` (isolated)
 
@@ -526,14 +526,14 @@ All critical blockers have been resolved as of February 8, 2026:
   - [ ] Build logs verified (no errors)
 
 - [ ] **Custom Domains**
-  - [ ] alliedimpact.com → Portal
-  - [ ] coinbox.alliedimpact.com → CoinBox
-  - [ ] careerbox.alliedimpact.com → CareerBox
-  - [ ] drivemaster.alliedimpact.com → DriveMaster
-  - [ ] edutech.alliedimpact.com → EduTech
-  - [ ] sportshub.alliedimpact.com → SportsHub
-  - [ ] myprojects.alliedimpact.com → MyProjects
-  - [ ] controlhub.alliedimpact.com → ControlHub
+  - [ ] alliedimpact.co.za → Portal
+  - [ ] coinbox.alliedimpact.co.za → CoinBox
+  - [ ] careerbox.alliedimpact.co.za → CareerBox
+  - [ ] drivemaster.alliedimpact.co.za → DriveMaster
+  - [ ] edutech.alliedimpact.co.za → EduTech
+  - [ ] sportshub.alliedimpact.co.za → SportsHub
+  - [ ] myprojects.alliedimpact.co.za → MyProjects
+  - [ ] controlhub.alliedimpact.co.za → ControlHub
 
 - [ ] **SSL Certificates**
   - [ ] All domains have HTTPS active
@@ -607,7 +607,7 @@ All critical blockers have been resolved as of February 8, 2026:
 - [ ] **Documentation Complete**
   - [ ] User guides ready for each app
   - [ ] FAQ sections prepared
-  - [ ] Support email configured (help@alliedimpact.com)
+  - [ ] Support email configured (help@alliedimpact.co.za)
   - [ ] Launch announcement drafted
 
 - [ ] **Communication Plan**
@@ -685,7 +685,7 @@ All critical blockers have been resolved as of February 8, 2026:
 - **DevOps Lead**: [Name + Contact]
 - **QA Lead**: [Name + Contact]
 - **Product Owner**: [Name + Contact]
-- **Customer Support**: help@alliedimpact.com
+- **Customer Support**: help@alliedimpact.co.za
 
 ### Escalation Protocol
 

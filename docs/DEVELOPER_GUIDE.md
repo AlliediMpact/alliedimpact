@@ -420,7 +420,7 @@ Required in `.env.local`:
 ## Deployment
 
 **Hosting**: Vercel  
-**URL**: mynewapp.alliedimpact.com  
+**URL**: mynewapp.alliedimpact.co.za  
 
 Deploy command:
 ```powershell
@@ -429,7 +429,7 @@ vercel --prod
 
 ## Support
 
-Contact: dev@alliedimpact.com
+Contact: dev@alliedimpact.co.za
 ```
 
 #### Step 13: Register in Platform & Portal
@@ -446,7 +446,7 @@ export const PRODUCTS: Record<string, ProductMetadata> = {
     category: ProductCategory.SUBSCRIPTION,
     icon: '📱', // Choose appropriate emoji
     url: process.env.NODE_ENV === 'production' 
-      ? 'https://mynewapp.alliedimpact.com' 
+      ? 'https://mynewapp.alliedimpact.co.za' 
       : 'http://localhost:3011',
     status: 'beta',
     subscription: {
@@ -495,7 +495,7 @@ vercel --prod
 # 3. Deploy Firestore rules
 firebase deploy --only firestore:rules
 
-# 4. Add custom domain in Vercel: mynewapp.alliedimpact.com
+# 4. Add custom domain in Vercel: mynewapp.alliedimpact.co.za
 
 # 5. Test production deployment
 ```
@@ -999,7 +999,7 @@ Go to Vercel Dashboard → Project → Settings → Environment Variables
 #### Custom Domain Setup
 
 1. Vercel Dashboard → Project → Settings → Domains
-2. Add custom domain: `mynewapp.alliedimpact.com`
+2. Add custom domain: `mynewapp.alliedimpact.co.za`
 3. Update DNS records as instructed
 4. Wait for SSL certificate (automatic)
 
@@ -1158,7 +1158,7 @@ const itemsRef = collection(db, 'myapp_items');
 
 **Fix**:
 1. Firebase Console → Authentication → Settings → Authorized domains
-2. Add: `localhost`, `mynewapp.alliedimpact.com`, `mynewapp.vercel.app`
+2. Add: `localhost`, `mynewapp.alliedimpact.co.za`, `mynewapp.vercel.app`
 
 #### "Entitlement check returns false but user has subscription"
 

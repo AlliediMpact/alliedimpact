@@ -305,8 +305,8 @@ pnpm start
 **Internal Use Only**
 
 For issues or questions:
-- Platform Team: platform@alliedimpact.com
-- Security Team: security@alliedimpact.com
+- Platform Team: platform@alliedimpact.co.za
+- Security Team: security@alliedimpact.co.za
 
 ---
 

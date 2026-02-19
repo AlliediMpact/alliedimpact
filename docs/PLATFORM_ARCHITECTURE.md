@@ -280,7 +280,7 @@ const user = await signIn(email, password);
 
 **How SSO Works**:
 ```
-1. User logs in to Portal (alliedimpact.com)
+1. User logs in to Portal (alliedimpact.co.za)
 2. Firebase session saved in cookie
 3. User clicks "Open CoinBox"
 4. CoinBox checks Firebase session

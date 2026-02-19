@@ -13,7 +13,7 @@ EduTech is Allied iMpact's comprehensive education platform offering dual learni
 
 **Status**: Active Development | Target Launch: February 25, 2026  
 **Port**: 3007  
-**URL**: edutech.alliedimpact.com (staging)
+**URL**: edutech.alliedimpact.co.za (staging)
 
 ---
 
@@ -255,7 +255,7 @@ All UI text uses next-intl for translations.
 ## 📞 Support
 
 - **Slack**: #edutech-dev
-- **Email**: edutech@alliedimpact.com
+- **Email**: edutech@alliedimpact.co.za
 - **Docs**: [Platform Documentation](../../docs/)
 
 ---

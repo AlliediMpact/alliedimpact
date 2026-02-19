@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0  
 **Status:** ✅ Production Ready  
-**Domain:** myprojects.alliedimpact.com  
+**Domain:** myprojects.alliedimpact.co.za  
 **Port:** 3006 (development)
 
 ---
@@ -35,7 +35,7 @@ My Projects is a dedicated client portal for Allied iMpact's custom solution cli
 ### App Independence
 My Projects is a **standalone Next.js application** with its own:
 - Codebase and repository folder (`apps/myprojects/`)
-- Domain and routing (`myprojects.alliedimpact.com`)
+- Domain and routing (`myprojects.alliedimpact.co.za`)
 - Deployment pipeline (independent of other apps)
 - Scaling strategy (can scale separately)
 - PWA support (can be installed as app)
@@ -166,7 +166,7 @@ While independent, My Projects integrates with the Allied iMpact platform:
 ## User Flows
 
 ### Flow 1: New Client Onboarding
-1. Client completes solution discovery questionnaire on alliedimpact.com
+1. Client completes solution discovery questionnaire on alliedimpact.co.za
 2. Clicks "Start My Project" button
 3. Redirected to My Projects app
 4. Registers account (email/password + Google/GitHub OAuth)
@@ -174,14 +174,14 @@ While independent, My Projects integrates with the Allied iMpact platform:
 6. Access project dashboard
 
 ### Flow 2: Returning Client
-1. Direct access to `myprojects.alliedimpact.com`
+1. Direct access to `myprojects.alliedimpact.co.za`
 2. Login with Allied iMpact credentials (SSO)
 3. View all projects (active + archived)
 4. Select project → Dashboard
 5. Track progress, communicate, pay milestones
 
 ### Flow 3: Via Platform Dashboard
-1. Login to `alliedimpact.com`
+1. Login to `alliedimpact.co.za`
 2. See "My Projects" in app grid on Individual Dashboard
 3. Click "My Projects" → SSO redirect
 4. Seamlessly access projects (no re-login)
@@ -475,7 +475,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment instructions i
 - Firebase project setup
 - Environment configuration
 - Security rules deployment
-- Domain setup (myprojects.alliedimpact.com)
+- Domain setup (myprojects.alliedimpact.co.za)
 - SSL certificate configuration
 - Post-deployment checklist
 - Monitoring and logging setup
@@ -515,7 +515,7 @@ See [PRODUCTION_STATUS.md](./PRODUCTION_STATUS.md) for detailed production readi
 ## Support and Contributing
 
 ### Bug Reports
-Create support ticket in-app or email: support@alliedimpact.com
+Create support ticket in-app or email: support@alliedimpact.co.za
 
 ### Feature Requests
 Create ticket with category "Feature Request" and describe your use case
@@ -533,7 +533,7 @@ Proprietary - © 2026 Allied iMpact. All rights reserved.
 
 ## Links
 
-- **Live App**: https://myprojects.alliedimpact.com
-- **Platform**: https://alliedimpact.com
+- **Live App**: https://myprojects.alliedimpact.co.za
+- **Platform**: https://alliedimpact.co.za
 - **Documentation**: See PRODUCTION_STATUS.md and DEPLOYMENT.md
-- **Support**: support@alliedimpact.com
+- **Support**: support@alliedimpact.co.za

@@ -48,7 +48,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 # Optional but recommended
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-NEXT_PUBLIC_APP_URL=https://portal.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://alliedimpact.co.za
 
 # Feature flags
 NEXT_PUBLIC_ENABLE_ANALYTICS=true
@@ -142,7 +142,7 @@ The middleware will automatically use Redis if environment variables are set.
 ### 6. Configure Custom Domain (Optional)
 
 1. In Vercel project settings, go to "Domains"
-2. Add your custom domain: `portal.alliedimpact.com`
+2. Add your custom domain: `alliedimpact.co.za`
 3. Update DNS records as instructed by Vercel
 4. Wait for DNS propagation (up to 48 hours)
 5. Vercel will automatically provision SSL certificate
