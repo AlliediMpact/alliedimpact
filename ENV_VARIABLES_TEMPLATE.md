@@ -4,7 +4,7 @@
 
 ---
 
-## 1. Portal (alliedimpact.com)
+## 1. Portal (alliedimpact.co.za)
 
 ```bash
 # Firebase Configuration (Get from Firebase Console → Project Settings)
@@ -16,8 +16,8 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://alliedimpact.com
-NEXT_PUBLIC_API_URL=https://alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://alliedimpact.co.za
+NEXT_PUBLIC_API_URL=https://alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -32,7 +32,7 @@ NEXT_PUBLIC_ENVIRONMENT=production
 
 ---
 
-## 2. CoinBox (coinbox.alliedimpact.com)
+## 2. CoinBox (coinbox.alliedimpact.co.za)
 
 ```bash
 # Paystack (Get from https://dashboard.paystack.com/#/settings/developer)
@@ -54,10 +54,10 @@ FIREBASE_CLIENT_EMAIL=
 FIREBASE_PRIVATE_KEY=
 
 # App URLs
-NEXT_PUBLIC_APP_URL=https://coinbox.alliedimpact.com
-NEXT_PUBLIC_BASE_URL=https://coinbox.alliedimpact.com
-NEXT_PUBLIC_VERIFICATION_REDIRECT_URL=https://coinbox.alliedimpact.com/auth/verify-email
-NEXT_PUBLIC_DASHBOARD_URL=https://alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://coinbox.alliedimpact.co.za
+NEXT_PUBLIC_BASE_URL=https://coinbox.alliedimpact.co.za
+NEXT_PUBLIC_VERIFICATION_REDIRECT_URL=https://coinbox.alliedimpact.co.za/auth/verify-email
+NEXT_PUBLIC_DASHBOARD_URL=https://alliedimpact.co.za
 
 # Google AI (Get from https://makersuite.google.com/app/apikey)
 GOOGLE_AI_API_KEY=
@@ -98,7 +98,7 @@ NEXT_PUBLIC_ENVIRONMENT=production
 
 ---
 
-## 3. CareerBox (careerbox.alliedimpact.com)
+## 3. CareerBox (careerbox.alliedimpact.co.za)
 
 ```bash
 # Firebase Configuration (Project: careerbox-64e54)
@@ -110,7 +110,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://careerbox.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://careerbox.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -119,7 +119,7 @@ NEXT_PUBLIC_ENVIRONMENT=production
 
 ---
 
-## 4. DriveMaster (drivemaster.alliedimpact.com)
+## 4. DriveMaster (drivemaster.alliedimpact.co.za)
 
 ```bash
 # Firebase Configuration (Project: drivemaster-513d9)
@@ -131,7 +131,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://drivemaster.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://drivemaster.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -139,7 +139,7 @@ NODE_ENV=production
 
 ---
 
-## 5. EduTech (edutech.alliedimpact.com)
+## 5. EduTech (edutech.alliedimpact.co.za)
 
 ```bash
 # Firebase Configuration (Project: edutech-4f548)
@@ -151,7 +151,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://edutech.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://edutech.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -159,7 +159,7 @@ NODE_ENV=production
 
 ---
 
-## 6. SportsHub (sportshub.alliedimpact.com)
+## 6. SportsHub (sportshub.alliedimpact.co.za)
 
 ```bash
 # Firebase Configuration (Project: sportshub-526df)
@@ -180,7 +180,7 @@ RECAPTCHA_SECRET_KEY=
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://sportshub.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://sportshub.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -188,7 +188,7 @@ NODE_ENV=production
 
 ---
 
-## 7. MyProjects (myprojects.alliedimpact.com)
+## 7. MyProjects (myprojects.alliedimpact.co.za)
 
 ```bash
 # Firebase Configuration (Shares with Portal: allied-impact-platform)
@@ -200,7 +200,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://myprojects.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://myprojects.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -208,7 +208,7 @@ NODE_ENV=production
 
 ---
 
-## 8. ControlHub (controlhub.alliedimpact.com)
+## 8. ControlHub (controlhub.alliedimpact.co.za)
 
 ```bash
 # Firebase Configuration (Project: controlhub-6376f)
@@ -220,7 +220,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://controlhub.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://controlhub.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production

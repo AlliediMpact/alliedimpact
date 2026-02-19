@@ -51,22 +51,22 @@ node --version  # Should be >= 18.0.0
 Deploy in this specific order to ensure proper SSO flow:
 
 ### 🎯 Phase 1: Portal First (Foundation)
-1. **Portal** (web/portal) → `alliedimpact.com`
+1. **Portal** (web/portal) → `alliedimpact.co.za`
    - Priority: HIGHEST
    - Reason: Central hub for SSO and cross-app navigation
 
 ### 🎯 Phase 2: Core Apps (High Usage Expected)
-2. **CoinBox** (apps/coinbox) → `coinbox.alliedimpact.com`
-3. **MyProjects** (apps/myprojects) → `myprojects.alliedimpact.com`
-4. **CareerBox** (apps/careerbox) → `careerbox.alliedimpact.com`
+2. **CoinBox** (apps/coinbox) → `coinbox.alliedimpact.co.za`
+3. **MyProjects** (apps/myprojects) → `myprojects.alliedimpact.co.za`
+4. **CareerBox** (apps/careerbox) → `careerbox.alliedimpact.co.za`
 
 ### 🎯 Phase 3: Supporting Apps
-5. **SportsHub** (apps/sports-hub) → `sportshub.alliedimpact.com`
-6. **DriveMaster** (apps/drivemaster) → `drivemaster.alliedimpact.com`
-7. **EduTech** (apps/edutech) → `edutech.alliedimpact.com`
+5. **SportsHub** (apps/sports-hub) → `sportshub.alliedimpact.co.za`
+6. **DriveMaster** (apps/drivemaster) → `drivemaster.alliedimpact.co.za`
+7. **EduTech** (apps/edutech) → `edutech.alliedimpact.co.za`
 
 ### 🎯 Phase 4: Internal Tools
-8. **ControlHub** (apps/controlhub) → `controlhub.alliedimpact.com`
+8. **ControlHub** (apps/controlhub) → `controlhub.alliedimpact.co.za`
 
 ---
 
@@ -88,8 +88,8 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=<from Firebase Console>
 NEXT_PUBLIC_FIREBASE_APP_ID=<from Firebase Console>
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://alliedimpact.com
-NEXT_PUBLIC_API_URL=https://alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://alliedimpact.co.za
+NEXT_PUBLIC_API_URL=https://alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -117,9 +117,9 @@ FIREBASE_CLIENT_EMAIL=<from service account JSON>
 FIREBASE_PRIVATE_KEY="<from service account JSON - must be enclosed in quotes>"
 
 # App URLs
-NEXT_PUBLIC_APP_URL=https://coinbox.alliedimpact.com
-NEXT_PUBLIC_BASE_URL=https://coinbox.alliedimpact.com
-NEXT_PUBLIC_DASHBOARD_URL=https://alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://coinbox.alliedimpact.co.za
+NEXT_PUBLIC_BASE_URL=https://coinbox.alliedimpact.co.za
+NEXT_PUBLIC_DASHBOARD_URL=https://alliedimpact.co.za
 
 # Google AI (for crypto predictions)
 GOOGLE_AI_API_KEY=<from Google AI Studio>
@@ -158,7 +158,7 @@ RECAPTCHA_SECRET_KEY=<from Google reCAPTCHA>
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=<from Google reCAPTCHA>
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://sportshub.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://sportshub.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -178,7 +178,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=<from Firebase>
 NEXT_PUBLIC_FIREBASE_APP_ID=<from Firebase>
 
 # App URL
-NEXT_PUBLIC_APP_URL=https://<app-subdomain>.alliedimpact.com
+NEXT_PUBLIC_APP_URL=https://<app-subdomain>.alliedimpact.co.za
 
 # Environment
 NODE_ENV=production
@@ -306,35 +306,35 @@ For each app's Vercel project:
 2. Add your custom domain:
 
 **Portal**:
-- Primary: `alliedimpact.com`
-- Redirect: `www.alliedimpact.com` → `alliedimpact.com`
+- Primary: `alliedimpact.co.za`
+- Redirect: `www.alliedimpact.co.za` → `alliedimpact.co.za`
 
 **CoinBox**:
-- Primary: `coinbox.alliedimpact.com`
+- Primary: `coinbox.alliedimpact.co.za`
 
 **CareerBox**:
-- Primary: `careerbox.alliedimpact.com`
+- Primary: `careerbox.alliedimpact.co.za`
 
 **DriveMaster**:
-- Primary: `drivemaster.alliedimpact.com`
+- Primary: `drivemaster.alliedimpact.co.za`
 
 **EduTech**:
-- Primary: `edutech.alliedimpact.com`
+- Primary: `edutech.alliedimpact.co.za`
 
 **SportsHub**:
-- Primary: `sportshub.alliedimpact.com`
+- Primary: `sportshub.alliedimpact.co.za`
 
 **MyProjects**:
-- Primary: `myprojects.alliedimpact.com`
+- Primary: `myprojects.alliedimpact.co.za`
 
 **ControlHub**:
-- Primary: `controlhub.alliedimpact.com`
+- Primary: `controlhub.alliedimpact.co.za`
 
 #### Step 2: Update DNS Records
 
 **⚠️ YOU MUST DO THIS**: Update your domain DNS settings (at your domain registrar):
 
-**For Root Domain (alliedimpact.com)**:
+**For Root Domain (alliedimpact.co.za)**:
 ```
 Type: A
 Name: @
@@ -375,7 +375,7 @@ CNAME  controlhub      cname.vercel-dns.com
 
 Visit each URL and verify:
 
-**Portal** (https://alliedimpact.com):
+**Portal** (https://alliedimpact.co.za):
 - [ ] Homepage loads
 - [ ] Login page works
 - [ ] Signup page works
@@ -383,7 +383,7 @@ Visit each URL and verify:
 - [ ] Legal pages accessible (privacy, terms)
 - [ ] PWA installable (check browser prompt)
 
-**CoinBox** (https://coinbox.alliedimpact.com):
+**CoinBox** (https://coinbox.alliedimpact.co.za):
 - [ ] Homepage loads
 - [ ] Login works
 - [ ] Dashboard accessible after login
@@ -403,7 +403,7 @@ Visit each URL and verify:
 #### 2. Test Cross-App Navigation (SSO)
 
 **Critical Test**:
-1. Login to Portal (alliedimpact.com)
+1. Login to Portal (alliedimpact.co.za)
 2. Click "Open CoinBox" from dashboard
 3. Verify you're automatically logged into CoinBox (no re-login)
 4. Navigate back to Portal
