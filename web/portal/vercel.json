@@ -94,11 +94,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "regions": ["iad1"],
-  "functions": {
-    "api/**": {
-      "maxDuration": 10
-    }
   }
 }
