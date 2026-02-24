@@ -7,7 +7,7 @@
     "platform/*",
     "apps/*",
     "packages/*",
-    "web"
+    "web/*"
   ],
   "scripts": {
     "dev": "turbo run dev",

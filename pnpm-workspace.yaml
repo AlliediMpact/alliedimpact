@@ -2,4 +2,4 @@ packages:
   - 'platform/*'
   - 'apps/*'
   - 'packages/*'
-  - 'web'
+  - 'web/*'
