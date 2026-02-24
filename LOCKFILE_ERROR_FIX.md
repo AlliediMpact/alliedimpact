@@ -1,0 +1,283 @@
+# Lockfile Error Fix - Deployment Error #4
+
+**Error Date:** February 24, 2026  
+**Deployment Stage:** Vercel Build (Install Phase)  
+**Status:** ✅ Fix Created - User Action Required
+
+---
+
+## Error Message
+
+```
+ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because 
+pnpm-lock.yaml is not up to date with web/portal/package.json
+
+Note that in CI environments this setting is true by default. If you still 
+need to run install in such cases, use "pnpm install --no-frozen-lockfile"
+
+Failure reason:
+specifiers in the lockfile ({}) don't match specs in package.json 
+({"@types/react":"^18.2.45","@types/react-dom":"^18.2.18",...})
+```
+
+---
+
+## What Happened
+
+### Timeline of Events
+
+1. **Feb 24, Evening**: Fixed workspace configuration error
+   - Changed `"web"` → `"web/*"` in package.json
+   - Changed `'web'` → `'web/*'` in pnpm-workspace.yaml
+   - Committed and pushed workspace fix
+
+2. **Feb 24, 21:58**: User deployed to Vercel
+   - Vercel cloned repo (commit: 8576ec8)
+   - Vercel ran `pnpm install --frozen-lockfile`
+   - **ERROR**: Lockfile was generated with OLD workspace config
+
+### Root Cause
+
+The `pnpm-lock.yaml` file was generated **BEFORE** the workspace configuration fix:
+
+```yaml
+# OLD workspace config (when lockfile was generated)
+workspaces:
+  - "web"  # ❌ Points to non-existent web/package.json
+
+# NEW workspace config (now in package.json)
+workspaces:
+  - "web/*"  # ✅ Points to web/portal/package.json
+```
+
+**Result**: The lockfile has **empty specifiers** `{}` for `web/portal/package.json` because when it was generated, the workspace config pointed to `"web"` which doesn't exist. It never processed `web/portal/package.json` properly.
+
+### Why Vercel Failed
+
+1. Vercel clones the repo (includes old pnpm-lock.yaml)
+2. Vercel reads workspace config (now correct: `web/*`)
+3. Vercel runs `pnpm install --frozen-lockfile`
+4. pnpm sees lockfile specifiers `{}` don't match package.json specifiers (all the dependencies)
+5. pnpm throws `ERR_PNPM_OUTDATED_LOCKFILE`
+6. Build fails
+
+---
+
+## The Fix
+
+### Quick Fix (Automated Script)
+
+I've created an automated fix script: [fix-lockfile.ps1](fix-lockfile.ps1)
+
+**Run this command:**
+
+```powershell
+cd C:\Users\iMpact SA\Desktop\projects\alliedimpact
+.\fix-lockfile.ps1
+```
+
+**What the script does:**
+1. ✅ Deletes old pnpm-lock.yaml
+2. ✅ Verifies workspace configuration is correct
+3. ✅ Runs `pnpm install` to regenerate lockfile
+4. ✅ Verifies new lockfile includes web/portal
+5. ✅ Commits and pushes to GitHub
+
+**Expected output:**
+```
+[1/5] Cleaning up lockfiles...
+  ✓ Deleted old pnpm-lock.yaml
+
+[2/5] Verifying workspace configuration...
+  ✓ Workspace configuration correct (web/*)
+
+[3/5] Regenerating pnpm-lock.yaml...
+  This may take 2-3 minutes...
+  ✓ Lockfile regenerated successfully
+
+[4/5] Verifying lockfile...
+  ✓ Lockfile created (XXX KB)
+  ✓ Lockfile includes web/portal workspace
+
+[5/5] Committing changes...
+  ✓ Changes committed
+  ✓ Pushed to GitHub successfully
+
+✓ LOCKFILE FIX COMPLETE!
+```
+
+---
+
+### Manual Fix (If Script Fails)
+
+If the automated script doesn't work, run these commands manually:
+
+```powershell
+# 1. Navigate to project root
+cd C:\Users\iMpact SA\Desktop\projects\alliedimpact
+
+# 2. Delete old lockfile
+Remove-Item pnpm-lock.yaml -Force
+
+# 3. Regenerate lockfile (takes 2-3 minutes)
+pnpm install
+
+# 4. Verify lockfile was created
+Test-Path pnpm-lock.yaml  # Should return True
+
+# 5. Verify lockfile size
+(Get-Item pnpm-lock.yaml).Length  # Should be > 100KB
+
+# 6. Check if web/portal is included
+Select-String -Path pnpm-lock.yaml -Pattern "web/portal" -Quiet  # Should return True
+
+# 7. Commit and push
+git add pnpm-lock.yaml
+git commit -m "Regenerate pnpm-lock.yaml with corrected workspace config"
+git push origin main
+```
+
+---
+
+## Verification Before Deploying
+
+Before deploying to Vercel again, verify:
+
+### 1. Lockfile Exists
+```powershell
+Test-Path pnpm-lock.yaml
+# Expected: True
+```
+
+### 2. Lockfile Contains web/portal
+```powershell
+Select-String -Path pnpm-lock.yaml -Pattern "web/portal" | Select-Object -First 3
+# Expected: Should show lines with "web/portal"
+```
+
+### 3. Workspace Config Correct
+```powershell
+Select-String -Path package.json -Pattern '"web/\*"'
+# Expected: Should show "web/*" in workspaces array
+```
+
+### 4. Local Build Works
+```powershell
+pnpm turbo build --filter=@allied-impact/portal
+# Expected: Build succeeds without errors
+```
+
+---
+
+## After Fixing
+
+### What Happens Next
+
+1. **You run the fix script** → Lockfile regenerated with correct workspace config
+2. **Git push completes** → GitHub has new lockfile
+3. **You deploy to Vercel** → Vercel clones repo (includes new lockfile)
+4. **Vercel runs pnpm install** → Uses new lockfile with all dependencies
+5. **Build succeeds** → No more "outdated lockfile" error! ✅
+
+### Expected Vercel Build Log
+
+```
+21:58:50.580 Detected `pnpm-lock.yaml` version 6 generated by pnpm@8.x
+21:58:50.586 Running "install" command: `pnpm install`...
+21:58:51.301 Scope: all 19 workspace projects
+21:58:51.500 Packages: +2073
+21:58:51.500 ++++++++++++++++++++++++++++++++++++++++++
+21:58:52.000 Progress: resolved 2073, reused 2050, downloaded 23, added 2073
+21:58:52.500 ✓ Installation complete
+```
+
+---
+
+## Why This Error Was Expected
+
+This error was **inevitable** because:
+
+1. The workspace configuration was broken (pointing to `"web"`)
+2. The lockfile was generated with the broken config
+3. We fixed the workspace config (`"web"` → `"web/*"`)
+4. **But we forgot to regenerate the lockfile!**
+
+**Rule:** Whenever you change `package.json` workspaces or `pnpm-workspace.yaml`, you **MUST** regenerate `pnpm-lock.yaml` by:
+- Deleting the old lockfile
+- Running `pnpm install`
+- Committing the new lockfile
+
+---
+
+## Deployment Blockers Summary
+
+| # | Error | Status | Fixed Date |
+|---|-------|--------|------------|
+| 1 | Monorepo build config | ✅ Fixed | Feb 24 |
+| 2 | API functions pattern error | ✅ Fixed | Feb 24 |
+| 3 | Workspace configuration | ✅ Fixed | Feb 24 |
+| 4 | Outdated lockfile | 🔧 Fix Ready | Feb 24 |
+
+**After running the fix script, all 4 blockers will be resolved!**
+
+---
+
+## Timeline to Launch
+
+**Current Time:** Feb 24, 2026 - 21:58  
+**Launch Deadline:** Feb 25, 2026
+
+**Remaining Steps:**
+- ⏱️ **Now**: Run fix-lockfile.ps1 (5 minutes)
+- ⏱️ **22:05**: Deploy Portal to Vercel (10 minutes)
+- ⏱️ **22:15**: Add environment variables (30 minutes)
+- ⏱️ **22:45**: Deploy remaining 7 apps (60 minutes)
+- ⏱️ **23:45**: Configure domains (30 minutes)
+- ⏱️ **00:15 (Feb 25)**: Final testing (60 minutes)
+- ⏱️ **01:15 (Feb 25)**: Buffer time (remaining hours until morning)
+- ✅ **Feb 25 Morning**: LAUNCH READY! 🚀
+
+**You're on track for launch!** Just need to regenerate the lockfile and deploy.
+
+---
+
+## If Deployment Still Fails
+
+If you get another error after fixing the lockfile, check:
+
+1. **Verify commit is latest**: 
+   ```powershell
+   git log --oneline -1
+   # Should show "Regenerate pnpm-lock.yaml..."
+   ```
+
+2. **Verify Vercel pulled correct commit**:
+   - Check build logs for commit hash
+   - Should match your latest commit
+
+3. **Try deploying from CLI instead**:
+   ```powershell
+   cd web/portal
+   vercel --prod
+   ```
+
+4. **Check Vercel Build Settings**:
+   - Root Directory: `web/portal` ✅
+   - Build Command: (auto-detected) ✅
+   - Install Command: (auto-detected) ✅
+   - Framework: Next.js ✅
+
+---
+
+## Support Files
+
+- **Automated Fix**: [fix-lockfile.ps1](fix-lockfile.ps1)
+- **Deployment Guide**: [VERCEL_DEPLOYMENT_GUIDE.md](VERCEL_DEPLOYMENT_GUIDE.md)
+- **Environment Variables**: [ENV_VARIABLES_TEMPLATE.md](ENV_VARIABLES_TEMPLATE.md)
+- **Workspace Fix**: [WORKSPACE_CONFIG_FIX.md](WORKSPACE_CONFIG_FIX.md)
+- **Monorepo Fix**: [VERCEL_MONOREPO_FIX.md](VERCEL_MONOREPO_FIX.md)
+- **API Functions Fix**: [API_FUNCTIONS_FIX.md](API_FUNCTIONS_FIX.md)
+
+---
+
+**Ready to fix and deploy!** Run the script now. 🚀
