@@ -123,8 +123,8 @@ export const rateLimiters = {
  * Returns { success: boolean, limit: number, remaining: number, reset: Date }
  */
 export async function checkRateLimit(
-  limiterType: keyof typeof rateLimiters,
-  identifier: string
+  identifier: string,
+  limiterType: keyof typeof rateLimiters
 ): Promise<{
   success: boolean;
   limit: number;

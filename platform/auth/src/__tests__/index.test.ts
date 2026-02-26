@@ -1,4 +1,4 @@
-import { signIn, signUp, signOutUser } from '../index'
+import { signIn, createPlatformUser, signOut } from '../index'
 import * as firebaseAuth from 'firebase/auth'
 
 // Mock Firebase Auth
@@ -45,7 +45,7 @@ describe('Auth Service', () => {
     })
   })
 
-  describe('signUp', () => {
+  describe('createPlatformUser', () => {
     it('should create new user with valid data', async () => {
       const mockUser = {
         uid: 'user456',
@@ -60,9 +60,9 @@ describe('Auth Service', () => {
       const mockCreateUser = jest.spyOn(firebaseAuth, 'createUserWithEmailAndPassword')
       mockCreateUser.mockResolvedValue(mockUserCredential as any)
 
-      const result = await signUp('newuser@example.com', 'password123')
+      const result = await createPlatformUser('newuser@example.com', 'password123')
 
-      expect(result).toEqual(mockUser)
+      expect(result.user).toEqual(mockUser)
       expect(mockCreateUser).toHaveBeenCalledWith(
         expect.anything(),
         'newuser@example.com',
@@ -74,23 +74,23 @@ describe('Auth Service', () => {
       const mockCreateUser = jest.spyOn(firebaseAuth, 'createUserWithEmailAndPassword')
       mockCreateUser.mockRejectedValue(new Error('auth/email-already-in-use'))
 
-      await expect(signUp('existing@example.com', 'password123')).rejects.toThrow()
+      await expect(createPlatformUser('existing@example.com', 'password123')).rejects.toThrow()
     })
 
     it('should throw error for weak password', async () => {
       const mockCreateUser = jest.spyOn(firebaseAuth, 'createUserWithEmailAndPassword')
       mockCreateUser.mockRejectedValue(new Error('auth/weak-password'))
 
-      await expect(signUp('newuser@example.com', '123')).rejects.toThrow()
+      await expect(createPlatformUser('newuser@example.com', '123')).rejects.toThrow()
     })
   })
 
-  describe('signOutUser', () => {
+  describe('signOut', () => {
     it('should sign out current user', async () => {
       const mockSignOut = jest.spyOn(firebaseAuth, 'signOut')
       mockSignOut.mockResolvedValue()
 
-      await expect(signOutUser()).resolves.not.toThrow()
+      await expect(signOut()).resolves.not.toThrow()
       expect(mockSignOut).toHaveBeenCalled()
     })
 
@@ -98,7 +98,7 @@ describe('Auth Service', () => {
       const mockSignOut = jest.spyOn(firebaseAuth, 'signOut')
       mockSignOut.mockRejectedValue(new Error('Network error'))
 
-      await expect(signOutUser()).rejects.toThrow()
+      await expect(signOut()).rejects.toThrow()
     })
   })
 })

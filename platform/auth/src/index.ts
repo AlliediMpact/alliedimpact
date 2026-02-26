@@ -200,10 +200,10 @@ export async function updatePlatformUserProfile(
 export * from './admin';
 export * from './middleware';
 
+// Export all main functions (no duplicate exports)
 export {
   initializeAuth,
   getAuthInstance,
-  getAuthInstance as getAuth,
   createPlatformUser,
   signIn,
   signOut,
