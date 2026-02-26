@@ -71,9 +71,9 @@ export async function createPlatformUser(
   const platformUser: PlatformUser = {
     uid: user.uid,
     email: user.email!,
-    displayName: displayName || null,
-    photoURL: user.photoURL,
-    phoneNumber: user.phoneNumber,
+    displayName: displayName || undefined,
+    photoURL: user.photoURL || undefined,
+    phoneNumber: user.phoneNumber || undefined,
     createdAt: new Date(),
     updatedAt: new Date(),
     emailVerified: user.emailVerified,
@@ -200,20 +200,7 @@ export async function updatePlatformUserProfile(
 export * from './admin';
 export * from './middleware';
 
-// Export all main functions (no duplicate exports)
-export {
-  initializeAuth,
-  getAuthInstance,
-  createPlatformUser,
-  signIn,
-  signOut,
-  getCurrentUser,
-  onAuthChange,
-  getPlatformUser,
-  resetPassword,
-  updatePlatformUserProfile
-};
-
+// Default export bundle
 export default {
   initializeAuth,
   getAuthInstance,

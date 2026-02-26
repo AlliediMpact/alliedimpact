@@ -24,7 +24,8 @@ export interface AdminAuthConfig {
  * Call this once at server startup
  */
 export function initializeAdminAuth(config: AdminAuthConfig): void {
-  if (typeof window !== 'undefined') {
+  // Admin SDK should only be used in server/Node.js environments
+  if (typeof process === 'undefined' || !process.versions?.node) {
     throw new Error('Admin SDK can only be initialized on the server');
   }
 
