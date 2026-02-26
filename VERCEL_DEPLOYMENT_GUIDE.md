@@ -61,7 +61,7 @@ Deploy in this specific order to ensure proper SSO flow:
 4. **CareerBox** (apps/careerbox) → `careerbox.alliedimpact.co.za`
 
 ### 🎯 Phase 3: Supporting Apps
-5. **SportsHub** (apps/sports-hub) → `sportshub.alliedimpact.co.za`
+5. **SportsHub** (apps/sportshup) → `sportshub.alliedimpact.co.za`
 6. **DriveMaster** (apps/drivemaster) → `drivemaster.alliedimpact.co.za`
 7. **EduTech** (apps/edutech) → `edutech.alliedimpact.co.za`
 
@@ -275,7 +275,7 @@ vercel --prod
 cd ../edutech
 vercel --prod
 
-cd ../sports-hub
+cd ../sportshup
 vercel --prod
 
 cd ../myprojects

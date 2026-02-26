@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && pnpm turbo build --filter=@allied-impact/sports-hub",
+  "buildCommand": "cd ../.. && pnpm turbo build --filter=@allied-impact/sportshup",
   "devCommand": "pnpm dev",
   "framework": "nextjs",
   "outputDirectory": ".next",

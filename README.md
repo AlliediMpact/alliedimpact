@@ -62,7 +62,7 @@ alliedimpact/                 # Monorepo root
 │   ├── drivemaster/         # Port 3001 | Driver training
 │   ├── edutech/             # Port 3007 | Educational courses
 │   ├── myprojects/          # Port 3006 | Project management
-│   └── sports-hub/          # Port 3008 | Sports predictions
+│   └── sportshup/           # Port 3008 | Sports predictions
 │
 ├── web/                      # Platform Web Presence
 │   └── portal/              # Port 3005 | Main entry & dashboard
@@ -197,7 +197,7 @@ pnpm dev
 # http://localhost:3007
 
 # SportsHub (Sports Predictions)
-cd apps/sports-hub
+cd apps/sportshup
 pnpm dev
 # http://localhost:3008
 

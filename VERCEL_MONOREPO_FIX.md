@@ -51,7 +51,7 @@ The original `vercel.json` files had:
 ✅ `apps/careerbox/vercel.json` → `--filter=@allied-impact/careerbox`  
 ✅ `apps/drivemaster/vercel.json` → `--filter=@allied-impact/drivemaster`  
 ✅ `apps/edutech/vercel.json` → `--filter=@allied-impact/edutech`  
-✅ `apps/sports-hub/vercel.json` → `--filter=@allied-impact/sports-hub`  
+✅ `apps/sportshup/vercel.json` → `--filter=@allied-impact/sportshup`  
 ✅ `apps/myprojects/vercel.json` → `--filter=@allied-impact/myprojects`  
 ✅ `apps/controlhub/vercel.json` → `--filter=@allied-impact/controlhub`  
 
@@ -126,7 +126,7 @@ vercel --prod
 - `apps/careerbox`
 - `apps/drivemaster`
 - `apps/edutech`
-- `apps/sports-hub`
+- `apps/sportshup`
 - `apps/myprojects`
 - `apps/controlhub`
 
