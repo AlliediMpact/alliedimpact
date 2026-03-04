@@ -7,7 +7,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { AnalyticsProvider } from '@/components/AnalyticsProvider';
 import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { AccessibilityMonitor } from '@/components/AccessibilityMonitor';
-import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@allied-impact/ui';
 
 export const metadata: Metadata = {
   title: {
