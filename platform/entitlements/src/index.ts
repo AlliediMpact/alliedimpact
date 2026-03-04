@@ -13,7 +13,8 @@
  */
 
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, Timestamp } from 'firebase/firestore';
-import type { ProductEntitlement, ProductId, SubscriptionTier, SubscriptionStatus } from '@allied-impact/types';
+import type { ProductEntitlement, ProductId } from '@allied-impact/types';
+import { SubscriptionTier, SubscriptionStatus } from '@allied-impact/types';
 import { getCache, invalidateUserCache } from './cache';
 
 // Re-export cache utilities
@@ -62,7 +63,7 @@ export async function hasProductAccess(
   }
   
   // Check if entitlement is active
-  if (entitlement.status !== 'active' && entitlement.status !== 'trial') {
+  if (entitlement.status !== SubscriptionStatus.ACTIVE && entitlement.status !== SubscriptionStatus.TRIAL) {
     return false;
   }
   
@@ -190,9 +191,9 @@ export async function grantAccess(
     id: entitlementId,
     userId,
     productId,
-    tier: options.tier || 'basic',
+    tier: options.tier || SubscriptionTier.BASIC,
     accessType: options.accessType,
-    status: options.trialEndDate ? 'trial' : 'active',
+    status: options.trialEndDate ? SubscriptionStatus.TRIAL : SubscriptionStatus.ACTIVE,
     startDate: options.startDate || now,
     endDate: options.endDate,
     trialEndDate: options.trialEndDate,
@@ -369,7 +370,7 @@ export async function hasSponsoredAccess(
 ): Promise<boolean> {
   const entitlement = await getProductEntitlement(userId, productId);
   return (entitlement as any)?.accessType === AccessType.SPONSORED && 
-         entitlement?.status === 'active';
+         entitlement?.status === SubscriptionStatus.ACTIVE;
 }
 
 /**
@@ -393,7 +394,7 @@ export async function revokeProductAccess(
   const entitlementId = `${userId}_${productId}`;
   
   await updateDoc(doc(db, 'product_entitlements', entitlementId), {
-    status: 'cancelled',
+    status: SubscriptionStatus.CANCELLED,
     updatedAt: Timestamp.now()
   });
 
@@ -450,7 +451,7 @@ export async function isInTrial(
 ): Promise<boolean> {
   const entitlement = await getProductEntitlement(userId, productId);
   
-  if (!entitlement || entitlement.status !== 'trial') {
+  if (!entitlement || entitlement.status !== SubscriptionStatus.TRIAL) {
     return false;
   }
   
