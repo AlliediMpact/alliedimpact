@@ -188,7 +188,9 @@ export class PayFastProvider implements IPaymentProvider {
     // PayFast sends payment_status
     const paymentStatus = data.payment_status as string;
 
-    switlogger.info('Payment completed', { 
+    switch (paymentStatus) {
+      case 'COMPLETE':
+        logger.info('Payment completed', { 
           transactionId: data.pf_payment_id, 
           amount: data.amount_gross,
           userId: data.custom_str1 
@@ -208,9 +210,8 @@ export class PayFastProvider implements IPaymentProvider {
         break;
       
       default:
-        logger.warn('Unknown payment status', { status: paymentStatus, transactionId: data.pf_payment_id }
-      default:
-        console.log('[PayFast] Unknown payment status:', paymentStatus);
+        logger.warn('Unknown payment status', { status: paymentStatus, transactionId: data.pf_payment_id });
+        break;
     }
   }
 
