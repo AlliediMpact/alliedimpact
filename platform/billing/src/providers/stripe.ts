@@ -13,8 +13,8 @@ import type {
   SubscriptionParams,
   SubscriptionResult,
   WebhookEvent,
-  PaymentProvider,
 } from '../core/types';
+import { PaymentProvider } from '../core/types';
 
 export interface StripeConfig {
   apiKey: string;
@@ -29,7 +29,7 @@ export class StripeProvider implements IPaymentProvider {
 
   constructor(config: StripeConfig) {
     this.stripe = new Stripe(config.apiKey, {
-      apiVersion: '2024-11-20.acacia',
+      apiVersion: '2023-10-16',
       typescript: true,
     });
     this.webhookSecret = config.webhookSecret;
@@ -152,7 +152,7 @@ export class StripeProvider implements IPaymentProvider {
         break;
 
       default:
-        logger.debug('Unhandled event type', { eventType, eventId: event.id });
+        logger.debug('Unhandled event type', { eventType, eventId: event.eventId });
     }
   }
 

@@ -13,30 +13,30 @@ import type {
   SubscriptionParams,
   SubscriptionResult,
   WebhookEvent,
-  PaymentProvider as PaymentProviderEnum,
   ProviderConfig,
-} from './core/types';
-import { PayFastProvider } from './providers/payfast';
-import { StripeProvider } from './providers/stripe';
-import { recordTransaction, updateTransactionStatus } from './core/transaction-store';
+} from './types';
+import { PaymentProvider } from './types';
+import { PayFastProvider } from '../providers/payfast';
+import { StripeProvider } from '../providers/stripe';
+import { recordTransaction, updateTransactionStatus } from './transaction-store';
 import type { ProductId } from '@allied-impact/types';
 
 const logger = createLogger('billing');
 
 export class BillingService {
-  private providers: Map<PaymentProviderEnum, IPaymentProvider> = new Map();
-  private defaultProvider: PaymentProviderEnum;
+  private providers: Map<PaymentProvider, IPaymentProvider> = new Map();
+  private defaultProvider: PaymentProvider;
 
-  constructor(configs: ProviderConfig[], defaultProvider: PaymentProviderEnum) {
+  constructor(configs: ProviderConfig[], defaultProvider: PaymentProvider) {
     this.defaultProvider = defaultProvider;
 
     // Initialize providers
     for (const { provider, config } of configs) {
       switch (provider) {
-        case PaymentProviderEnum.PAYFAST:
+        case PaymentProvider.PAYFAST:
           this.providers.set(provider, new PayFastProvider(config as any));
           break;
-        case PaymentProviderEnum.STRIPE:
+        case PaymentProvider.STRIPE:
           this.providers.set(provider, new StripeProvider(config as any));
           break;
         default:

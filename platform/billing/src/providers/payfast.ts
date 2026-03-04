@@ -13,8 +13,8 @@ import type {
   SubscriptionParams,
   SubscriptionResult,
   WebhookEvent,
-  PaymentProvider,
 } from '../core/types';
+import { PaymentProvider } from '../core/types';
 
 export interface PayFastConfig {
   merchantId: string;

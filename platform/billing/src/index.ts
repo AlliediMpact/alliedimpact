@@ -22,7 +22,8 @@ export { StripeProvider } from './providers/stripe';
 // Legacy exports (for backwards compatibility - to be deprecated)
 import Stripe from 'stripe';
 import { getFirestore, collection, doc, addDoc, getDoc, updateDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import type { PlatformTransaction, ProductId, TransactionType, TransactionStatus, PaymentMethod } from '@allied-impact/types';
+import { TransactionType, TransactionStatus, PaymentMethod } from '@allied-impact/types';
+import type { PlatformTransaction, ProductId } from '@allied-impact/types';
 
 let stripe: Stripe | null = null;
 
@@ -32,7 +33,7 @@ let stripe: Stripe | null = null;
 export function initializeStripe(apiKey: string): Stripe {
   if (!stripe) {
     stripe = new Stripe(apiKey, {
-      apiVersion: '2024-11-20.acacia',
+      apiVersion: '2023-10-16',
       typescript: true
     });
   }
@@ -80,9 +81,9 @@ export async function createPaymentIntent(
     productId,
     amount,
     currency,
-    type: 'one_time',
-    status: 'pending',
-    paymentMethod: 'stripe',
+    type: TransactionType.ONE_TIME,
+    status: TransactionStatus.PENDING,
+    paymentMethod: PaymentMethod.STRIPE,
     paymentIntentId: paymentIntent.id,
     description: `Payment for ${productId}`
   });
@@ -129,9 +130,9 @@ export async function createSubscription(
     productId,
     amount: (subscription.items.data[0].price.unit_amount || 0) / 100,
     currency: subscription.currency,
-    type: 'subscription',
-    status: 'pending',
-    paymentMethod: 'stripe',
+    type: TransactionType.SUBSCRIPTION,
+    status: TransactionStatus.PENDING,
+    paymentMethod: PaymentMethod.STRIPE,
     paymentIntentId: paymentIntent.id,
     description: `Subscription for ${productId}`,
     metadata: {
@@ -332,7 +333,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
   const transaction = await getTransactionByPaymentIntent(paymentIntent.id);
   
   if (transaction) {
-    await updateTransactionStatus(transaction.id, 'completed', {
+    await updateTransactionStatus(transaction.id, TransactionStatus.COMPLETED, {
       stripePaymentIntentStatus: paymentIntent.status
     });
   }
@@ -342,7 +343,7 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent): P
   const transaction = await getTransactionByPaymentIntent(paymentIntent.id);
   
   if (transaction) {
-    await updateTransactionStatus(transaction.id, 'failed', {
+    await updateTransactionStatus(transaction.id, TransactionStatus.FAILED, {
       stripePaymentIntentStatus: paymentIntent.status,
       failureReason: paymentIntent.last_payment_error?.message
     });
@@ -359,9 +360,9 @@ async function handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
         productId: metadata.productId as ProductId,
         amount: (invoice.amount_paid || 0) / 100,
         currency: invoice.currency,
-        type: 'subscription',
-        status: 'completed',
-        paymentMethod: 'stripe',
+        type: TransactionType.SUBSCRIPTION,
+        status: TransactionStatus.COMPLETED,
+        paymentMethod: PaymentMethod.STRIPE,
         paymentIntentId: invoice.payment_intent as string,
         description: `Subscription payment for ${metadata.productId}`,
         metadata: {
@@ -410,7 +411,7 @@ export async function refundPayment(
   // Update transaction status
   const transaction = await getTransactionByPaymentIntent(paymentIntentId);
   if (transaction) {
-    await updateTransactionStatus(transaction.id, 'refunded', {
+    await updateTransactionStatus(transaction.id, TransactionStatus.REFUNDED, {
       refundId: refund.id,
       refundAmount: refund.amount / 100
     });
