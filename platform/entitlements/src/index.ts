@@ -275,70 +275,27 @@ export async function grantSponsoredAccess(
 
 /**
  * Grant project-based access (custom dev clients)
-/**
- * Get entitlements by access type
  */
-export async function getEntitlementsByAccessType(
+export async function grantProjectAccess(
   userId: string,
-  accessType: AccessType
-): Promise<EnhancedEntitlement[]> {
-  const allEntitlements = await getUserEntitlements(userId);
-  return allEntitlements.filter(
-    (e: any) => e.accessType === accessType
-  ) as EnhancedEntitlement[];
-}
-
-/**
- * Check if user has sponsored access
- */
-export async function hasSponsoredAccess(
-  userId: string,
-  productId: ProductId
-): Promise<boolean> {
-  const entitlement = await getProductEntitlement(userId, productId);
-  return (entitlement as any)?.accessType === AccessType.SPONSORED && 
-         entitlement?.status === 'active';
-}
-
-/**
- * Check if user has any access (regardless of type)
- */
-export async function hasAnyAccess(
-  userId: string,
-  productId: ProductId
-): Promise<boolean> {
-  return hasProductAccess(userId, productId);
-}
-
-export default {
-  // Legacy functions (backward compatible)
-  hasProductAccess,
-  getProductEntitlement,
-  getUserEntitlements,
-  grantProductAccess,
-  revokeProductAccess,
-  updateEntitlementTier,
-  updateEntitlementStatus,
-  isInTrial,
-  getSubscriptionTier,
-  
-  // Enhanced functions
-  grantAccess,
-  grantSubscription,
-  grantSponsoredAccess,
-  grantProjectAccess,
-  grantRoleAccess,
-  grantGrantAccess,
-  getEntitlementsByAccessType,
-  hasSponsoredAccess,
-  hasAnyAccess
+  productId: ProductId,
+  projectId: string,
+  options: {
+    projectName?: string;
+    duration?: number;
+    tier?: SubscriptionTier;
+  } = {}
 ): Promise<EnhancedEntitlement> {
+  const endDate = options.duration 
+    ? new Date(Date.now() + options.duration)
+    : undefined;
+
   return grantAccess(userId, productId, {
     accessType: AccessType.PROJECT,
     tier: options.tier,
     projectId,
     projectName: options.projectName,
-    endDate: options.endDate,
+    endDate,
     autoRenew: false,
     grantedBy: 'admin'
   });
@@ -391,6 +348,41 @@ export async function grantGrantAccess(
 }
 
 /**
+ * Get entitlements by access type
+ */
+export async function getEntitlementsByAccessType(
+  userId: string,
+  accessType: AccessType
+): Promise<EnhancedEntitlement[]> {
+  const allEntitlements = await getUserEntitlements(userId);
+  return allEntitlements.filter(
+    (e: any) => e.accessType === accessType
+  ) as EnhancedEntitlement[];
+}
+
+/**
+ * Check if user has sponsored access
+ */
+export async function hasSponsoredAccess(
+  userId: string,
+  productId: ProductId
+): Promise<boolean> {
+  const entitlement = await getProductEntitlement(userId, productId);
+  return (entitlement as any)?.accessType === AccessType.SPONSORED && 
+         entitlement?.status === 'active';
+}
+
+/**
+ * Check if user has any access (regardless of type)
+ */
+export async function hasAnyAccess(
+  userId: string,
+  productId: ProductId
+): Promise<boolean> {
+  return hasProductAccess(userId, productId);
+}
+
+/**
  * Revoke product access from a user
  */
 export async function revokeProductAccess(
@@ -401,12 +393,12 @@ export async function revokeProductAccess(
   const entitlementId = `${userId}_${productId}`;
   
   await updateDoc(doc(db, 'product_entitlements', entitlementId), {
-
-  // Invalidate cache
-  invalidateUserCache(userId);
     status: 'cancelled',
     updatedAt: Timestamp.now()
   });
+
+  // Invalidate cache
+  invalidateUserCache(userId);
 }
 
 /**
@@ -421,12 +413,12 @@ export async function updateEntitlementTier(
   const entitlementId = `${userId}_${productId}`;
   
   await updateDoc(doc(db, 'product_entitlements', entitlementId), {
-
-  // Invalidate cache
-  invalidateUserCache(userId);
     tier: newTier,
     updatedAt: Timestamp.now()
   });
+
+  // Invalidate cache
+  invalidateUserCache(userId);
 }
 
 /**
@@ -438,15 +430,15 @@ export async function updateEntitlementStatus(
   status: SubscriptionStatus
 ): Promise<void> {
   const db = getFirestore();
-
-  // Invalidate cache
-  invalidateUserCache(userId);
   const entitlementId = `${userId}_${productId}`;
   
   await updateDoc(doc(db, 'product_entitlements', entitlementId), {
     status,
     updatedAt: Timestamp.now()
   });
+
+  // Invalidate cache
+  invalidateUserCache(userId);
 }
 
 /**
