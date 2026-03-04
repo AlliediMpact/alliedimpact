@@ -4,8 +4,6 @@
  * Provider-agnostic billing service
  */
 
-import { createLogger } from '@allied-impact/shared';
-
 import type {
   IPaymentProvider,
   PaymentParams,
@@ -16,12 +14,19 @@ import type {
   ProviderConfig,
 } from './types';
 import { PaymentProvider } from './types';
+import { TransactionType, TransactionStatus } from '@allied-impact/types';
 import { PayFastProvider } from '../providers/payfast';
 import { StripeProvider } from '../providers/stripe';
 import { recordTransaction, updateTransactionStatus } from './transaction-store';
 import type { ProductId } from '@allied-impact/types';
 
-const logger = createLogger('billing');
+// Simple logger for billing service
+const logger = {
+  info: (msg: string, data?: any) => console.log(`[billing] ${msg}`, data || ''),
+  warn: (msg: string, data?: any) => console.warn(`[billing] ${msg}`, data || ''),
+  error: (msg: string, data?: any) => console.error(`[billing] ${msg}`, data || ''),
+  debug: (msg: string, data?: any) => console.debug(`[billing] ${msg}`, data || ''),
+};
 
 export class BillingService {
   private providers: Map<PaymentProvider, IPaymentProvider> = new Map();
@@ -48,7 +53,7 @@ export class BillingService {
   /**
    * Get provider instance
    */
-  private getProvider(provider?: PaymentProviderEnum): IPaymentProvider {
+  private getProvider(provider?: PaymentProvider): IPaymentProvider {
     const selectedProvider = provider || this.defaultProvider;
     const providerInstance = this.providers.get(selectedProvider);
 
@@ -64,7 +69,7 @@ export class BillingService {
    */
   async createPayment(
     params: PaymentParams,
-    provider?: PaymentProviderEnum
+    provider?: PaymentProvider
   ): Promise<PaymentResult> {
     const providerInstance = this.getProvider(provider);
     const result = await providerInstance.createPayment(params);
@@ -75,8 +80,8 @@ export class BillingService {
       productId: params.productId,
       amount: params.amount,
       currency: params.currency,
-      type: 'one_time',
-      status: 'pending',
+      type: TransactionType.ONE_TIME,
+      status: TransactionStatus.PENDING,
       paymentMethod: result.provider as any,
       paymentIntentId: result.paymentId,
       description: params.description,
@@ -91,7 +96,7 @@ export class BillingService {
    */
   async createSubscription(
     params: SubscriptionParams,
-    provider?: PaymentProviderEnum
+    provider?: PaymentProvider
   ): Promise<SubscriptionResult> {
     const providerInstance = this.getProvider(provider);
     const result = await providerInstance.createSubscription(params);
@@ -102,8 +107,8 @@ export class BillingService {
       productId: params.productId,
       amount: params.amount,
       currency: params.currency,
-      type: 'subscription',
-      status: 'pending',
+      type: TransactionType.SUBSCRIPTION,
+      status: TransactionStatus.PENDING,
       paymentMethod: result.provider as any,
       paymentIntentId: result.subscriptionId,
       description: `${params.billingCycle} subscription`,
@@ -122,7 +127,7 @@ export class BillingService {
    */
   async cancelSubscription(
     subscriptionId: string,
-    provider?: PaymentProviderEnum
+    provider?: PaymentProvider
   ): Promise<void> {
     const providerInstance = this.getProvider(provider);
     await providerInstance.cancelSubscription(subscriptionId);
@@ -137,7 +142,7 @@ export class BillingService {
    */
   async handleWebhook(
     event: WebhookEvent,
-    provider?: PaymentProviderEnum
+    provider?: PaymentProvider
   ): Promise<void> {
     const providerInstance = this.getProvider(provider || event.provider);
 
@@ -159,7 +164,7 @@ export class BillingService {
    */
   async getPaymentStatus(
     paymentId: string,
-    provider?: PaymentProviderEnum
+    provider?: PaymentProvider
   ): Promise<'pending' | 'completed' | 'failed'> {
     const providerInstance = this.getProvider(provider);
     return providerInstance.getPaymentStatus(paymentId);
@@ -170,7 +175,7 @@ export class BillingService {
    */
   async getSubscriptionStatus(
     subscriptionId: string,
-    provider?: PaymentProviderEnum
+    provider?: PaymentProvider
   ): Promise<'active' | 'cancelled' | 'past_due'> {
     const providerInstance = this.getProvider(provider);
     return providerInstance.getSubscriptionStatus(subscriptionId);
@@ -185,7 +190,7 @@ let billingService: BillingService | null = null;
  */
 export function initializeBilling(
   configs: ProviderConfig[],
-  defaultProvider: PaymentProviderEnum = PaymentProviderEnum.PAYFAST
+  defaultProvider: PaymentProvider = PaymentProvider.PAYFAST
 ): BillingService {
   if (!billingService) {
     billingService = new BillingService(configs, defaultProvider);

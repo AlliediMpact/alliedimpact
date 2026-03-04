@@ -4,7 +4,6 @@
  * Stripe payment gateway integration (refactored to provider pattern)
  */
 
-import { createLogger } from '@allied-impact/shared';
 import Stripe from 'stripe';
 import type {
   IPaymentProvider,
@@ -21,7 +20,13 @@ export interface StripeConfig {
   webhookSecret: string;
 }
 
-const logger = createLogger('billing:stripe');
+// Simple logger for Stripe provider
+const logger = {
+  info: (msg: string, data?: any) => console.log(`[billing:stripe] ${msg}`, data || ''),
+  warn: (msg: string, data?: any) => console.warn(`[billing:stripe] ${msg}`, data || ''),
+  error: (msg: string, data?: any) => console.error(`[billing:stripe] ${msg}`, data || ''),
+  debug: (msg: string, data?: any) => console.debug(`[billing:stripe] ${msg}`, data || ''),
+};
 
 export class StripeProvider implements IPaymentProvider {
   private stripe: Stripe;

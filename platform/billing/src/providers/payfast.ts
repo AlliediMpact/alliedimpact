@@ -4,7 +4,6 @@
  * PayFast payment gateway integration for South African market
  */
 
-import { createLogger } from '@allied-impact/shared';
 import crypto from 'crypto';
 import type {
   IPaymentProvider,
@@ -26,7 +25,13 @@ export interface PayFastConfig {
   sandbox?: boolean;
 }
 
-const logger = createLogger('billing:payfast');
+// Simple logger for PayFast provider
+const logger = {
+  info: (msg: string, data?: any) => console.log(`[billing:payfast] ${msg}`, data || ''),
+  warn: (msg: string, data?: any) => console.warn(`[billing:payfast] ${msg}`, data || ''),
+  error: (msg: string, data?: any) => console.error(`[billing:payfast] ${msg}`, data || ''),
+  debug: (msg: string, data?: any) => console.debug(`[billing:payfast] ${msg}`, data || ''),
+};
 
 export class PayFastProvider implements IPaymentProvider {
   private config: PayFastConfig;
