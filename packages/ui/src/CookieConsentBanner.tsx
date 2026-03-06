@@ -272,14 +272,3 @@ export function CookieConsentBanner({
 }
 
 export default CookieConsentBanner;
-
-// TypeScript declaration for gtag
-declare global {
-  interface Window {
-    gtag?: (
-      command: string,
-      action: string,
-      params: { analytics_storage: 'granted' | 'denied' }
-    ) => void;
-  }
-}
