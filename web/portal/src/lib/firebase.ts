@@ -90,4 +90,4 @@ export const getDbInstance = (): Firestore | null => {
 
 // Export for direct use
 export { app, auth, db };
-export { auth, db };
+
