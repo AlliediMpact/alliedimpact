@@ -5,11 +5,11 @@ import { Button } from '@allied-impact/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
 import { Mail, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { getAuthInstance } from '@/lib/firebase';
 import { sendEmailVerification } from 'firebase/auth';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || 'your email';
   const [resending, setResending] = useState(false);
@@ -139,5 +139,17 @@ export default function VerifyEmailPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
