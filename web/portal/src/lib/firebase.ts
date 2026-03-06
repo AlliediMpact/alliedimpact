@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 
 // Validate configuration
-const validateConfig = () => {
+const validateConfig = (): boolean => {
   const required = [
     'NEXT_PUBLIC_FIREBASE_API_KEY',
     'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
@@ -28,10 +28,14 @@ const validateConfig = () => {
   const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
-    throw new Error(
-      `Missing required Firebase environment variables: ${missing.join(', ')}`
+    console.error(
+      `⚠️ Missing Firebase environment variables: ${missing.join(', ')}\n` +
+      `Please add these to your Vercel project settings:\n` +
+      `https://vercel.com/your-team/portal/settings/environment-variables`
     );
+    return false;
   }
+  return true;
 };
 
 // Initialize Firebase
@@ -39,20 +43,25 @@ let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
 
-export const initializeFirebase = (): FirebaseApp => {
+export const initializeFirebase = (): FirebaseApp | null => {
   if (typeof window === 'undefined') {
-    // Server-side: return null or throw error
-    throw new Error('Firebase should only be initialized on the client side');
+    // Server-side: don't initialize
+    console.warn('Firebase initialization attempted on server-side');
+    return null;
   }
 
   // Validate config before initialization
-  validateConfig();
+  if (!validateConfig()) {
+    // Config validation failed - return null and let app handle gracefully
+    return null;
+  }
 
   // Initialize only if not already initialized
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
+    console.log('✅ Firebase initialized successfully');
   } else {
     app = getApps()[0];
     auth = getAuth(app);
@@ -63,19 +72,22 @@ export const initializeFirebase = (): FirebaseApp => {
 };
 
 // Export auth and db instances
-export const getAuthInstance = (): Auth => {
+export const getAuthInstance = (): Auth | null => {
   if (!auth) {
-    initializeFirebase();
+    const app = initializeFirebase();
+    if (!app) return null;
   }
-  return auth;
+  return auth || null;
 };
 
-export const getDbInstance = (): Firestore => {
+export const getDbInstance = (): Firestore | null => {
   if (!db) {
-    initializeFirebase();
+    const app = initializeFirebase();
+    if (!app) return null;
   }
-  return db;
+  return db || null;
 };
 
 // Export for direct use
+export { app, auth, db };
 export { auth, db };

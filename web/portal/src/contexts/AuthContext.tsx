@@ -67,10 +67,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Initialize Firebase on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      try {
-        initializeFirebase();
-      } catch (error) {
-        console.error('Firebase initialization error:', error);
+      const app = initializeFirebase();
+      if (!app) {
+        console.error('⚠️ Firebase failed to initialize. Check environment variables.');
+        setLoading(false);
+        return;
       }
     }
   }, []);
@@ -79,6 +80,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const fetchPlatformUser = async (uid: string): Promise<PlatformUser | null> => {
     try {
       const db = getDbInstance();
+      if (!db) {
+        console.warn('Firestore not initialized - skipping user fetch');
+        return null;
+      }
+
       const userDoc = await getDoc(doc(db, 'platform_users', uid));
 
       if (userDoc.exists()) {
@@ -101,6 +107,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const createPlatformUser = async (firebaseUser: FirebaseUser): Promise<void> => {
     try {
       const db = getDbInstance();
+      if (!db) {
+        console.warn('Firestore not initialized - skipping user creation');
+        return;
+      }
+
       const platformUserData: Omit<PlatformUser, 'createdAt' | 'updatedAt'> & {
         createdAt: Timestamp;
         updatedAt: Timestamp;
@@ -142,6 +153,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Listen to auth state changes
   useEffect(() => {
     const auth = getAuthInstance();
+    
+    if (!auth) {
+      console.warn('Firebase Auth not initialized - skipping auth state listener');
+      setLoading(false);
+      return;
+    }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
@@ -172,6 +189,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Sign in
   const signIn = async (email: string, password: string): Promise<UserCredential> => {
     const auth = getAuthInstance();
+    if (!auth) throw new Error('Firebase Auth not initialized. Please check your environment configuration.');
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -182,6 +200,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     displayName?: string
   ): Promise<UserCredential> => {
     const auth = getAuthInstance();
+    if (!auth) throw new Error('Firebase Auth not initialized. Please check your environment configuration.');
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
     // Update profile if displayName provided
@@ -200,12 +219,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Sign out
   const signOut = async (): Promise<void> => {
     const auth = getAuthInstance();
+    if (!auth) throw new Error('Firebase Auth not initialized. Please check your environment configuration.');
     await firebaseSignOut(auth);
   };
 
   // Reset password
   const resetPassword = async (email: string): Promise<void> => {
     const auth = getAuthInstance();
+    if (!auth) throw new Error('Firebase Auth not initialized. Please check your environment configuration.');
     await sendPasswordResetEmail(auth, email);
   };
 
@@ -215,6 +236,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     photoURL?: string;
   }): Promise<void> => {
     const auth = getAuthInstance();
+    if (!auth) throw new Error('Firebase Auth not initialized. Please check your environment configuration.');
     if (auth.currentUser) {
       await updateProfile(auth.currentUser, data);
       await refreshUser();
