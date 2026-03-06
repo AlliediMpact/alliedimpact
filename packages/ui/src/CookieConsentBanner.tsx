@@ -44,14 +44,15 @@ export function CookieConsentBanner({
     
     // Set analytics cookies based on consent
     if (typeof window !== 'undefined') {
+      const gtag = (window as any).gtag;
       if (prefs.analytics) {
         // Enable Google Analytics
-        window.gtag?.('consent', 'update', {
+        gtag?.('consent', 'update', {
           analytics_storage: 'granted',
         });
       } else {
         // Disable Google Analytics
-        window.gtag?.('consent', 'update', {
+        gtag?.('consent', 'update', {
           analytics_storage: 'denied',
         });
       }
@@ -269,17 +270,6 @@ export function CookieConsentBanner({
       </div>
     </div>
   );
-}
-
-// Extend Window interface for gtag
-declare global {
-  interface Window {
-    gtag?: (
-      command: string,
-      action: string,
-      params: { analytics_storage: 'granted' | 'denied' }
-    ) => void;
-  }
 }
 
 export default CookieConsentBanner;
