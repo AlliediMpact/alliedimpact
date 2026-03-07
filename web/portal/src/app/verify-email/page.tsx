@@ -36,6 +36,11 @@ function VerifyEmailContent() {
 
     try {
       const auth = getAuthInstance();
+      
+      if (!auth) {
+        throw new Error('Authentication service not available. Please try again later.');
+      }
+      
       const currentUser = auth.currentUser;
 
       if (!currentUser) {
