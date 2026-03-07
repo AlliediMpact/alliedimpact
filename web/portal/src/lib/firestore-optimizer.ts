@@ -83,6 +83,14 @@ export class FirestoreQueryBuilder {
     const startTime = Date.now();
 
     try {
+      if (!this.db) {
+        logger.warn('Firestore not initialized - returning empty results', {
+          action: 'firestore_query',
+          metadata: { collection: this.collectionPath },
+        });
+        return [];
+      }
+
       const collectionRef = collection(this.db, this.collectionPath);
       const q = query(collectionRef, ...this.constraints);
       const snapshot = await getDocs(q);
