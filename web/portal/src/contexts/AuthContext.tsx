@@ -142,6 +142,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const updatePlatformUser = async (uid: string): Promise<void> => {
     try {
       const db = getDbInstance();
+      if (!db) {
+        console.warn('Firestore not initialized - skipping platform user update');
+        return;
+      }
+      
       await updateDoc(doc(db, 'platform_users', uid), {
         updatedAt: Timestamp.now(),
       });
