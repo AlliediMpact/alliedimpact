@@ -23,6 +23,16 @@ export default function ContactPage() {
 
     try {
       const db = getDbInstance();
+      
+      if (!db) {
+        setSubmitStatus({
+          type: 'error',
+          message: 'Service temporarily unavailable. Please try again later or email us directly at hello@alliedimpact.co.za',
+        });
+        setLoading(false);
+        return;
+      }
+      
       const contactSubmissionsRef = collection(db, 'contact_submissions');
       
       await addDoc(contactSubmissionsRef, {
