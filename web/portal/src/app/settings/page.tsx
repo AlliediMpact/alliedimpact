@@ -116,6 +116,11 @@ function SettingsContent() {
       }
 
       const db = getDbInstance();
+      
+      if (!db) {
+        throw new Error('Database service not available. Please try again later.');
+      }
+      
       const userDocRef = doc(db, 'platform_users', user.uid);
       
       await updateDoc(userDocRef, {
