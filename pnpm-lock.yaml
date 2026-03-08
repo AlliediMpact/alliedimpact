@@ -789,13 +789,14 @@ importers:
         version: 3.4.19
 
   packages/config:
+    dependencies:
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
     devDependencies:
       '@types/node':
         specifier: ^20.10.5
         version: 20.19.27
-      typescript:
-        specifier: ^5.3.3
-        version: 5.9.3
 
   packages/security:
     dependencies:
@@ -1040,6 +1041,9 @@ importers:
       firebase-admin:
         specifier: ^12.0.0
         version: 12.7.0
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
       zod:
         specifier: ^3.22.4
         version: 3.25.76
@@ -1056,9 +1060,6 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.27)
-      typescript:
-        specifier: ^5.3.3
-        version: 5.9.3
 
   platform/projects:
     dependencies:
@@ -1074,13 +1075,13 @@ importers:
       firebase-admin:
         specifier: ^11.11.1
         version: 11.11.1
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
     devDependencies:
       '@types/node':
         specifier: ^20.10.5
         version: 20.19.27
-      typescript:
-        specifier: ^5.3.3
-        version: 5.9.3
 
   platform/shared:
     dependencies:
