@@ -86,7 +86,7 @@ export function CookieConsentBanner({
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none">
+    <div className="fixed inset-0 z-50 flex items-end justify-start pointer-events-none">
       {/* Backdrop */}
       {showCustomize && (
         <div 
@@ -95,8 +95,8 @@ export function CookieConsentBanner({
         />
       )}
 
-      {/* Banner */}
-      <div className="max-w-6xl w-full mx-4 mb-6 pointer-events-auto">
+      {/* Banner - Bottom Left */}
+      <div className="max-w-2xl w-full ml-4 mb-6 pointer-events-auto">
         <div className="bg-background border-2 border-primary/20 rounded-xl shadow-2xl overflow-hidden">
           {/* Main Banner Content */}
           {!showCustomize ? (
@@ -131,18 +131,21 @@ export function CookieConsentBanner({
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-3">
                     <button
+                      type="button"
                       onClick={handleAcceptAll}
                       className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-md"
                     >
                       Accept All
                     </button>
                     <button
+                      type="button"
                       onClick={handleRejectNonEssential}
                       className="px-6 py-2.5 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/80 transition-colors"
                     >
                       Reject Non-Essential
                     </button>
                     <button
+                      type="button"
                       onClick={() => setShowCustomize(true)}
                       className="px-6 py-2.5 border-2 border-muted rounded-lg font-semibold hover:bg-secondary/50 transition-colors flex items-center gap-2"
                     >
@@ -153,6 +156,7 @@ export function CookieConsentBanner({
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setVisible(false)}
                   className="text-muted-foreground hover:text-foreground transition-colors p-1"
                   aria-label="Close banner"
@@ -165,6 +169,7 @@ export function CookieConsentBanner({
             /* Customize Panel */
             <div className="p-6 md:p-8 relative">
               <button
+                type="button"
                 onClick={() => setShowCustomize(false)}
                 className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Close customization"
@@ -246,18 +251,21 @@ export function CookieConsentBanner({
               {/* Save Buttons */}
               <div className="flex flex-wrap gap-3 mt-8">
                 <button
+                  type="button"
                   onClick={handleSaveCustom}
                   className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-md"
                 >
                   Save Preferences
                 </button>
                 <button
+                  type="button"
                   onClick={handleAcceptAll}
                   className="px-6 py-2.5 border-2 border-muted rounded-lg font-semibold hover:bg-secondary/50 transition-colors"
                 >
                   Accept All
                 </button>
                 <button
+                  type="button"
                   onClick={() => setShowCustomize(false)}
                   className="px-6 py-2.5 text-muted-foreground hover:text-foreground transition-colors"
                 >
