@@ -28,8 +28,8 @@ export function CookieConsentBanner({
     // Check if user has already made a choice
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      // Show banner after 1 second delay
-      const timer = setTimeout(() => setVisible(true), 1000);
+      // Show banner after 1 minute delay
+      const timer = setTimeout(() => setVisible(true), 60000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -86,17 +86,17 @@ export function CookieConsentBanner({
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-start pointer-events-none">
-      {/* Backdrop */}
+    <>
+      {/* Backdrop for customize modal */}
       {showCustomize && (
         <div 
-          className="absolute inset-0 bg-black/50 pointer-events-auto"
+          className="fixed inset-0 bg-black/50 z-[60] pointer-events-auto"
           onClick={() => setShowCustomize(false)}
         />
       )}
-
+      
       {/* Banner - Bottom Left */}
-      <div className="max-w-2xl w-full ml-4 mb-6 pointer-events-auto">
+      <div className="fixed bottom-6 left-6 z-[70] max-w-2xl pointer-events-auto">
         <div className="bg-background border-2 border-primary/20 rounded-xl shadow-2xl overflow-hidden">
           {/* Main Banner Content */}
           {!showCustomize ? (
@@ -276,7 +276,7 @@ export function CookieConsentBanner({
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
