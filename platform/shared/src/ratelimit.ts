@@ -183,7 +183,7 @@ export async function checkRateLimit(
 /**
  * Helper for Next.js API routes - returns appropriate error response
  */
-export function rateLimitResponse(result: { success: boolean; limit: number; remaining: number; reset: Date }) {
+export function rateLimitResponse(result: { success: boolean; limit: number; remaining: number; reset: Date }): Response {
   return Response.json(
     {
       error: 'Too many requests',
