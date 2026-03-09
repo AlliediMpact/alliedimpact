@@ -19,7 +19,10 @@ import {
   deleteDoc
 } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
-import { logInfo, logError } from '@allied-impact/shared';
+import { createLogger } from '@allied-impact/shared';
+
+// Initialize logger
+const logger = createLogger('projects');
 
 // ==================== ENUMS ====================
 
@@ -199,10 +202,10 @@ export async function createProject(
       endDate: project.endDate ? Timestamp.fromDate(project.endDate) : null,
     });
     
-    logInfo('Project created', { projectId: project.id, clientId });
+    logger.info('Project created', { projectId: project.id, clientId });
     return project;
   } catch (error) {
-    logError('Failed to create project', { error, clientId });
+    logger.error('Failed to create project', error as Error, { clientId });
     throw error;
   }
 }
@@ -227,7 +230,7 @@ export async function getProject(projectId: string): Promise<Project | null> {
       endDate: data.endDate ? data.endDate.toDate() : undefined,
     } as Project;
   } catch (error) {
-    logError('Failed to get project', { error, projectId });
+    logger.error('Failed to get project', error as Error, { projectId });
     throw error;
   }
 }
@@ -255,7 +258,7 @@ export async function getClientProjects(clientId: string): Promise<Project[]> {
       } as Project;
     });
   } catch (error) {
-    logError('Failed to get client projects', { error, clientId });
+    logger.error('Failed to get client projects', error as Error, { clientId });
     throw error;
   }
 }
@@ -280,9 +283,9 @@ export async function updateProject(
     }
     
     await updateDoc(doc(db, 'projects', projectId), updateData);
-    logInfo('Project updated', { projectId });
+    logger.info('Project updated', { projectId });
   } catch (error) {
-    logError('Failed to update project', { error, projectId });
+    logger.error('Failed to update project', error as Error, { projectId });
     throw error;
   }
 }
@@ -319,10 +322,10 @@ export async function createMilestone(
       });
     }
     
-    logInfo('Milestone created', { milestoneId: milestone.id, projectId: milestoneData.projectId });
+    logger.info('Milestone created', { milestoneId: milestone.id, projectId: milestoneData.projectId });
     return milestone;
   } catch (error) {
-    logError('Failed to create milestone', { error });
+    logger.error('Failed to create milestone', error as Error);
     throw error;
   }
 }
@@ -349,7 +352,7 @@ export async function getProjectMilestones(projectId: string): Promise<Milestone
       } as Milestone;
     });
   } catch (error) {
-    logError('Failed to get project milestones', { error, projectId });
+    logger.error('Failed to get project milestones', error as Error, { projectId });
     throw error;
   }
 }
@@ -373,9 +376,9 @@ export async function updateMilestone(
     }
     
     await updateDoc(doc(db, 'milestones', milestoneId), updateData);
-    logInfo('Milestone updated', { milestoneId });
+    logger.info('Milestone updated', { milestoneId });
   } catch (error) {
-    logError('Failed to update milestone', { error, milestoneId });
+    logger.error('Failed to update milestone', error as Error, { milestoneId });
     throw error;
   }
 }
@@ -413,10 +416,10 @@ export async function createDeliverable(
       });
     }
     
-    logInfo('Deliverable created', { deliverableId: deliverable.id, projectId: deliverableData.projectId });
+    logger.info('Deliverable created', { deliverableId: deliverable.id, projectId: deliverableData.projectId });
     return deliverable;
   } catch (error) {
-    logError('Failed to create deliverable', { error });
+    logger.error('Failed to create deliverable', error as Error);
     throw error;
   }
 }
@@ -444,7 +447,7 @@ export async function getProjectDeliverables(projectId: string): Promise<Deliver
       } as Deliverable;
     });
   } catch (error) {
-    logError('Failed to get project deliverables', { error, projectId });
+    logger.error('Failed to get project deliverables', error as Error, { projectId });
     throw error;
   }
 }
@@ -484,10 +487,10 @@ export async function createTicket(
       });
     }
     
-    logInfo('Ticket created', { ticketId: ticket.id, projectId: ticketData.projectId });
+    logger.info('Ticket created', { ticketId: ticket.id, projectId: ticketData.projectId });
     return ticket;
   } catch (error) {
-    logError('Failed to create ticket', { error });
+    logger.error('Failed to create ticket', error as Error);
     throw error;
   }
 }
@@ -517,7 +520,7 @@ export async function getProjectTickets(projectId: string): Promise<Ticket[]> {
       } as Ticket;
     });
   } catch (error) {
-    logError('Failed to get project tickets', { error, projectId });
+    logger.error('Failed to get project tickets', error as Error, { projectId });
     throw error;
   }
 }
@@ -556,9 +559,9 @@ export async function addTicketComment(
       updatedAt: Timestamp.now(),
     });
     
-    logInfo('Ticket comment added', { ticketId, commentId: newComment.id });
+    logger.info('Ticket comment added', { ticketId, commentId: newComment.id });
   } catch (error) {
-    logError('Failed to add ticket comment', { error, ticketId });
+    logger.error('Failed to add ticket comment', error as Error, { ticketId });
     throw error;
   }
 }
@@ -576,7 +579,7 @@ export async function calculateProjectProgress(projectId: string): Promise<numbe
     const totalProgress = milestones.reduce((sum, m) => sum + m.progress, 0);
     return Math.round(totalProgress / milestones.length);
   } catch (error) {
-    logError('Failed to calculate project progress', { error, projectId });
+    logger.error('Failed to calculate project progress', error as Error, { projectId });
     return 0;
   }
 }
