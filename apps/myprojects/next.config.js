@@ -33,6 +33,24 @@ const nextConfig = {
       type: 'asset/resource',
     });
 
+    // Add fallbacks for Node.js modules when building for browser
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        path: false,
+        os: false,
+        stream: false,
+        http: false,
+        https: false,
+        zlib: false,
+        util: false,
+      };
+    }
+
     return config;
   },
   async headers() {
