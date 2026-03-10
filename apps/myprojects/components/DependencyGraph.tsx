@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@allied-impact/ui';
 import { Button } from '@allied-impact/ui';
-import { X, GitBranch, Plus, Trash2, AlertTriangle, CheckCircle, Zap, TrendingRight } from 'lucide-react';
+import { X, GitBranch, Plus, Trash2, AlertTriangle, CheckCircle, Zap, ArrowRight } from 'lucide-react';
 import { Milestone } from '@allied-impact/projects';
 import {
   DependencyGraphNode,
@@ -241,7 +241,7 @@ export default function DependencyGraph({
               {/* Dependency Graph Visualization */}
               <div className="space-y-4">
                 <h4 className="font-semibold flex items-center gap-2">
-                  <TrendingRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" />
                   Dependency Flow
                 </h4>
 
@@ -377,7 +377,7 @@ export default function DependencyGraph({
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <TrendingRight className="h-6 w-6 text-muted-foreground" />
+                    <ArrowRight className="h-6 w-6 text-muted-foreground" />
                   </div>
 
                   <div>

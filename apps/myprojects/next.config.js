@@ -16,6 +16,25 @@ const nextConfig = {
   images: {
     domains: ['firebasestorage.googleapis.com'],
   },
+  experimental: {
+    // Disable WASM optimization to prevent farmhash build errors
+    webpackBuildWorker: false,
+  },
+  webpack: (config, { isServer }) => {
+    // Handle WASM modules
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
+    
+    // Exclude problematic WASM files from parsing
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'asset/resource',
+    });
+
+    return config;
+  },
   async headers() {
     return [
       {
