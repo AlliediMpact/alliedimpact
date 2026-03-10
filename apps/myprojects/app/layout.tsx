@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AppLayout from '@/components/AppLayout';
-import { CookieConsentBanner } from '@alliedimpact/ui';
+import { CookieConsentBanner } from '@allied-impact/ui';
 import { ProjectProvider } from '@/contexts/ProjectContext';
 
 const inter = Inter({ subsets: ['latin'] });
