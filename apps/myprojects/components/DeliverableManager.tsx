@@ -172,12 +172,12 @@ export function DeliverableModal({ projectId, milestoneId, deliverable, onClose,
             {/* Notes */}
             <div>
               <label className="block text-sm font-medium mb-2">Notes</label>
-              <textarea
-               RichTextEditor
+              <RichTextEditor
                 content={formData.notes}
                 onChange={(html) => setFormData({ ...formData, notes: html })}
                 placeholder="Additional notes, comments, or special instructions..."
-                minHeight="150px
+                minHeight="150px"
+              />
             </div>
 
             {/* File Upload */}
