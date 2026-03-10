@@ -38,6 +38,8 @@ export default function AppHeader({ user, onSignOut, onMenuToggle, isMobileMenuO
   useEffect(() => {
     if (!user?.uid) return;
 
+    let unsubscribe: (() => void) | undefined;
+
     const loadUnreadCount = async () => {
       try {
         const { getFirestore, collection, query, where, onSnapshot } = await import('firebase/firestore');
@@ -50,17 +52,21 @@ export default function AppHeader({ user, onSignOut, onMenuToggle, isMobileMenuO
           where('read', '==', false)
         );
 
-        const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+        unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
           setUnreadCount(snapshot.size);
         });
-
-        return () => unsubscribe();
       } catch (error) {
         console.error('Failed to load unread count:', error);
       }
     };
 
     loadUnreadCount();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [user?.uid]);
 
   const handleSearch = (e: React.FormEvent) => {
