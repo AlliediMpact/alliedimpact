@@ -1,6 +1,8 @@
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/config/firebase';
+import { getDbInstance } from '@/lib/firebase';
 import { Milestone } from '@allied-impact/projects';
+
+const db = getDbInstance();
 
 export interface MilestoneDependency {
   id: string;

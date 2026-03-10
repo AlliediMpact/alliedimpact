@@ -337,11 +337,11 @@ export function TicketCard({ ticket, onClick }: TicketCardProps) {
     <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onClick(ticket)}>
       <CardContent className="pt-6">
         <div className="flex items-start justify-between mb-3">
-          <didiv className="text-sm text-gray-600 line-clamp-2">
-              <RichTextViewer content={ticket.description} />
-            </div
+          <div>
             <h4 className="font-semibold mb-1">{ticket.title}</h4>
-            <p className="text-sm text-gray-600 line-clamp-2">{ticket.description}</p>
+            <div className="text-sm text-gray-600 line-clamp-2">
+              <RichTextViewer content={ticket.description} />
+            </div>
           </div>
         </div>
 

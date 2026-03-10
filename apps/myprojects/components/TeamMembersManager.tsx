@@ -16,7 +16,7 @@ export interface TeamMember {
   addedBy: string;
   permissions: {
     canEditMilestones: boolean;
-    canApproveDe liverables: boolean;
+    canApproveDeliverables: boolean;
     canManageTickets: boolean;
     canManageTeam: boolean;
   };
