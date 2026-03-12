@@ -20,7 +20,7 @@ const nextConfig = {
     // Disable WASM optimization to prevent farmhash build errors
     webpackBuildWorker: false,
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, webpack }) => {
     // Handle WASM modules
     config.experiments = {
       ...config.experiments,
@@ -33,8 +33,19 @@ const nextConfig = {
       type: 'asset/resource',
     });
 
-    // Add fallbacks for Node.js modules when building for browser
+    // Intercept node: protocol imports for client bundles
     if (!isServer) {
+      // Replace node: protocol imports with empty modules
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(
+          /^node:/,
+          (resource) => {
+            // Replace any node: protocol import with an empty module
+            resource.request = 'data:text/javascript,module.exports = {}';
+          }
+        )
+      );
+      
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -52,23 +63,8 @@ const nextConfig = {
         child_process: false,
         events: false,
         buffer: false,
-      };
-      
-      // Handle node: protocol imports
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'node:events': false,
-        'node:process': false,
-        'node:stream': false,
-        'node:util': false,
-        'node:buffer': false,
-      };
-    }
-
-    return config;
-  },
-  async headers() {
-    return [
+        process: false,
+      }urn [
       {
         source: '/:path*',
         headers: [
