@@ -538,7 +538,6 @@ export default function AdvancedSearch({
                       <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
                         <span className="px-2 py-1 bg-gray-100 rounded">{result.item.status}</span>
                         <span className="px-2 py-1 bg-gray-100 rounded">{result.item.priority}</span>
-                        <span className="px-2 py-1 bg-gray-100 rounded">{result.item.category}</span>
                         <span className="text-blue-600">Score: {result.score}</span>
                       </div>
                     </button>
