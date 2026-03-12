@@ -188,6 +188,7 @@ export default function MyProjectsDashboard() {
       };
     } catch (error) {
       console.error('Failed to set up project details listeners:', error);
+      return undefined;
     }
   };
 
