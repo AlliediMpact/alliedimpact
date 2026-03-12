@@ -434,7 +434,7 @@ export default function MyProjectsDashboard() {
             <Briefcase className="h-16 w-16 text-gray-400 mb-4" />
             <h3 className="text-xl font-semibold mb-2">No Projects Yet</h3>
             <p className="text-gray-600 text-center mb-6">
-              You don't have any projects yet. Contact us to get started on your custom development project.
+              You don&apos;t have any projects yet. Contact us to get started on your custom development project.
             </p>
             <Button onClick={() => window.open(process.env.NEXT_PUBLIC_PLATFORM_URL || 'https://alliedimpact.com', '_blank')}>
               Contact Sales
@@ -702,7 +702,7 @@ export default function MyProjectsDashboard() {
                 <div className="text-center py-12">
                   <FileText className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600">No deliverables yet</p>
-                  <p className="text-sm text-gray-500 mt-1">Deliverables will appear here as they're added</p>
+                  <p className="text-sm text-gray-500 mt-1">Deliverables will appear here as they&apos;re added</p>
                 </div>
               ) : (
                 <div className="grid gap-4 md:grid-cols-2">

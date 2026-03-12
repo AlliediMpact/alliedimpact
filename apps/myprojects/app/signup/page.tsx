@@ -143,7 +143,7 @@ export default function MyProjectsSignupPage() {
       <Card className="mb-8 bg-blue-50 border-blue-200">
         <CardHeader>
           <CardTitle>Your Project</CardTitle>
-          <CardDescription>We'll create this project automatically when you sign up</CardDescription>
+          <CardDescription>We&apos;ll create this project automatically when you sign up</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div><strong>Type:</strong> {discoveryData.projectType === 'custom' ? discoveryData.customProjectType : discoveryData.projectType}</div>
@@ -157,7 +157,7 @@ export default function MyProjectsSignupPage() {
       <Card>
         <CardHeader>
           <CardTitle>Account Details</CardTitle>
-          <CardDescription>We've pre-filled your information from the discovery form</CardDescription>
+          <CardDescription>We&apos;ve pre-filled your information from the discovery form</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignup} className="space-y-4">
