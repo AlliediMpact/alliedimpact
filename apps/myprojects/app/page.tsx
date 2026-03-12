@@ -46,7 +46,7 @@ import AdvancedSearch from '@/components/AdvancedSearch';
 
 export default function MyProjectsDashboard() {
   const router = useRouter();
-  const { selectedProject } = useProject();
+  const { projects, selectedProject } = useProject();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
