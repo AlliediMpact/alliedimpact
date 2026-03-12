@@ -64,9 +64,8 @@ export default function BulkActionsBar<T extends { id: string }>({
           { value: DeliverableStatus.PENDING, label: 'Pending' },
           { value: DeliverableStatus.IN_PROGRESS, label: 'In Progress' },
           { value: DeliverableStatus.DELIVERED, label: 'Delivered' },
-          { value: DeliverableStatus.IN_REVIEW, label: 'In Review' },
-          { value: DeliverableStatus.APPROVED, label: 'Approved' },
-          { value: DeliverableStatus.REJECTED, label: 'Rejected' }
+          { value: DeliverableStatus.REVISION_REQUESTED, label: 'Revision Requested' },
+          { value: DeliverableStatus.APPROVED, label: 'Approved' }
         ];
       case 'tickets':
         return [
