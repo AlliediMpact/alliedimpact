@@ -28,11 +28,11 @@ export default function MilestoneWithDeliverables({
     }
 
     const statusWeights: Record<DeliverableStatus, number> = {
-      'Pending': 0,
-      'In Progress': 25,
-      'Delivered': 75,
-      'Approved': 100,
-      'Revision Requested': 50
+      [DeliverableStatus.PENDING]: 0,
+      [DeliverableStatus.IN_PROGRESS]: 25,
+      [DeliverableStatus.DELIVERED]: 75,
+      [DeliverableStatus.APPROVED]: 100,
+      [DeliverableStatus.REVISION_REQUESTED]: 50
     };
 
     const totalProgress = linkedDeliverables.reduce(
@@ -47,22 +47,22 @@ export default function MilestoneWithDeliverables({
 
   // Count deliverables by status
   const statusCounts = {
-    approved: linkedDeliverables.filter(d => d.status === 'Approved').length,
-    delivered: linkedDeliverables.filter(d => d.status === 'Delivered').length,
-    inProgress: linkedDeliverables.filter(d => d.status === 'In Progress').length,
-    pending: linkedDeliverables.filter(d => d.status === 'Pending').length,
-    revision: linkedDeliverables.filter(d => d.status === 'Revision Requested').length
+    approved: linkedDeliverables.filter(d => d.status === DeliverableStatus.APPROVED).length,
+    delivered: linkedDeliverables.filter(d => d.status === DeliverableStatus.DELIVERED).length,
+    inProgress: linkedDeliverables.filter(d => d.status === DeliverableStatus.IN_PROGRESS).length,
+    pending: linkedDeliverables.filter(d => d.status === DeliverableStatus.PENDING).length,
+    revision: linkedDeliverables.filter(d => d.status === DeliverableStatus.REVISION_REQUESTED).length
   };
 
   const getStatusIcon = (status: DeliverableStatus) => {
     switch (status) {
-      case 'Approved':
+      case DeliverableStatus.APPROVED:
         return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'Delivered':
+      case DeliverableStatus.DELIVERED:
         return <Package className="h-4 w-4 text-blue-600" />;
-      case 'In Progress':
+      case DeliverableStatus.IN_PROGRESS:
         return <Clock className="h-4 w-4 text-orange-600" />;
-      case 'Revision Requested':
+      case DeliverableStatus.REVISION_REQUESTED:
         return <XCircle className="h-4 w-4 text-red-600" />;
       default:
         return <FileText className="h-4 w-4 text-gray-400" />;
@@ -71,13 +71,13 @@ export default function MilestoneWithDeliverables({
 
   const getStatusColor = (status: DeliverableStatus) => {
     switch (status) {
-      case 'Approved':
+      case DeliverableStatus.APPROVED:
         return 'bg-green-50 text-green-700 border-green-200';
-      case 'Delivered':
+      case DeliverableStatus.DELIVERED:
         return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'In Progress':
+      case DeliverableStatus.IN_PROGRESS:
         return 'bg-orange-50 text-orange-700 border-orange-200';
-      case 'Revision Requested':
+      case DeliverableStatus.REVISION_REQUESTED:
         return 'bg-red-50 text-red-700 border-red-200';
       default:
         return 'bg-gray-50 text-gray-700 border-gray-200';
