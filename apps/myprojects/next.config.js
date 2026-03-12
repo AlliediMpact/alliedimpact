@@ -46,8 +46,15 @@ const nextConfig = {
         stream: false,
         http: false,
         https: false,
+        http2: false,
         zlib: false,
         util: false,
+        child_process: false,
+        // Handle node: protocol imports
+        'node:events': false,
+        'node:process': false,
+        'node:stream': false,
+        'node:util': false,
       };
     }
 
