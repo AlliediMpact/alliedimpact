@@ -89,6 +89,7 @@ export default function ActivityFeed({ projectId, maxItems = 50, showFilters = t
     } catch (error) {
       console.error('Failed to load activities:', error);
       setLoading(false);
+      return undefined;
     }
   };
 
