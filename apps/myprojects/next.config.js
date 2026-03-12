@@ -50,11 +50,18 @@ const nextConfig = {
         zlib: false,
         util: false,
         child_process: false,
-        // Handle node: protocol imports
+        events: false,
+        buffer: false,
+      };
+      
+      // Handle node: protocol imports
+      config.resolve.alias = {
+        ...config.resolve.alias,
         'node:events': false,
         'node:process': false,
         'node:stream': false,
         'node:util': false,
+        'node:buffer': false,
       };
     }
 
