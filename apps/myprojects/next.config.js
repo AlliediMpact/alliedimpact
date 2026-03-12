@@ -64,7 +64,13 @@ const nextConfig = {
         events: false,
         buffer: false,
         process: false,
-      }urn [
+      };
+    }
+
+    return config;
+  },
+  async headers() {
+    return [
       {
         source: '/:path*',
         headers: [
