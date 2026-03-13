@@ -184,7 +184,7 @@ export default function MilestoneWithDeliverables({
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       {getStatusIcon(deliverable.status)}
-                      <h4 className="font-medium truncate">{deliverable.title}</h4>
+                      <h4 className="font-medium truncate">{deliverable.name}</h4>
                     </div>
                     <span className={`px-2 py-0.5 text-xs rounded border whitespace-nowrap ${getStatusColor(deliverable.status)}`}>
                       {deliverable.status}
