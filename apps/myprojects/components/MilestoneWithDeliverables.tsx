@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, FileText, CheckCircle, Clock, XCircle, Package } from 'lucide-react';
-import { Milestone, Deliverable, DeliverableStatus } from '@allied-impact/projects';
+import { Milestone, Deliverable, DeliverableStatus, MilestoneStatus } from '@allied-impact/projects';
 import { Button } from '@allied-impact/ui';
 
 interface MilestoneWithDeliverablesProps {
