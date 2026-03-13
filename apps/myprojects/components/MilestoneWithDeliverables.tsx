@@ -108,11 +108,15 @@ export default function MilestoneWithDeliverables({
             </div>
           </button>
           <div className="flex items-center gap-2">
-            <span className={`px-2 py-1 text-xs rounded border ${
-              milestone.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-200' :
-              milestone.status === 'In Progress' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-              'bg-gray-50 text-gray-700 border-gray-200'
-            }`}>
+            <span
+              className={`px-2 py-1 text-xs rounded border ${
+                milestone.status === MilestoneStatus.COMPLETED
+                  ? 'bg-green-50 text-green-700 border-green-200'
+                  : milestone.status === MilestoneStatus.IN_PROGRESS
+                  ? 'bg-blue-50 text-blue-700 border-blue-200'
+                  : 'bg-gray-50 text-gray-700 border-gray-200'
+              }`}
+            >
               {milestone.status}
             </span>
           </div>
