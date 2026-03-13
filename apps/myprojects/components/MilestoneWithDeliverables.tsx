@@ -100,7 +100,7 @@ export default function MilestoneWithDeliverables({
             )}
             <div className="flex-1">
               <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                {milestone.title}
+                {milestone.name}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
                 {milestone.description}
