@@ -208,10 +208,10 @@ export default function MilestoneWithDeliverables({
                         {deliverable.dueDate.toLocaleDateString()}
                       </span>
                     </div>
-                    {deliverable.files && deliverable.files.length > 0 && (
+                    {deliverable.fileUrls && deliverable.fileUrls.length > 0 && (
                       <div className="flex items-center gap-1">
                         <FileText className="h-3 w-3" />
-                        <span>{deliverable.files.length} file{deliverable.files.length !== 1 ? 's' : ''}</span>
+                        <span>{deliverable.fileUrls.length} file{deliverable.fileUrls.length !== 1 ? 's' : ''}</span>
                       </div>
                     )}
                   </div>
