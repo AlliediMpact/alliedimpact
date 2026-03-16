@@ -29,6 +29,25 @@ interface ActivityFeedProps {
   showFilters?: boolean;
 }
 
+export const getActivityIcon = (type: string) => {
+  switch (type) {
+    case 'milestone':
+      return <Flag className="h-4 w-4 text-purple-600" />;
+    case 'deliverable':
+      return <Package className="h-4 w-4 text-blue-600" />;
+    case 'ticket':
+      return <MessageSquare className="h-4 w-4 text-orange-600" />;
+    case 'comment':
+      return <MessageSquare className="h-4 w-4 text-gray-600" />;
+    case 'status_change':
+      return <CheckCircle className="h-4 w-4 text-green-600" />;
+    case 'file_upload':
+      return <FileText className="h-4 w-4 text-indigo-600" />;
+    default:
+      return <AlertCircle className="h-4 w-4 text-gray-400" />;
+  }
+};
+
 export default function ActivityFeed({ projectId, maxItems = 50, showFilters = true }: ActivityFeedProps) {
   const [activities, setActivities] = useState<ActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -104,25 +123,6 @@ export default function ActivityFeed({ projectId, maxItems = 50, showFilters = t
   const exportActivities = () => {
     const csv = [
       ['Timestamp', 'Type', 'Action', 'User', 'Entity'].join(','),
-      ...filteredActivities.map(a =>
-        [
-          a.timestamp.toISOString(),
-          a.type,
-          a.action,
-          a.userName,
-          a.entityName
-        ].join(',')
-      )
-    ].join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `activity-log-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-  };
-
 export const getActivityIcon = (type: string) => {
     switch (type) {
       case 'milestone':
