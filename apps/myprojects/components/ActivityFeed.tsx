@@ -123,7 +123,7 @@ export default function ActivityFeed({ projectId, maxItems = 50, showFilters = t
     a.click();
   };
 
-  const getActivityIcon = (type: string) => {
+export const getActivityIcon = (type: string) => {
     switch (type) {
       case 'milestone':
         return <Flag className="h-4 w-4 text-purple-600" />;
