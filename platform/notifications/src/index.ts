@@ -7,7 +7,8 @@
 
 import { createLogger } from '@allied-impact/shared';
 import { getFirestore, collection, doc, addDoc, getDoc, updateDoc, query, where, getDocs, orderBy, limit as firestoreLimit, Timestamp } from 'firebase/firestore';
-import type { Notification, ProductId, NotificationType, NotificationPriority } from '@allied-impact/types';
+import type { Notification } from '@allied-impact/types';
+import { ProductId, NotificationType, NotificationPriority } from '@allied-impact/types';
 
 const logger = createLogger('notifications');
 
@@ -44,7 +45,7 @@ export async function sendNotification(
     createdAt: Timestamp.fromDate(now)
   });
     // Send via appropriate channels
-  if (notification.type === 'email' || notification.priority === 'urgent') {
+  if (notification.type === NotificationType.EMAIL || notification.priority === NotificationPriority.URGENT) {
     await sendEmailNotification(userId, {
       title: notification.title,
       message: notification.message,
@@ -52,7 +53,7 @@ export async function sendNotification(
     });
   }
   
-  if (notification.type === 'push') {
+  if (notification.type === NotificationType.PUSH) {
     await sendPushNotification(userId, {
       title: notification.title,
       message: notification.message,
@@ -60,7 +61,7 @@ export async function sendNotification(
     });
   }
   
-  if (notification.type === 'sms') {
+  if (notification.type === NotificationType.SMS) {
     await sendSmsNotification(userId, {
       title: notification.title,
       message: notification.message
@@ -239,8 +240,8 @@ export async function getUnreadCount(userId: string): Promise<number> {
  */
 export async function sendWelcomeNotification(userId: string, userName?: string): Promise<void> {
   await sendNotification(userId, {
-    type: 'email',
-    priority: 'medium',
+    type: NotificationType.EMAIL,
+    priority: NotificationPriority.MEDIUM,
     title: 'Welcome to Allied iMpact!',
     message: `Hi ${userName || 'there'}! Welcome to Allied iMpact. Explore our products and start your journey today.`,
     actionUrl: '/dashboard'
@@ -255,16 +256,19 @@ export async function sendProductAccessNotification(
   productId: ProductId
 ): Promise<void> {
   const productNames: Record<ProductId, string> = {
-    coinbox: 'Coin Box',
-    drivemaster: 'Drive Master',
-    codetech: 'CodeTech',
-    cupfinal: 'Cup Final',
-    umkhanyakude: 'uMkhanyakude'
+    [ProductId.COIN_BOX]: 'Coin Box',
+    [ProductId.DRIVE_MASTER]: 'Drive Master',
+    [ProductId.CODE_TECH]: 'CodeTech',
+    [ProductId.CUP_FINAL]: 'Cup Final',
+    [ProductId.UMKHANYAKUDE]: 'uMkhanyakude',
+    [ProductId.EDUTECH]: 'EduTech',
+    [ProductId.CAREER_BOX]: 'Career Box',
+    [ProductId.MY_PROJECTS]: 'My Projects'
   };
   
   await sendNotification(userId, {
-    type: 'in_app',
-    priority: 'high',
+    type: NotificationType.IN_APP,
+    priority: NotificationPriority.HIGH,
     productId,
     title: 'Product Access Granted!',
     message: `You now have access to ${productNames[productId]}. Start exploring now!`,
@@ -282,8 +286,8 @@ export async function sendPaymentConfirmation(
   currency: string
 ): Promise<void> {
   await sendNotification(userId, {
-    type: 'email',
-    priority: 'high',
+    type: NotificationType.EMAIL,
+    priority: NotificationPriority.HIGH,
     productId,
     title: 'Payment Confirmed',
     message: `Your payment of ${currency.toUpperCase()} ${amount.toFixed(2)} has been processed successfully.`,
@@ -300,8 +304,8 @@ export async function sendSubscriptionExpiryWarning(
   daysRemaining: number
 ): Promise<void> {
   await sendNotification(userId, {
-    type: 'email',
-    priority: 'urgent',
+    type: NotificationType.EMAIL,
+    priority: NotificationPriority.URGENT,
     productId,
     title: 'Subscription Expiring Soon',
     message: `Your subscription will expire in ${daysRemaining} days. Renew now to continue enjoying our services.`,

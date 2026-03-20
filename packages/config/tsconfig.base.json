@@ -28,7 +28,20 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@allied-impact/auth": ["../../platform/auth/src"],
+      "@allied-impact/billing": ["../../platform/billing/src"],
+      "@allied-impact/entitlements": ["../../platform/entitlements/src"],
+      "@allied-impact/notifications": ["../../platform/notifications/src"],
+      "@allied-impact/projects": ["../../platform/projects/src"],
+      "@allied-impact/shared": ["../../platform/shared/src"],
+      "@allied-impact/config": ["../../packages/config"],
+      "@allied-impact/types": ["../../packages/types/src"],
+      "@allied-impact/ui": ["../../packages/ui/src"],
+      "@allied-impact/utils": ["../../packages/utils/src"],
+      "@alliedimpact/security": ["../../packages/security/src"]
+    }
   },
   "exclude": ["node_modules", "dist", "build", ".next"]
 }

@@ -72,6 +72,7 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
     } catch (error) {
       console.error('Failed to load notifications:', error);
       setLoading(false);
+      return undefined;
     }
   };
 
