@@ -22,7 +22,7 @@ interface OfflineDBSchema extends DBSchema {
       deviceFingerprint: string;
       synced: boolean;
     };
-    indexes: { 'by-synced': boolean };
+    indexes: { 'by-synced': 'synced' };
   };
   gameStates: {
     key: string;
@@ -140,9 +140,8 @@ class OfflineStorageService {
       ...questions.map((question) =>
         tx.store.put({
           ...question,
-          journeyId,
           cachedAt: new Date(),
-        })
+        } as any)
       ),
       tx.done,
     ]);
@@ -155,7 +154,7 @@ class OfflineStorageService {
     const db = await this.initDB();
     const cached = await db.getAllFromIndex('questions', 'by-journey', journeyId);
     
-    return cached.map(({ cachedAt, journeyId: _, ...question }) => question as Question);
+    return cached.map(({ cachedAt, ...question }) => question as Question);
   }
 
   /**
@@ -220,7 +219,7 @@ class OfflineStorageService {
    */
   async getPendingSync(): Promise<Array<any>> {
     const db = await this.initDB();
-    return await db.getAllFromIndex('pendingSync', 'by-synced', false);
+    return await db.getAllFromIndex('pendingSync', 'by-synced', IDBKeyRange.only(false));
   }
 
   /**
@@ -325,4 +324,5 @@ class OfflineStorageService {
   }
 }
 
+export { OfflineStorageService };
 export const offlineStorage = new OfflineStorageService();

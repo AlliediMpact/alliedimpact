@@ -212,12 +212,6 @@ export function middleware(request: NextRequest) {
     // }
   }
 
-  // Add rate limit headers to response
-  const response = NextResponse.next();
-  response.headers.set('X-RateLimit-Limit', limit.requests.toString());
-  response.headers.set('X-RateLimit-Remaining', rateLimit.remaining.toString());
-  response.headers.set('X-RateLimit-Reset', rateLimit.resetAt.toString());
-  
   return response;
 }
 

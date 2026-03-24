@@ -1,5 +1,8 @@
 import { doc, getDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
-import { db } from '@/config/firebase';
+import { getFirestore } from 'firebase/firestore';
+import { getApp } from 'firebase/app';
+
+const db = getFirestore(getApp());
 
 export interface DeliverableVersion {
   id: string;

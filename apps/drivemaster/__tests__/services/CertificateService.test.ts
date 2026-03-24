@@ -1,4 +1,4 @@
-import { CertificateService } from '@/lib/services/CertificateService';
+import { CertificateService, DISCLAIMERS } from '@/lib/services/CertificateService';
 
 // Mock Firebase
 jest.mock('@/lib/firebase/config', () => ({
@@ -92,8 +92,8 @@ describe('CertificateService', () => {
     });
 
     it('should have specific disclaimer texts', () => {
-      const DISCLAIMERS = certificateService['DISCLAIMERS'];
-      
+      // DISCLAIMERS is exported at module level, not a class property
+      // Import it at the top of this file to use it, or access via certificateService
       expect(DISCLAIMERS[0]).toContain('not a substitute');
       expect(DISCLAIMERS[1]).toContain('educational platform');
       expect(DISCLAIMERS[2]).toContain('official testing process');

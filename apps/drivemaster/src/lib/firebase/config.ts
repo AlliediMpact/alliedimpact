@@ -42,11 +42,11 @@ if (missingEnvVars.length > 0) {
 }
 
 // Initialize Firebase (singleton pattern)
-let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
-let storage: FirebaseStorage;
-let functions: Functions;
+let app: FirebaseApp = null as any;
+let auth: Auth = null as any;
+let db: Firestore = null as any;
+let storage: FirebaseStorage = null as any;
+let functions: Functions = null as any;
 
 if (typeof window !== 'undefined') {
   // Client-side initialization

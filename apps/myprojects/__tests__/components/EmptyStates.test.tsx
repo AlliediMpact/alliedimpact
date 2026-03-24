@@ -1,5 +1,12 @@
 import { render, screen } from '@testing-library/react';
-import { EmptyStates } from '../../components/EmptyStates';
+import {
+  NoProjectsEmpty,
+  NoMilestonesEmpty,
+  NoDeliverablesEmpty,
+  NoTicketsEmpty,
+  NoTeamMembersEmpty,
+  NoSearchResultsEmpty
+} from '../../components/EmptyStates';
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({

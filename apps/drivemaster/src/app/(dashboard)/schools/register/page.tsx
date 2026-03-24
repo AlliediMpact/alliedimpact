@@ -57,7 +57,11 @@ export default function SchoolRegisterPage() {
     setSubmitting(true);
     try {
       const drivingSchoolService = new DrivingSchoolService();
-      const schoolId = await drivingSchoolService.createSchool(user.uid, formData);
+      const schoolData = {
+        ...formData,
+        ownerId: user.uid,
+      };
+      const schoolId = await drivingSchoolService.createSchool(user.uid, schoolData);
       alert('School profile created! It will be reviewed by an admin before being activated.');
       router.push('/school-dashboard');
     } catch (error) {

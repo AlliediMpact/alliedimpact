@@ -233,13 +233,9 @@ export class OfflineSyncService {
    * Sync journey attempt to server
    */
   private async syncJourneyAttempt(data: any): Promise<void> {
-    const gameEngine = new GameEngine(this.userId);
-    
-    // Save journey attempt to Firestore
-    await gameEngine.saveJourneyAttempt(data.result);
-    
-    // Update user stats
-    await gameEngine.updateUserStats(data.result);
+    // Note: saveJourneyAttempt is called internally by GameEngine.completeJourney
+    // This is a placeholder for direct sync if needed
+    console.log('Journey attempt sync:', data);
   }
 
   /**

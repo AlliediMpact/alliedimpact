@@ -135,7 +135,7 @@ export const toastNetworkError = () => {
 };
 
 export const toastOfflineMode = () => {
-  toast('📱 You're offline. Some features may be limited.', {
+  toast("📱 You're offline. Some features may be limited.", {
     icon: '⚠️',
     duration: 3000,
   });

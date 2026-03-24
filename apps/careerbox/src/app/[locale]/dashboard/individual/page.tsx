@@ -13,7 +13,6 @@ export default function IndividualDashboardPage() {
   const locale = params?.locale as string || 'en';
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
   const [profileComplete, setProfileComplete] = useState(false);
   const [matchCount, setMatchCount] = useState(37); // Mock data
   const [tier, setTier] = useState<'free' | 'entry' | 'classic'>('free');

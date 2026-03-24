@@ -78,18 +78,26 @@ describe('rateLimiting utilities', () => {
   });
 
   describe('throttle', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
     it('should execute immediately on first call', () => {
-      const mockFn = jest.fn(() => 'result');
+      const mockFn = jest.fn((arg: string) => 'result');
       const throttledFn = throttle(mockFn, 1000);
 
-      const result = throttledFn('test');
+      throttledFn('test');
 
       expect(mockFn).toHaveBeenCalledWith('test');
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('should block subsequent calls within wait period', () => {
-      const mockFn = jest.fn(() => 'result');
+      const mockFn = jest.fn((arg: string) => 'result');
       const throttledFn = throttle(mockFn, 1000);
 
       throttledFn('call1');
@@ -101,7 +109,7 @@ describe('rateLimiting utilities', () => {
     });
 
     it('should allow call after wait period', () => {
-      const mockFn = jest.fn(() => 'result');
+      const mockFn = jest.fn((arg: string) => 'result');
       const throttledFn = throttle(mockFn, 1000);
 
       throttledFn('call1');

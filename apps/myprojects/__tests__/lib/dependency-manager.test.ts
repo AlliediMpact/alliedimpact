@@ -62,7 +62,7 @@ describe('dependency-manager', () => {
       projectId: 'p1',
       name: 'Milestone 3',
       description: 'Third milestone',
-      status: MilestoneStatus.NOT_STARTED,
+      status: MilestoneStatus.PENDING,
       dueDate: new Date('2026-04-01').toISOString(),
       assignedTo: ['user1'],
       deliverables: [],

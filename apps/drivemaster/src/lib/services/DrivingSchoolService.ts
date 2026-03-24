@@ -234,26 +234,24 @@ export class DrivingSchoolService {
       return null;
     }
 
-    const doc = snapshot.docs[0];
-    const data = doc.data();
+    const docSnapshot = snapshot.docs[0];
+    const data = docSnapshot.data();
 
     // Check if expired
     const endDate = data.endDate?.toDate();
     if (endDate && endDate < new Date()) {
       // Deactivate expired subscription
-      await updateDoc(doc.ref, { isActive: false });
+      await updateDoc(docSnapshot.ref, { isActive: false });
       
       // Deactivate school
-      const schoolRef = doc.ref.parent.parent?.collection('drivemaster_schools').doc(schoolId);
-      if (schoolRef) {
-        await updateDoc(schoolRef, { isActive: false });
-      }
+      const schoolRef = doc(db, 'drivemaster_schools', schoolId);
+      await updateDoc(schoolRef, { isActive: false });
 
       return null;
     }
 
     return {
-      subscriptionId: doc.id,
+      subscriptionId: docSnapshot.id,
       ...data,
       startDate: data.startDate?.toDate(),
       endDate: endDate,

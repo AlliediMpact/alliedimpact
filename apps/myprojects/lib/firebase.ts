@@ -87,3 +87,6 @@ export const getDbInstance = (): Firestore | null => {
   }
   return db || null;
 };
+
+// Export app, auth, and db instances
+export { app, auth, db };

@@ -96,11 +96,13 @@ export default function JourneysPage() {
 
   const checkBankruptcy = async () => {
     if (!user || !userProfile) return;
-
     const gamificationService = new GamificationService(user.uid);
-    conscheckDailyLimit = async () => {
-    if (!user || !userProfile) return;
+    const isBankrupt = await gamificationService.isBankrupt();
+    setShowBankruptcy(isBankrupt);
+  };
 
+  const checkDailyLimit = async () => {
+    if (!user || !userProfile) return;
     const subscriptionService = new SubscriptionService(user.uid);
     const canStart = await subscriptionService.canStartJourney();
     setDailyLimitReached(!canStart.allowed);
@@ -108,67 +110,25 @@ export default function JourneysPage() {
 
   const handleBankruptcyRecovered = () => {
     setShowBankruptcy(false);
-    window.location.reload(); // Refresh to update credits
+    window.location.reload();
   };
 
   const canAccessStage = (stage: Stage): boolean => {
     if (!userProfile) return false;
 
-    const tier = userProfile.subscriptionTier || 'free';
+    const tier = userProfile.tier || 'free';
     
-    // Free users: Beginner only
     if (tier === 'free') {
       return stage === 'beginner';
     }
 
-    // Trial and Paid: Based on progression
-    const unlockedStages = userProfile.unlockedStages || ['beginner'];
-    return unlockedStages.includes(stage);
-
-  const handleBankruptcyRecovered = () => {
-    setShowBankruptcy(false);
-    window.location.reload(); // Refresh to update credits
-  };
-    }
+    // For paid/trial tiers, users can access any stage
+    return true;
   };
 
   const handleStageChange = (stage: Stage) => {
     setSelectedStage(stage);
     loadJourneys(stage);
-  };
-
-  const canAccessStage = (stage: Stage): boolean => {
-    if (!userProfile) return false;
-
-    // Free users can only access Beginner
-    if (usUpgrade Modal */}
-      {showUpgradeModal && (
-        <UpgradeModal onClose={() => setShowUpgradeModal(false)} />
-      )}
-
-      {/* Daily Limit Banner */}
-      {dailyLimitReached && userProfile?.subscriptionTier === 'free' && (
-        <div className="bg-orange-600 text-white py-3">
-          <div className="container mx-auto px-4 text-center">
-            <span className="font-semibold">Daily limit reached (3 journeys)</span>
-            {' • '}
-            <Link href="/subscription" className="underline hover:text-orange-100">
-              Upgrade for unlimited access
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* erProfile.tier === 'free') {
-      return stage === 'beginner';
-    }
-
-    // Trial and Paid users can access based on progression
-    const stageOrder: Stage[] = ['beginner', 'intermediate', 'advanced', 'k53'];
-    const currentIndex = stageOrder.indexOf(userProfile.currentStage);
-    const requestedIndex = stageOrder.indexOf(stage);
-
-    return requestedIndex <= currentIndex;
   };
 
   if (loading || !user || !userProfile) {
@@ -180,33 +140,11 @@ export default function JourneysPage() {
   }
 
   return (
-    <div cldiv className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Select Stage</h2>
-            <button
-              onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                showBookmarkedOnly
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <Bookmark className={`w-4 h-4 ${showBookmarkedOnly ? 'fill-current' : ''}`} />
-              <span className="text-sm font-medium">
-                {showBookmarkedOnly ? 'Show All' : 'Bookmarks Only'}
-              </span>
-              {bookmarkedJourneys.length > 0 && (
-                <span className="bg-white text-primary-600 px-2 py-0.5 rounded-full text-xs font-bold">
-                  {bookmarkedJourneys.length}
-                </span>
-              )}
-            </button>
-          </div
-      {/* Bankruptcy Modal */}
+    <div className="min-h-screen bg-white">
       {showBankruptcy && user && (
         <BankruptcyModal userId={user.uid} onRecovered={handleBankruptcyRecovered} />
       )}
 
-      {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/dashboard" className="text-2xl font-bold text-primary-600">
@@ -226,27 +164,38 @@ export default function JourneysPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Choose Your Journey</h1>
-          <p className="text-gray-600">
-            Select a journey from your current stage to begin learning
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Choose Your Journey</h1>
+            <p className="text-gray-600">
+              Select a journey from your current stage to begin learning
+            </p>
+          </div>
+          <button
+            onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              showBookmarkedOnly
+                ? 'bg-primary-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <Bookmark className={`w-4 h-4 ${showBookmarkedOnly ? 'fill-current' : ''}`} />
+            <span className="text-sm font-medium">
+              {showBookmarkedOnly ? 'Show All' : 'Bookmarks Only'}
+            </span>
+            {bookmarkedJourneys.length > 0 && (
+              <span className="bg-white text-primary-600 px-2 py-0.5 rounded-full text-xs font-bold">
+                {bookmarkedJourneys.length}
+              </span>
+            )}
+          </button>
         </div>
-              .filter((journey) =>
-                showBookmarkedOnly ? bookmarkedJourneys.includes(journey.journeyId) : true
-              )
-              .map((journey) => (
-                <JourneyCard
-                  key={journey.journeyId}
-                  journey={journey}
-                  userProfile={userProfile}
-                  difficulty={difficulties[journey.journeyId]}
-                  isBookmarked={bookmarkedJourneys.includes(journey.journeyId)}
-                  onToggleBookmark={toggleBookmark}
-                />
-              <StageButton
+
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Select Stage</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StageButton
               stage="beginner"
               label="Beginner"
               threshold="95-100%"
@@ -281,61 +230,26 @@ export default function JourneysPage() {
           </div>
         </div>
 
-        {/* Journeys Grid */}
         {loadingJourneys ? (
-          <div className="text-center py-12">
-  difficulty,
-  isBookmarked,
-  onToggleBookmark,
-}: {
-  journey: Journey;
-  userProfile: any;
-  difficulty?: any;
-  isBookmarked?: boolean;
-  onToggleBookmark?: (journeyId: string) => void;
-}) {
-  const router = useRouter();
-
-  const handleStart = () => {
-    router.push(`/journeys/${journey.journeyId}/start`);
-  };
-
-  const handleBookmarkClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onToggleBookmark?.(journey.journeyId);
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow relative">
-      {/* Bookmark Button */}
-      {onToggleBookmark && (
-        <button
-          onClick={handleBookmarkClick}
-          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md transition-colors"
-        >
-          <Bookmark
-            className={`w-5 h-5 transition-colors ${
-              isBookmarked ? 'fill-primary-600 text-primary-600' : 'text-gray-400'
-            }`}
-          />
-        </button>
-      )}
-
-      {/* Thumbnail */}
-      <div
-        className="h-48 bg-cover bg-center relative"
-        style={{ backgroundImage: `url(${journey.thumbnailUrl})` }}
-      >
-        {/* Difficulty Badge Overlay */}
-        {difficulty && (
-          <div className="absolute bottom-3 left-3">
-            <DifficultyBadge difficulty={difficulty} variant="compact" showPercentage={false} />
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
-        )}
-      </div         journey={journey}
-                userProfile={userProfile}
-              />
-            ))}
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {journeys
+              .filter((journey) =>
+                showBookmarkedOnly ? bookmarkedJourneys.includes(journey.journeyId) : true
+              )
+              .map((journey) => (
+                <JourneyCard
+                  key={journey.journeyId}
+                  journey={journey}
+                  userProfile={userProfile}
+                  difficulty={difficulties[journey.journeyId]}
+                  isBookmarked={bookmarkedJourneys.includes(journey.journeyId)}
+                  onToggleBookmark={toggleBookmark}
+                />
+              ))}
           </div>
         )}
       </main>
@@ -380,9 +294,15 @@ function StageButton({
 function JourneyCard({
   journey,
   userProfile,
+  difficulty,
+  isBookmarked,
+  onToggleBookmark,
 }: {
   journey: Journey;
   userProfile: any;
+  difficulty?: any;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (journeyId: string) => void;
 }) {
   const router = useRouter();
 
@@ -390,20 +310,41 @@ function JourneyCard({
     router.push(`/journeys/${journey.journeyId}/start`);
   };
 
-  return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-      {/* Thumbnail */}
-      <div
-        className="h-48 bg-cover bg-center"
-        style={{ backgroundImage: `url(${journey.thumbnailUrl})` }}
-      />
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleBookmark?.(journey.journeyId);
+  };
 
-      {/* Content */}
+  return (
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow relative">
+      {onToggleBookmark && (
+        <button
+          onClick={handleBookmarkClick}
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md transition-colors"
+        >
+          <Bookmark
+            className={`w-5 h-5 transition-colors ${
+              isBookmarked ? 'fill-primary-600 text-primary-600' : 'text-gray-400'
+            }`}
+          />
+        </button>
+      )}
+
+      <div
+        className="h-48 bg-cover bg-center relative"
+        style={{ backgroundImage: `url(${journey.thumbnailUrl})` }}
+      >
+        {difficulty && (
+          <div className="absolute bottom-3 left-3">
+            <DifficultyBadge difficulty={difficulty} variant="compact" showPercentage={false} />
+          </div>
+        )}
+      </div>
+
       <div className="p-6">
         <h3 className="text-xl font-bold mb-2">{journey.title}</h3>
         <p className="text-gray-600 text-sm mb-4">{journey.description}</p>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
           <div>
             <div className="text-gray-500">Distance</div>
@@ -423,54 +364,15 @@ function JourneyCard({
           </div>
         </div>
 
-        {/* Route */}
         <div className="text-xs text-gray-500 mb-4">
           <div>{journey.route.startLocation}</div>
           <div className="text-center my-1">↓</div>
           <div>{journey.route.endLocation}</div>
         </div>
 
-        {/* Action Button */}
         <Button onClick={handleStart} className="w-full">
           Start Journey
         </Button>
-      </div>
-    </div>
-  );
-}
-
-function UpgradeModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-8">
-        <div className="text-center mb-6">
-          <div className="text-6xl mb-4">🔒</div>
-          <h2 className="text-3xl font-bold mb-2">Upgrade to Continue</h2>
-          <p className="text-gray-600">
-            This stage is locked for Free users. Upgrade to unlock all stages!
-          </p>
-        </div>
-
-        <div className="bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200 rounded-lg p-4 mb-6">
-          <h3 className="font-bold text-primary-900 mb-2">✨ Unlock Full Access</h3>
-          <ul className="text-sm text-primary-800 space-y-2">
-            <li>• All 4 stages unlocked</li>
-            <li>• Unlimited journeys per day</li>
-            <li>• Lifetime access for R99</li>
-            <li>• Or try 7-day free trial first</li>
-          </ul>
-        </div>
-
-        <div className="space-y-3">
-          <Link href="/subscription">
-            <Button className="w-full" size="lg">
-              View Upgrade Options
-            </Button>
-          </Link>
-          <Button variant="outline" className="w-full" onClick={onClose}>
-            Maybe Later
-          </Button>
-        </div>
       </div>
     </div>
   );

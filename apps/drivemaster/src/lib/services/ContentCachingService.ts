@@ -23,18 +23,6 @@ export class ContentCachingService {
       for (const journey of journeys) {
         try {
           await offlineStorage.cacheJourney(journey);
-          
-          // Cache questions if available
-          if (journey.events) {
-            const questions = journey.events
-              .filter((event) => event.type === 'question')
-              .map((event) => event.question!)
-              .filter(Boolean);
-
-            if (questions.length > 0) {
-              await offlineStorage.cacheQuestions(journey.journeyId, questions);
-            }
-          }
 
           result.cached++;
         } catch (error) {
@@ -102,7 +90,7 @@ export class ContentCachingService {
       let questionCount = 0;
       journeys.forEach((journey) => {
         if (journey.events) {
-          questionCount += journey.events.filter((e) => e.type === 'question').length;
+          questionCount += journey.events.length;
         }
       });
 

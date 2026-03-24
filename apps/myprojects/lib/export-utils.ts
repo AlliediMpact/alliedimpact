@@ -128,10 +128,8 @@ export function exportTicketsToCSV(tickets: Ticket[]): string {
     description: t.description,
     status: t.status,
     priority: t.priority,
-    category: t.category,
     assignedTo: t.assignedTo || '',
     commentCount: t.comments?.length || 0,
-    createdBy: t.createdBy,
     createdAt: t.createdAt,
     updatedAt: t.updatedAt,
     resolvedAt: t.resolvedAt || ''

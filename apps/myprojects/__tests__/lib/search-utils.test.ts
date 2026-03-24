@@ -29,7 +29,7 @@ describe('search-utils', () => {
       projectId: 'p1',
       name: 'Development Sprint 1',
       description: 'First development sprint for core features',
-      status: MilestoneStatus.NOT_STARTED,
+      status: MilestoneStatus.PENDING,
       dueDate: new Date('2026-03-01').toISOString(),
       assignedTo: ['user3'],
       deliverables: [],
@@ -78,7 +78,7 @@ describe('search-utils', () => {
       name: 'Wireframes',
       description: 'Low-fidelity wireframes for initial review',
       type: 'design',
-      status: DeliverableStatus.IN_REVIEW,
+      status: DeliverableStatus.REVISION_REQUESTED,
       dueDate: new Date('2026-01-15').toISOString(),
       assignedTo: 'user2',
       fileUrls: [],
@@ -93,7 +93,7 @@ describe('search-utils', () => {
       name: 'API Documentation',
       description: 'Comprehensive API documentation',
       type: 'documentation',
-      status: DeliverableStatus.NOT_STARTED,
+      status: DeliverableStatus.PENDING,
       dueDate: new Date('2026-02-20').toISOString(),
       assignedTo: 'user3',
       notes: 'Include code examples and authentication flows',
@@ -123,7 +123,7 @@ describe('search-utils', () => {
           id: 'c1',
           userId: 'user1',
           userName: 'User One',
-          text: 'I can reproduce this on iOS Safari',
+          content: 'I can reproduce this on iOS Safari',
           timestamp: new Date('2026-01-05').toISOString(),
         },
       ],
@@ -202,7 +202,7 @@ describe('search-utils', () => {
 
     it('should filter by multiple statuses', () => {
       const filters: SearchFilters = { 
-        status: [MilestoneStatus.IN_PROGRESS, MilestoneStatus.NOT_STARTED] 
+        status: [MilestoneStatus.IN_PROGRESS, MilestoneStatus.PENDING] 
       };
       const results = searchMilestones(mockMilestones, filters);
       

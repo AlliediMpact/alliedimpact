@@ -1,4 +1,4 @@
-import { MasteryService, STAGE_ORDER } from '@/lib/services/MasteryService';
+import { MasteryService, STAGE_ORDER, STAGE_REQUIREMENTS } from '@/lib/services/MasteryService';
 import { Stage } from '@/lib/types/game';
 
 // Mock Firebase
@@ -30,37 +30,37 @@ describe('MasteryService', () => {
 
   describe('Mastery Thresholds', () => {
     it('should have correct threshold for Beginner', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].beginner.minScore).toBe(95);
+      expect(STAGE_REQUIREMENTS.beginner.minScore).toBe(95);
     });
 
     it('should have correct threshold for Intermediate', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].intermediate.minScore).toBe(97);
+      expect(STAGE_REQUIREMENTS.intermediate.minScore).toBe(97);
     });
 
     it('should have correct threshold for Advanced', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].advanced.minScore).toBe(98);
+      expect(STAGE_REQUIREMENTS.advanced.minScore).toBe(98);
     });
 
     it('should have correct threshold for K53', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].k53.minScore).toBe(100);
+      expect(STAGE_REQUIREMENTS.k53.minScore).toBe(100);
     });
   });
 
   describe('Journey Requirements', () => {
     it('should require 3 journeys for Beginner', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].beginner.minJourneys).toBe(3);
+      expect(STAGE_REQUIREMENTS.beginner.minJourneys).toBe(3);
     });
 
     it('should require 5 journeys for Intermediate', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].intermediate.minJourneys).toBe(5);
+      expect(STAGE_REQUIREMENTS.intermediate.minJourneys).toBe(5);
     });
 
     it('should require 5 journeys for Advanced', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].advanced.minJourneys).toBe(5);
+      expect(STAGE_REQUIREMENTS.advanced.minJourneys).toBe(5);
     });
 
     it('should require 3 journeys for K53', () => {
-      expect(masteryService['STAGE_REQUIREMENTS'].k53.minJourneys).toBe(3);
+      expect(STAGE_REQUIREMENTS.k53.minJourneys).toBe(3);
     });
   });
 

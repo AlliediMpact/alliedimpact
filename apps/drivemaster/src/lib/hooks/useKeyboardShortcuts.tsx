@@ -117,7 +117,7 @@ export function KeyboardShortcutsLegend({ className = '' }: { className?: string
  */
 export function useGlobalShortcuts() {
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) {
+    const handleKeyDown = (event: KeyboardEvent) => {
       // Ctrl/Cmd + K for search (common pattern)
       if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
         event.preventDefault();

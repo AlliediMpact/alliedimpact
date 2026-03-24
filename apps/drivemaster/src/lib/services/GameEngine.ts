@@ -308,7 +308,7 @@ export class GameEngine {
   /**
    * Save journey attempt to Firestore
    */
-  private async saveJourneyAttempt(result: JourneyResult): Promise<void> {
+  async saveJourneyAttempt(result: JourneyResult): Promise<void> {
     if (!this.gameState) return;
 
     try {
@@ -345,8 +345,8 @@ export class GameEngine {
       await addDoc(progressRef, {
         ...attempt,
         startedAt: Timestamp.fromDate(attempt.startedAt),
-        completedAt: Timestamp.fromDate(attempt.completedAt),
-        syncedAt: Timestamp.fromDate(attempt.syncedAt!),
+        completedAt: Timestamp.fromDate(attempt.completedAt || new Date()),
+        syncedAt: Timestamp.fromDate(attempt.syncedAt || new Date()),
       });
 
       // Update user stats
@@ -359,7 +359,7 @@ export class GameEngine {
   /**
    * Update user statistics after journey completion
    */
-  private async updateUserStats(result: JourneyResult): Promise<void> {
+  async updateUserStats(result: JourneyResult): Promise<void> {
     try {
       const userRef = doc(db, 'drivemaster_users', this.userId);
       const userDoc = await getDoc(userRef);

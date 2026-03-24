@@ -5,6 +5,8 @@ import { Clock, AlertCircle, AlertTriangle, Bell, BellOff } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@allied-impact/ui';
 import { Button } from '@allied-impact/ui';
 import { useRouter } from 'next/navigation';
+import { Timestamp, updateDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface DeadlineItem {
   id: string;

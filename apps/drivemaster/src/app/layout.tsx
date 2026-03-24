@@ -4,7 +4,7 @@ import './globals.css';
 import { AuthProvider } from '@/lib/contexts/AuthContext';
 import { Toaster } from '@/components/Toaster';
 import { FeedbackWidget } from '@/components/FeedbackWidget';
-import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@allied-impact/ui';
 import PlatformFooter from '@/components/PlatformFooter';
 
 const inter = Inter({ subsets: ['latin'] });

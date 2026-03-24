@@ -125,15 +125,7 @@ export default function JourneyPlayPage() {
     router.push(`/journeys/${journeyId}/start`);
   };
 
-  const han(
-      <JourneyResultScreen
-        result={journeyResult}
-        onRetry={handleRetry}
-        onExit={handleBackToJourneys}
-        unlockedStage={unlockedStage}
-        newBadges={newBadges}
-      />
-    )
+  const handleBackToAllJourneys = () => {
     router.push('/journeys');
   };
 
@@ -149,7 +141,7 @@ export default function JourneyPlayPage() {
   }
 
   if (journeyComplete && journeyResult) {
-    return <JourneyResultScreen result={journeyResult} onRetry={handleRetry} onExit={handleBackToJourneys} />;
+    return <JourneyResultScreen result={journeyResult} onRetry={handleRetry} onExit={handleBackToAllJourneys} />;
   }
 
   if (!gameState || !gameState.currentQuestion) {
@@ -157,7 +149,7 @@ export default function JourneyPlayPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Error Loading Journey</h1>
-          <Button onClick={handleBackToJourneys}>Back to Journeys</Button>
+          <Button onClick={handleBackToAllJourneys}>Back to Journeys</Button>
         </div>
       </div>
     );
@@ -293,50 +285,21 @@ function AnswerFeedback({
           {result.isCorrect ? 'Correct!' : 'Incorrect'}
         </h2>
         <div className="text-xl">
-  unlockedStage,
-  newBadges,
-}: {
-  result: JourneyResult;
-  onRetry: () => void;
-  onExit: () => void;
-  unlockedStage: string | null;
-  newBadges: string[];
-}) {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-      <div className="container mx-auto px-4 max-w-2xl">
-        <div className="bg-gray-800 rounded-lg p-8 text-center">
-          <div className="text-6xl mb-6">{result.passed ? '🎉' : '😔'}</div>
-          
-          <h1 className="text-4xl font-bold mb-4">
-            {result.passed ? 'Journey Complete!' : 'Not Quite There Yet'}
-          </h1>
+          You {result.isCorrect ? 'got it right!' : "didn't quite get it"}
+        </div>
+      </div>
+      <div className="mt-8 text-center">
+        <button
+          onClick={onContinue}
+          className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+}
 
-          <div className="text-6xl font-bold mb-6">
-            {result.score.toFixed(1)}%
-          </div>
-
-          <p className="text-gray-300 mb-8">{result.feedback}</p>
-
-          {/* Unlocked Stage Alert */}
-          {unlockedStage && (
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-6 mb-6 animate-pulse">
-              <div className="text-3xl mb-2">🎊</div>
-              <div className="text-xl font-bold mb-2">New Stage Unlocked!</div>
-              <div className="text-lg capitalize">{unlockedStage} is now available</div>
-            </div>
-          )}
-
-          {/* New Badges */}
-          {newBadges.length > 0 && (
-            <div className="bg-yellow-900 bg-opacity-50 border-2 border-yellow-500 rounded-lg p-4 mb-6">
-              <div className="text-2xl mb-2">🏅</div>
-              <div className="font-bold mb-2">New Badge{newBadges.length > 1 ? 's' : ''} Earned!</div>
-              <div className="text-sm text-yellow-300">
-                {newBadges.join(', ')}
-              </div>
-            </div>
-          )}
 function JourneyResultScreen({
   result,
   onRetry,
@@ -362,34 +325,19 @@ function JourneyResultScreen({
 
           <p className="text-gray-300 mb-8">{result.feedback}</p>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="text-2xl font-bold text-green-400">{result.correctAnswers}</div>
-              <div className="text-sm text-gray-400">Correct</div>
-            </div>
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="text-2xl font-bold text-red-400">{result.incorrectAnswers}</div>
-              <div className="text-sm text-gray-400">Incorrect</div>
-            </div>
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="text-2xl font-bold text-yellow-400">{result.creditsEarned > 0 ? '+' : ''}{result.creditsEarned}</div>
-              <div className="text-sm text-gray-400">Credits</div>
-            </div>
-          </div>
-
-          <div className="text-sm text-gray-400 mb-8">
-            Duration: {Math.floor(result.duration / 60)}:{(result.duration % 60).toString().padStart(2, '0')}
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-4">
-            <Button onClick={onRetry} variant="secondary" className="flex-1">
-              {result.passed ? 'Play Again' : 'Retry'}
-            </Button>
-            <Button onClick={onExit} className="flex-1">
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={onRetry}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              Try Again
+            </button>
+            <button
+              onClick={onExit}
+              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
               Back to Journeys
-            </Button>
+            </button>
           </div>
         </div>
       </div>

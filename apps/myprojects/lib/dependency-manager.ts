@@ -68,10 +68,11 @@ export async function addMilestoneDependency(
   };
 
   // Update both milestones
-  const fromRef = doc(db, 'milestones', fromMilestoneId);
-  const toRef = doc(db, 'milestones', toMilestoneId);
+  const fromRef = doc(db!, 'milestones', fromMilestoneId);
+  const toRef = doc(db!, 'milestones', toMilestoneId);
 
-  await Promise.all([
+  const allDeps: Promise<void>[] = [];
+  allDeps.push(
     updateDoc(fromRef, {
       dependents: arrayUnion(toMilestoneId),
       dependencies: arrayUnion(dependency),
@@ -79,8 +80,8 @@ export async function addMilestoneDependency(
     updateDoc(toRef, {
       dependencies: arrayUnion(fromMilestoneId),
       dependencyDetails: arrayUnion(dependency),
-    }),
-  ]);
+    })
+  );
 
   // Auto-update cascading dates
   await cascadeDateChanges(projectId, fromMilestoneId);
@@ -93,8 +94,8 @@ export async function removeMilestoneDependency(
   fromMilestoneId: string,
   toMilestoneId: string
 ): Promise<void> {
-  const fromRef = doc(db, 'milestones', fromMilestoneId);
-  const toRef = doc(db, 'milestones', toMilestoneId);
+  const fromRef = doc(db!, 'milestones', fromMilestoneId);
+  const toRef = doc(db!, 'milestones', toMilestoneId);
 
   await Promise.all([
     updateDoc(fromRef, {
@@ -131,7 +132,7 @@ export async function checkCircularDependency(
     visited.add(currentId);
 
     // Get dependencies of current milestone
-    const milestoneRef = doc(db, 'milestones', currentId);
+    const milestoneRef = doc(db!, 'milestones', currentId);
     const milestoneSnap = await getDoc(milestoneRef);
     
     if (milestoneSnap.exists()) {
@@ -149,7 +150,7 @@ export async function checkCircularDependency(
  */
 export async function getProjectDependencies(projectId: string): Promise<MilestoneDependency[]> {
   const milestonesQuery = query(
-    collection(db, 'milestones'),
+    collection(db!, 'milestones'),
     where('projectId', '==', projectId)
   );
 
@@ -329,7 +330,7 @@ export async function cascadeDateChanges(
   projectId: string,
   changedMilestoneId: string
 ): Promise<void> {
-  const milestoneRef = doc(db, 'milestones', changedMilestoneId);
+  const milestoneRef = doc(db!, 'milestones', changedMilestoneId);
   const milestoneSnap = await getDoc(milestoneRef);
   
   if (!milestoneSnap.exists()) return;
@@ -339,7 +340,7 @@ export async function cascadeDateChanges(
 
   // Update all dependent milestones
   for (const dependentId of dependents) {
-    const dependentRef = doc(db, 'milestones', dependentId);
+    const dependentRef = doc(db!, 'milestones', dependentId);
     const dependentSnap = await getDoc(dependentRef);
     
     if (!dependentSnap.exists()) continue;

@@ -275,13 +275,14 @@ export function searchTickets(
       // Search in comments
       if (ticket.comments) {
         ticket.comments.forEach((comment, index) => {
-          const commentScore = calculateScore(comment.text, query);
+          const content = typeof comment === 'string' ? comment : comment.content || '';
+          const commentScore = calculateScore(content, query);
           if (commentScore > 0) {
             score += commentScore / 2; // Lower weight for comments
             matches.push({
               field: `comment_${index}`,
-              snippet: createSnippet(comment.text, query),
-              highlighted: highlightText(comment.text, query)
+              snippet: createSnippet(content, query),
+              highlighted: highlightText(content, query)
             });
           }
         });
@@ -305,7 +306,7 @@ export function searchTickets(
   
   // Filter by category
   if (category && category.length > 0) {
-    results = results.filter(r => category.includes(r.item.category));
+    results = results.filter(r => r.item && category.includes((r.item as any).category || ''));
   }
   
   // Filter by assigned user

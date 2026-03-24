@@ -1,19 +1,17 @@
 'use client';
 
-import { useAuth } from '@/lib/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Button } from '@allied-impact/ui';
-import { logoutUser } from '@/lib/firebase/auth';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import { GamificationService } from '@/lib/services/GamificationService';
 import { SubscriptionService } from '@/lib/services/SubscriptionService';
-import { SchoolAdCarousel } from '@/components/SchoolAdCarousel';
-import { OfflineIndicator } from '@/components/OfflineIndicator';
+import { Button } from '@allied-impact/ui';
+import { logoutUser } from '@/lib/firebase/auth';
+import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
   const { user, userProfile, loading } = useAuth();
   const router = useRouter();
-  
   const [streakInfo, setStreakInfo] = useState<any>(null);
   const [streakBonus, setStreakBonus] = useState(false);
   const [showAds, setShowAds] = useState(false);
@@ -33,23 +31,18 @@ export default function DashboardPage() {
 
   const checkSubscription = async () => {
     if (!user) return;
-    
     const subscriptionService = new SubscriptionService(user.uid);
     const subInfo = await subscriptionService.getSubscriptionInfo();
-    // Show ads for Free and Trial users only
     setShowAds(subInfo.tier === 'free' || subInfo.tier === 'trial');
   };
 
   const checkStreak = async () => {
     if (!user) return;
-    
     const gamificationService = new GamificationService(user.uid);
     const streak = await gamificationService.checkDailyStreak();
     setStreakInfo(streak);
-    
     if (streak.streakBonusEarned) {
       setStreakBonus(true);
-      // Auto-hide after 5 seconds
       setTimeout(() => setStreakBonus(false), 5000);
     }
   };
@@ -77,23 +70,18 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Offline Indicator */}
-      <OfflineIndicator />
-      
-      {/* Streak Bonus Toast */}
       {streakBonus && (
         <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-4 rounded-lg shadow-2xl animate-bounce">
           <div className="flex items-center gap-3">
             <span className="text-3xl">🔥</span>
             <div>
-              <div className="font-bold">Daily Streak Bonus!</div>
+              <div className="font-bold">Daily Streak!</div>
               <div className="text-sm">+20 credits earned</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-primary-600">DriveMaster</h1>
@@ -106,9 +94,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {/* Welcome Section */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-3xl font-bold mb-4">
             Welcome, {userProfile.displayName}! 👋
@@ -117,7 +103,6 @@ export default function DashboardPage() {
             Ready to continue your journey to mastery?
           </p>
 
-          {/* Stats Grid */}
           <div className="grid md:grid-cols-4 gap-4">
             <StatCard
               label="Current Stage"
@@ -143,73 +128,33 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Subscription Status */}
-        <div className="bg-gradient-to-r from-primary-600 to-primary-800 text-white rounded-lg shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-bold mb-2">
-                {userProfile.tier === 'free' && '🆓 Free Account'}
-                {userProfile.tier === 'trial' && '⏰ Trial Active'}
-                {userProfile.tier === 'paid' && '⭐ Lifetime Member'}
-              </h3>
-
-        {/* School Ad Carousel - Show for Free and Trial users */}
-        {showAds && (
-          <div className="mb-8">
-            <SchoolAdCarousel />
-          </div>
-        )}
-              <p className="text-primary-100">
-                {userProfile.tier === 'free' && 'Upgrade to unlock all stages'}
-                {userProfile.tier === 'trial' && 'Trial expires in X days'}
-                {userProfile.tier === 'paid' && 'Enjoy unlimited access forever'}
-              </p>
-            </div>
-            {userProfile.tier !== 'paid' && (
-              <Button variant="secondary">
-                Upgrade Now
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Progress Section */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h3 className="text-2xl font-bold mb-6">Your Progress</h3>
-          
           <div className="space-y-4">
             <ProgressStage
               stage="Beginner"
               threshold="95-100%"
-              completed={userProfile.stagesCompleted.includes('beginner')}
+              completed={userProfile.stagesCompleted?.includes('beginner')}
               current={userProfile.currentStage === 'beginner'}
               locked={false}
             />
             <ProgressStage
               stage="Intermediate"
               threshold="97-100%"
-              completed={userProfile.stagesCompleted.includes('intermediate')}
+              completed={userProfile.stagesCompleted?.includes('intermediate')}
               current={userProfile.currentStage === 'intermediate'}
-              locked={!userProfile.stagesCompleted.includes('beginner')}
+              locked={!userProfile.stagesCompleted?.includes('beginner')}
             />
             <ProgressStage
               stage="Advanced"
               threshold="98-100%"
-              completed={userProfile.stagesCompleted.includes('advanced')}
+              completed={userProfile.stagesCompleted?.includes('advanced')}
               current={userProfile.currentStage === 'advanced'}
-              locked={!userProfile.stagesCompleted.includes('intermediate')}
-            />
-            <ProgressStage
-              stage="K53 Simulation"
-              threshold="100%"
-              completed={userProfile.stagesCompleted.includes('k53')}
-              current={userProfile.currentStage === 'k53'}
-              locked={!userProfile.stagesCompleted.includes('advanced')}
+              locked={!userProfile.stagesCompleted?.includes('intermediate')}
             />
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="grid md:grid-cols-3 gap-6">
           <ActionCard
             title="Start Journey"
@@ -227,7 +172,7 @@ export default function DashboardPage() {
           />
           <ActionCard
             title="Certificates"
-            description="Download your achievements"
+            description="Download achievements"
             icon="🏆"
             buttonText="View Certificates"
             onClick={() => router.push('/certificates')}
@@ -238,13 +183,15 @@ export default function DashboardPage() {
   );
 }
 
-  label, 
-  value, 
-  icon, 
-  suffix 
-}: { 
-  label: string; 
-  value: string | number; 
+
+function StatCard({
+  label,
+  value,
+  icon,
+  suffix,
+}: {
+  label: string;
+  value: string | number;
   icon: string;
   suffix?: string;
 }) {
@@ -253,8 +200,7 @@ export default function DashboardPage() {
       <div className="text-3xl mb-2">{icon}</div>
       <div className="text-2xl font-bold text-gray-900">
         {value}{suffix ? ` ${suffix}` : ''}
-      
-      <div className="text-2xl font-bold text-gray-900">{value}</div>
+      </div>
       <div className="text-sm text-gray-600">{label}</div>
     </div>
   );
@@ -269,7 +215,7 @@ function ProgressStage({
 }: {
   stage: string;
   threshold: string;
-  completed: boolean;
+  completed?: boolean;
   current: boolean;
   locked: boolean;
 }) {
@@ -289,9 +235,9 @@ function ProgressStage({
           </h4>
           <p className="text-sm text-gray-600">Required: {threshold}</p>
         </div>
-        {current && <span className="text-sm font-semibold text-blue-600">CURRENT</span>}
-        {completed && <span className="text-sm font-semibold text-green-600">COMPLETED</span>}
-        {locked && <span className="text-sm font-semibold text-gray-600">LOCKED</span>}
+        {current && <span className="text-xs font-semibold text-blue-600">CURRENT</span>}
+        {completed && <span className="text-xs font-semibold text-green-600">COMPLETED</span>}
+        {locked && <span className="text-xs font-semibold text-gray-600">LOCKED</span>}
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ import BulkInvestmentForm from './BulkInvestmentForm';
 import BulkCryptoOrderForm from './BulkCryptoOrderForm';
 import BulkMessageComposer from './BulkMessageComposer';
 import BulkExportForm from './BulkExportForm';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/components/AuthProvider';
 
 interface FeatureCardProps {
   icon: React.ReactNode;

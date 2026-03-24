@@ -6,7 +6,7 @@ import { locales } from '@/i18n/config';
 import { ToastProvider } from '@/components/ui/toast';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { SkipLink } from '@/components/ui/accessibility';
-import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
+import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@allied-impact/ui';
 import PlatformFooter from '@/components/PlatformFooter';
 import '../globals.css';
 

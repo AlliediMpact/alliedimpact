@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AppHeader from '@/components/AppHeader';
-import { Project } from '@allied-impact/projects';
+import { Project, ProjectStatus } from '@allied-impact/projects';
 
 // Mock next/navigation
 const mockPush = jest.fn();
@@ -99,7 +99,7 @@ describe('AppHeader', () => {
     name: 'Test Project',
     description: 'Test project description',
     clientId: 'client1',
-    status: 'active',
+    status: ProjectStatus.PLANNING,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     createdBy: 'user123',

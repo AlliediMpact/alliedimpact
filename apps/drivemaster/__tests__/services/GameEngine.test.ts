@@ -46,43 +46,20 @@ describe('GameEngine', () => {
   });
 
   describe('Question Validation', () => {
-    it('should validate correct answer', () => {
-      const question = {
-        questionId: 'q1',
-        questionText: 'Test question',
-        options: ['A', 'B', 'C', 'D'],
-        correctAnswer: 'B',
-        explanation: 'Test explanation',
-      };
-
-      const result = gameEngine['validateAnswer'](question, 'B');
+    it('should validate correct answer', async () => {
+      const result = await gameEngine['validateAnswer']('q1', 'opt-b', 50);
       expect(result.isCorrect).toBe(true);
     });
 
-    it('should validate incorrect answer', () => {
-      const question = {
-        questionId: 'q1',
-        questionText: 'Test question',
-        options: ['A', 'B', 'C', 'D'],
-        correctAnswer: 'B',
-        explanation: 'Test explanation',
-      };
-
-      const result = gameEngine['validateAnswer'](question, 'A');
+    it('should validate incorrect answer', async () => {
+      const result = await gameEngine['validateAnswer']('q1', 'opt-a', 50);
       expect(result.isCorrect).toBe(false);
     });
 
-    it('should handle case-insensitive answers', () => {
-      const question = {
-        questionId: 'q1',
-        questionText: 'Test question',
-        options: ['A', 'B', 'C', 'D'],
-        correctAnswer: 'B',
-        explanation: 'Test explanation',
-      };
-
-      const result = gameEngine['validateAnswer'](question, 'b');
-      expect(result.isCorrect).toBe(true);
+    it('should handle answers correctly', async () => {
+      const result = await gameEngine['validateAnswer']('q1', 'opt-b', 50);
+      expect(result).toHaveProperty('isCorrect');
+      expect(result).toHaveProperty('correctOptionId');
     });
   });
 

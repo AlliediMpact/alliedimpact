@@ -30,7 +30,7 @@ export interface Certificate {
   createdAt: Date;
 }
 
-const DISCLAIMERS = [
+export const DISCLAIMERS = [
   '1. This certificate is for educational purposes only and does not replace official K53 learner\'s or driver\'s license testing.',
   '2. DriveMaster is a learning platform and is not affiliated with or endorsed by any official licensing authority.',
   '3. Passing all stages on DriveMaster does not guarantee passing the official license test.',

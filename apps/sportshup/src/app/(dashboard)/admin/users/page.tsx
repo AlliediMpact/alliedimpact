@@ -4,13 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import UserManagement from '@/components/admin/UserManagement';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-
-export const metadata = {
-  title: 'User Management - SportsHub Admin',
-  description: 'Manage users, roles, and permissions',
-};
 
 export default function UsersManagementPage() {
   const router = useRouter();

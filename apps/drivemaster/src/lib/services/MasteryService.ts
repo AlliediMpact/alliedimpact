@@ -43,9 +43,9 @@ export interface Badge {
   required?: number;
 }
 
-const STAGE_ORDER: Stage[] = ['beginner', 'intermediate', 'advanced', 'k53'];
+export const STAGE_ORDER: Stage[] = ['beginner', 'intermediate', 'advanced', 'k53'];
 
-const STAGE_REQUIREMENTS = {
+export const STAGE_REQUIREMENTS = {
   beginner: {
     minJourneys: 3,
     minScore: 95,

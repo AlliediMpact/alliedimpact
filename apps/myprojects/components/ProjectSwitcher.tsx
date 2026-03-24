@@ -78,8 +78,8 @@ export default function ProjectSwitcher({ currentProject, onProjectChange }: Pro
     // These would come from actual data in production
     return {
       progress: project.progress || 0,
-      milestonesActive: project.activeMilestones || 0,
-      ticketsOpen: project.openTickets || 0
+      milestonesActive: project.milestones?.length || 0,
+      ticketsOpen: 0
     };
   };
 

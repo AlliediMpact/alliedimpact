@@ -72,6 +72,7 @@ export default function TeamMembersManager({ projectId }: TeamMembersManagerProp
       const { getApp } = await import('firebase/app');
       
       const db = getFirestore(getApp());
+      if (!db) return;
       const membersQuery = query(
         collection(db, 'projectMembers'),
         where('projectId', '==', projectId),
@@ -96,6 +97,7 @@ export default function TeamMembersManager({ projectId }: TeamMembersManagerProp
     } catch (error) {
       console.error('Failed to load team members:', error);
       setLoading(false);
+      return undefined;
     }
   };
 
