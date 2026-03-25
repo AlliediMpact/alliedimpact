@@ -4,9 +4,11 @@ import './globals.css';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
-import { PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
+import { PWAInstaller, ServiceWorkerRegistration } from '@allied-impact/ui';
 
 const inter = Inter({ subsets: ['latin'] });
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'ControlHub - Platform Observability',

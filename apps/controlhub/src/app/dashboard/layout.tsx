@@ -1,9 +1,11 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { Moon, Sun, LogOut, User as UserIcon, Shield } from 'lucide-react';
+import { Moon, Sun, LogOut, User as UserIcon, Shield, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
+
+export const dynamic = 'force-dynamic';
 
 export default function DashboardLayout({
   children,

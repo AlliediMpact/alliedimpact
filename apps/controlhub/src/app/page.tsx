@@ -1,4 +1,3 @@
-jk
 import Link from 'next/link';
 import { Shield, Activity } from 'lucide-react';
 import { Logo, Button } from '@allied-impact/ui';
@@ -9,7 +8,7 @@ export default function HomePage() {
       <div className="max-w-2xl mx-auto p-8 text-center">
         {/* Logo & Title */}
         <div className="flex items-center justify-center gap-4 mb-8">
-          <Logo appName="ControlHub" variant="full" size="lg" />
+          <Logo appName="ControlHub" size={64} />
         </div>
         
         <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">

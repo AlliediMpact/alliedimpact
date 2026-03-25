@@ -8,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import type { HealthEvent, Alert } from '@/types/events';
 import { Activity, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [apps, setApps] = useState<HealthEvent[]>([]);
@@ -49,7 +51,7 @@ export default function DashboardPage() {
       const alertsData = snapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
-      })) as Alert[];
+      })) as unknown as Alert[];
       setAlerts(alertsData);
     });
     return () => unsubscribe();

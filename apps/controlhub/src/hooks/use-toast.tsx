@@ -59,7 +59,11 @@ export function Toaster() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`flex items-center gap-3 rounded-lg border p-4 shadow-lg min-w-[300px] animate-in slide-in-from-right ${\n            toast.variant === 'destructive'\n              ? 'bg-destructive text-destructive-foreground border-destructive'\n              : 'bg-background border-border'\n          }`}
+          className={`flex items-center gap-3 rounded-lg border p-4 shadow-lg min-w-[300px] animate-in slide-in-from-right ${
+            toast.variant === 'destructive'
+              ? 'bg-destructive text-destructive-foreground border-destructive'
+              : 'bg-background border-border'
+          }`}
         >
           <div className="flex-1">
             <p className="font-semibold">{toast.title}</p>
