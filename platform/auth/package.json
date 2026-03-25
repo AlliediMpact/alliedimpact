@@ -9,6 +9,12 @@
       "source": "./src/index.ts",
       "require": "./dist/index.js",
       "default": "./src/index.ts"
+    },
+    "./middleware": {
+      "types": "./src/middleware.ts",
+      "source": "./src/middleware.ts",
+      "require": "./dist/middleware.js",
+      "default": "./src/middleware.ts"
     }
   },
   "scripts": {
