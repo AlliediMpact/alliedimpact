@@ -79,7 +79,7 @@ describe('Validation Utilities', () => {
     it('should reject weak passwords', () => {
       const result = validatePassword('123');
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain('at least 8 characters');
+      expect(result.feedback).toContain('at least 8 characters');
     });
 
     it('should accept strong passwords', () => {
@@ -106,16 +106,16 @@ describe('Validation Utilities', () => {
 
   describe('validateRequired', () => {
     it('should accept non-empty values', () => {
-      expect(validateRequired('value')).toEqual({ isValid: true });
-      expect(validateRequired('  text  ')).toEqual({ isValid: true });
+      expect(validateRequired('value', 'field')).toEqual({ isValid: true });
+      expect(validateRequired('  text  ', 'field')).toEqual({ isValid: true });
     });
 
     it('should reject empty values', () => {
-      expect(validateRequired('')).toEqual({
+      expect(validateRequired('', 'field')).toEqual({
         isValid: false,
-        error: 'This field is required',
+        error: 'field is required',
       });
-      expect(validateRequired('   ')).toEqual({
+      expect(validateRequired('   ', 'field')).toEqual({
         isValid: false,
         error: 'This field is required',
       });
@@ -131,12 +131,12 @@ describe('Validation Utilities', () => {
 
   describe('validateMinLength', () => {
     it('should accept values meeting minimum length', () => {
-      expect(validateMinLength('hello', 5)).toEqual({ isValid: true });
-      expect(validateMinLength('hello world', 5)).toEqual({ isValid: true });
+      expect(validateMinLength('hello', 5, 'field')).toEqual({ isValid: true });
+      expect(validateMinLength('hello world', 5, 'field')).toEqual({ isValid: true });
     });
 
     it('should reject values below minimum length', () => {
-      expect(validateMinLength('hi', 5)).toEqual({
+      expect(validateMinLength('hi', 5, 'field')).toEqual({
         isValid: false,
         error: 'Must be at least 5 characters',
       });
@@ -145,11 +145,11 @@ describe('Validation Utilities', () => {
 
   describe('validateMaxLength', () => {
     it('should accept values within maximum length', () => {
-      expect(validateMaxLength('hello', 10)).toEqual({ isValid: true });
+      expect(validateMaxLength('hello', 10, 'field')).toEqual({ isValid: true });
     });
 
     it('should reject values exceeding maximum length', () => {
-      expect(validateMaxLength('hello world', 5)).toEqual({
+      expect(validateMaxLength('hello world', 5, 'field')).toEqual({
         isValid: false,
         error: 'Must be no more than 5 characters',
       });
@@ -179,18 +179,18 @@ describe('Validation Utilities', () => {
 
   describe('validateNumber', () => {
     it('should validate numeric values', () => {
-      expect(validateNumber('123')).toEqual({ isValid: true });
-      expect(validateNumber('0')).toEqual({ isValid: true });
-      expect(validateNumber('-50')).toEqual({ isValid: true });
-      expect(validateNumber('99.99')).toEqual({ isValid: true });
+      expect(validateNumber('123', 'field')).toEqual({ isValid: true });
+      expect(validateNumber('0', 'field')).toEqual({ isValid: true });
+      expect(validateNumber('-50', 'field')).toEqual({ isValid: true });
+      expect(validateNumber('99.99', 'field')).toEqual({ isValid: true });
     });
 
     it('should reject non-numeric values', () => {
-      expect(validateNumber('abc')).toEqual({
+      expect(validateNumber('abc', 'field')).toEqual({
         isValid: false,
         error: 'Please enter a valid number',
       });
-      expect(validateNumber('12a')).toEqual({
+      expect(validateNumber('12a', 'field')).toEqual({
         isValid: false,
         error: 'Please enter a valid number',
       });
@@ -199,17 +199,17 @@ describe('Validation Utilities', () => {
 
   describe('validateNumberRange', () => {
     it('should validate numbers within range', () => {
-      expect(validateNumberRange('50', 0, 100)).toEqual({ isValid: true });
-      expect(validateNumberRange('0', 0, 100)).toEqual({ isValid: true });
-      expect(validateNumberRange('100', 0, 100)).toEqual({ isValid: true });
+      expect(validateNumberRange(50, 0, 100, 'field')).toEqual({ isValid: true });
+      expect(validateNumberRange(0, 0, 100, 'field')).toEqual({ isValid: true });
+      expect(validateNumberRange(100, 0, 100, 'field')).toEqual({ isValid: true });
     });
 
-    it('should reject numbers outside range', () => {
-      expect(validateNumberRange('150', 0, 100)).toEqual({
+    it('should reject values outside range', () => {
+      expect(validateNumberRange(150, 0, 100, 'field')).toEqual({
         isValid: false,
         error: 'Must be between 0 and 100',
       });
-      expect(validateNumberRange('-5', 0, 100)).toEqual({
+      expect(validateNumberRange(-5, 0, 100, 'field')).toEqual({
         isValid: false,
         error: 'Must be between 0 and 100',
       });
@@ -218,16 +218,16 @@ describe('Validation Utilities', () => {
 
   describe('validateDate', () => {
     it('should validate correct date strings', () => {
-      expect(validateDate('2024-01-01')).toEqual({ isValid: true });
-      expect(validateDate('2023-12-31')).toEqual({ isValid: true });
+      expect(validateDate('2024-01-01', 'field')).toEqual({ isValid: true });
+      expect(validateDate('2023-12-31', 'field')).toEqual({ isValid: true });
     });
 
     it('should reject invalid date strings', () => {
-      expect(validateDate('invalid')).toEqual({
+      expect(validateDate('invalid', 'field')).toEqual({
         isValid: false,
         error: 'Please enter a valid date',
       });
-      expect(validateDate('2024-13-01')).toEqual({
+      expect(validateDate('2024-13-01', 'field')).toEqual({
         isValid: false,
         error: 'Please enter a valid date',
       });
@@ -238,13 +238,13 @@ describe('Validation Utilities', () => {
     it('should validate future dates', () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 10);
-      expect(validateFutureDate(futureDate.toISOString().split('T')[0])).toEqual({
+      expect(validateFutureDate(futureDate.toISOString().split('T')[0], 'field')).toEqual({
         isValid: true,
       });
     });
 
     it('should reject past dates', () => {
-      expect(validateFutureDate('2020-01-01')).toEqual({
+      expect(validateFutureDate('2020-01-01', 'field')).toEqual({
         isValid: false,
         error: 'Date must be in the future',
       });
@@ -253,13 +253,13 @@ describe('Validation Utilities', () => {
 
   describe('validatePastDate', () => {
     it('should validate past dates', () => {
-      expect(validatePastDate('2020-01-01')).toEqual({ isValid: true });
+      expect(validatePastDate('2020-01-01', 'field')).toEqual({ isValid: true });
     });
 
     it('should reject future dates', () => {
       const futureDate = new Date();
-      futureDate.setFullYear(futureDate.getFullYear() + 1);
-      expect(validatePastDate(futureDate.toISOString().split('T')[0])).toEqual({
+      futureDate.setDate(futureDate.getDate() + 10);
+      expect(validatePastDate(futureDate.toISOString().split('T')[0], 'field')).toEqual({
         isValid: false,
         error: 'Date must be in the past',
       });
@@ -270,13 +270,13 @@ describe('Validation Utilities', () => {
     it('should validate files within size and type constraints', () => {
       const file = new File(['content'], 'test.pdf', { type: 'application/pdf' });
       Object.defineProperty(file, 'size', { value: 1024 * 1024 }); // 1MB
-      expect(validateFile(file, 5, ['application/pdf'])).toEqual({ isValid: true });
+      expect(validateFile(file, { maxSize: 5 * 1024 * 1024, allowedTypes: ['application/pdf'] })).toEqual({ isValid: true });
     });
 
     it('should reject files exceeding size limit', () => {
       const file = new File(['content'], 'large.pdf', { type: 'application/pdf' });
       Object.defineProperty(file, 'size', { value: 10 * 1024 * 1024 }); // 10MB
-      expect(validateFile(file, 5, ['application/pdf'])).toEqual({
+      expect(validateFile(file, { maxSize: 5 * 1024 * 1024, allowedTypes: ['application/pdf'] })).toEqual({
         isValid: false,
         error: 'File size must be less than 5MB',
       });
@@ -284,7 +284,7 @@ describe('Validation Utilities', () => {
 
     it('should reject files with invalid types', () => {
       const file = new File(['content'], 'test.exe', { type: 'application/exe' });
-      expect(validateFile(file, 5, ['application/pdf'])).toEqual({
+      expect(validateFile(file, { maxSize: 5 * 1024 * 1024, allowedTypes: ['application/pdf'] })).toEqual({
         isValid: false,
         error: 'Invalid file type. Allowed types: application/pdf',
       });
@@ -293,19 +293,19 @@ describe('Validation Utilities', () => {
 
   describe('validateSalaryRange', () => {
     it('should validate correct salary ranges', () => {
-      expect(validateSalaryRange('50000', '100000')).toEqual({ isValid: true });
-      expect(validateSalaryRange('50000', '50000')).toEqual({ isValid: true });
+      expect(validateSalaryRange(50000, 100000)).toEqual({ isValid: true });
+      expect(validateSalaryRange(50000, 50000)).toEqual({ isValid: true });
     });
 
     it('should reject invalid salary ranges', () => {
-      expect(validateSalaryRange('100000', '50000')).toEqual({
+      expect(validateSalaryRange(100000, 50000)).toEqual({
         isValid: false,
-        error: 'Maximum salary must be greater than minimum salary',
+        error: 'Maximum salary must be greater than or equal to minimum',
       });
     });
 
-    it('should reject non-numeric salaries', () => {
-      expect(validateSalaryRange('abc', '100000')).toEqual({
+    it('should reject non-numeric values', () => {
+      expect(validateSalaryRange(NaN, 100000)).toEqual({
         isValid: false,
         error: 'Please enter valid salary amounts',
       });

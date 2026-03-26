@@ -202,7 +202,7 @@ export default function CompanyMatchDetailPage() {
                   {matchData.score}% Match
                 </Badge>
                 {isShortlisted && (
-                  <Badge variant="tier.classic">
+                  <Badge variant="tier">
                     <Star className="h-3 w-3 mr-1 fill-current" />
                     Shortlisted
                   </Badge>
@@ -308,7 +308,7 @@ export default function CompanyMatchDetailPage() {
                   <div className="text-center py-8">
                     <FileText className="h-12 w-12 text-gray-400 mx-auto mb-3" />
                     <p className="text-gray-600 mb-4">No resume uploaded</p>
-                    <Badge variant="tier.entry">Upgrade to view all candidate details</Badge>
+                    <Badge variant="tier">Upgrade to view all candidate details</Badge>
                   </div>
                 )}
               </CardContent>

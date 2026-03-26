@@ -32,7 +32,7 @@ describe('Button Component', () => {
   });
 
   it('should apply variant classes', () => {
-    const { rerender } = render(<Button variant="primary">Primary</Button>);
+    const { rerender } = render(<Button variant="default">Default</Button>);
     expect(screen.getByRole('button')).toHaveClass('bg-gradient-to-r');
     
     rerender(<Button variant="outline">Outline</Button>);
@@ -44,34 +44,32 @@ describe('Button Component', () => {
 
   it('should apply size classes', () => {
     const { rerender } = render(<Button size="sm">Small</Button>);
-    expect(screen.getByRole('button')).toHaveClass('text-sm');
+    expect(screen.getByRole('button')).toHaveClass('h-9');
     
-    rerender(<Button size="md">Medium</Button>);
-    expect(screen.getByRole('button')).toHaveClass('text-base');
+    rerender(<Button size="default">Default</Button>);
+    expect(screen.getByRole('button')).toHaveClass('h-10');
     
     rerender(<Button size="lg">Large</Button>);
-    expect(screen.getByRole('button')).toHaveClass('text-lg');
+    expect(screen.getByRole('button')).toHaveClass('h-11');
   });
 
-  it('should render with icon', () => {
-    const Icon = () => <svg data-testid="icon" />;
+  it('should render as child element', () => {
     render(
-      <Button icon={<Icon />}>
-        With Icon
+      <Button asChild>
+        <a href="/">Link Button</a>
       </Button>
     );
     
-    expect(screen.getByTestId('icon')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /link button/i })).toBeInTheDocument();
   });
 
-  it('should show loading state', () => {
-    render(<Button loading>Loading</Button>);
-    expect(screen.getByRole('button')).toBeDisabled();
-    expect(screen.getByRole('button')).toHaveTextContent('Loading');
+  it('should render with children', () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByRole('button')).toHaveTextContent('Click me');
   });
 
-  it('should support full width', () => {
-    render(<Button fullWidth>Full Width</Button>);
-    expect(screen.getByRole('button')).toHaveClass('w-full');
+  it('should support icon variant', () => {
+    render(<Button size="icon">⚙️</Button>);
+    expect(screen.getByRole('button')).toHaveClass('h-10');
   });
 });

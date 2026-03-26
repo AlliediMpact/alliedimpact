@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
-import { Users, Building2, TrendingUp, MessageSquare, MapPin, ArrowRight, Check } from 'lucide-react';
+import { Users, Building2, TrendingUp, MessageSquare, MapPin, ArrowRight, Check, Briefcase } from 'lucide-react';
 import { Logo } from '@allied-impact/ui';
 
 export default function HomePage() {
@@ -18,7 +18,7 @@ export default function HomePage() {
           <Logo 
             appName="CareerBox" 
             onClick={() => router.push(`/${locale}`)}
-            size="lg"
+            size={64}
           />
           <div className="flex items-center gap-4">
             <Link href={`/${locale}/pricing`} className="text-gray-600 hover:text-gray-900">

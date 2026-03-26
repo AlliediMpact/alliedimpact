@@ -34,9 +34,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    let timeoutId: NodeJS.Timeout;
+
+    // Safety timeout: if auth doesn't resolve within 10 seconds, stop loading
+    timeoutId = setTimeout(() => {
+      if (isMounted && loading) {
+        console.warn('Auth state change timeout - allowing page to render');
+        setLoading(false);
+      }
+    }, 10000);
+
     const unsubscribe = onAuthStateChanged(
       auth,
       async (firebaseUser) => {
+        if (!isMounted) return;
+
         setUser(firebaseUser);
 
         if (firebaseUser) {
@@ -53,15 +66,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         setLoading(false);
+        clearTimeout(timeoutId);
       },
       (err) => {
+        if (!isMounted) return;
+
         console.error('Auth state change error:', err);
         setError('Authentication error');
         setLoading(false);
+        clearTimeout(timeoutId);
       }
     );
 
-    return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+      unsubscribe();
+    };
   }, []);
 
   return (

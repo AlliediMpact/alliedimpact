@@ -4,6 +4,7 @@ import createIntlMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './src/i18n/config';
 import { verifyAuth } from '@allied-impact/auth/middleware';
 import { hasProductAccess } from '@allied-impact/entitlements';
+import { ProductId } from '@allied-impact/types';
 
 // Rate limiting store (in-memory for Edge Runtime)
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
@@ -205,7 +206,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Check if user has entitlement to access CareerBox
-    const hasAccess = await hasProductAccess(decodedToken.uid, 'careerbox');
+    const hasAccess = await hasProductAccess(decodedToken.uid, ProductId.CAREER_BOX);
     
     if (!hasAccess) {
       return redirectToDashboard(request, pathnameLocale || defaultLocale, 'subscription-required');

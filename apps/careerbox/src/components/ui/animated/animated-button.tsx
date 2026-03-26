@@ -30,6 +30,9 @@ export function AnimatedButton({
     lg: 'px-6 py-3 text-lg',
   };
 
+  // Exclude onDrag to avoid type conflict with Framer Motion
+  const { onDrag, ...buttonProps } = props as any;
+
   return (
     <motion.button
       whileHover={{ scale: disabled ? 1 : 1.05 }}
@@ -43,7 +46,7 @@ export function AnimatedButton({
         disabled && 'opacity-50 cursor-not-allowed',
         className
       )}
-      {...props}
+      {...buttonProps}
     >
       {children}
     </motion.button>
@@ -56,6 +59,9 @@ export function IconButton({
   disabled,
   ...props
 }: Omit<AnimatedButtonProps, 'variant' | 'size'>) {
+  // Exclude onDrag to avoid type conflict with Framer Motion
+  const { onDrag, ...buttonProps } = props as any;
+
   return (
     <motion.button
       whileHover={{ scale: disabled ? 1 : 1.1, rotate: 5 }}
@@ -67,7 +73,7 @@ export function IconButton({
         disabled && 'opacity-50 cursor-not-allowed',
         className
       )}
-      {...props}
+      {...buttonProps}
     >
       {children}
     </motion.button>
@@ -79,6 +85,9 @@ export function FloatingActionButton({
   className,
   ...props
 }: Omit<AnimatedButtonProps, 'variant' | 'size'>) {
+  // Exclude onDrag to avoid type conflict with Framer Motion
+  const { onDrag, ...buttonProps } = props as any;
+
   return (
     <motion.button
       whileHover={{ scale: 1.1, boxShadow: '0 10px 30px rgba(59, 130, 246, 0.5)' }}
@@ -97,7 +106,7 @@ export function FloatingActionButton({
         'fixed bottom-8 right-8 p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full shadow-2xl focus:outline-none focus:ring-2 focus:ring-blue-500',
         className
       )}
-      {...props}
+      {...buttonProps}
     >
       {children}
     </motion.button>

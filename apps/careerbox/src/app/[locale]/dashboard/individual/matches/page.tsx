@@ -445,7 +445,7 @@ export default function IndividualMatchesPage() {
             description="Try adjusting your filters or search query to see more results."
             action={{
               label: "Clear Filters",
-              onClick: clearFilters
+              onClick: clearAllFilters
             }}
           />
         ) : (

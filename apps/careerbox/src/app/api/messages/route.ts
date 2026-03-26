@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
       
       if (!conversationSnap.empty) {
         const conversationDoc = conversationSnap.docs[0];
-        const userType = messages[0].recipientType; // Determine user type from message
+        const userType = (unreadMessages[0] as any).recipientType; // Determine user type from unread messages
         await updateDoc(doc(db, 'careerbox_conversations', conversationDoc.id), {
           [`unreadBy${userType === 'individual' ? 'Individual' : 'Company'}`]: 0,
         });

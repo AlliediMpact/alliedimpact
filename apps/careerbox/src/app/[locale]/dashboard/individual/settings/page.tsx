@@ -12,6 +12,7 @@ import {
   EyeOff,
   Check,
   Crown,
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -471,7 +472,7 @@ export default function SettingsPage() {
                         </p>
                       </div>
                       <Badge
-                        variant={subscription.tier === 'free' ? 'tier.free' : subscription.tier === 'entry' ? 'tier.entry' : 'tier.classic'}
+                        variant="tier"
                         className="text-base px-3 py-1"
                       >
                         {subscription.tier === 'free' && 'Free'}

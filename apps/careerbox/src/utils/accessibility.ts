@@ -3,6 +3,8 @@
  * Provides helpers for ARIA attributes, keyboard navigation, and screen reader support
  */
 
+import * as React from 'react';
+
 // Screen reader only text (visually hidden but accessible)
 export const srOnly = 'sr-only absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0';
 

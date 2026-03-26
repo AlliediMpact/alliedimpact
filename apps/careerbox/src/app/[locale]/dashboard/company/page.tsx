@@ -212,7 +212,7 @@ export default function CompanyDashboardPage() {
                   <span className="text-gray-600">Active Listings</span>
                   <Briefcase className="h-5 w-5 text-blue-600" />
                 </div>
-                <div className="text-3xl font-bold text-gray-900">{activeListings}</div>
+                <div className="text-3xl font-bold text-gray-900">{stats.activeListings}</div>
                 <Link href={`/${locale}/dashboard/company/listings/create`} className="text-xs text-blue-600 hover:text-blue-700 mt-1 inline-block">
                   Create new listing →
                 </Link>
@@ -223,7 +223,7 @@ export default function CompanyDashboardPage() {
                   <span className="text-gray-600">Total Matches</span>
                   <Users className="h-5 w-5 text-blue-600" />
                 </div>
-                <div className="text-3xl font-bold text-gray-900">{matchCount}</div>
+                <div className="text-3xl font-bold text-gray-900">{stats.totalApplicants}</div>
                 {tier === 'free' && (
                   <p className="text-xs text-gray-500 mt-1">Upgrade to view profiles</p>
                 )}
@@ -320,7 +320,7 @@ export default function CompanyDashboardPage() {
                 {tier === 'free' ? (
                   <div className="p-6 text-center">
                     <p className="text-gray-600 mb-4">
-                      You have <span className="font-bold text-2xl text-blue-600">{matchCount}</span> potential candidates!
+                      You have <span className="font-bold text-2xl text-blue-600">{stats.totalApplicants}</span> potential candidates!
                     </p>
                     <p className="text-gray-500 mb-6">
                       Upgrade to see full candidate profiles and contact them directly.
@@ -333,7 +333,7 @@ export default function CompanyDashboardPage() {
                     </Link>
                   </div>
                 ) : (
-                  recentMatches.map((match) => (
+                  recentApplicants.map((match) => (
                     <div key={match.id} className="p-6 hover:bg-gray-50 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-4 flex-1">
@@ -342,12 +342,12 @@ export default function CompanyDashboardPage() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-1">
-                              <h3 className="text-lg font-semibold text-gray-900">{match.name}</h3>
+                              <h3 className="text-lg font-semibold text-gray-900">{match.applicantName}</h3>
                               <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
                                 {match.matchScore}% Match
                               </span>
                             </div>
-                            <p className="text-gray-600 mb-2">{match.role} • {match.experience} experience</p>
+                            <p className="text-gray-600 mb-2">{match.position} • {match.experience} experience</p>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />

@@ -145,7 +145,7 @@ export default function CreateListingPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Post a New Position</h1>
               <p className="text-gray-600">Create a job listing to find your next great hire</p>
             </div>
-            <Badge variant="tier.entry">Premium Feature</Badge>
+            <Badge variant="tier">Premium Feature</Badge>
           </div>
         </div>
 

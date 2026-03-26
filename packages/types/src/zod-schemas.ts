@@ -14,7 +14,10 @@ export const ProductIdSchema = z.enum([
   'drivemaster',
   'codetech',
   'cupfinal',
-  'umkhanyakude'
+  'umkhanyakude',
+  'edutech',
+  'careerbox',
+  'myprojects'
 ]);
 
 export const SubscriptionTierSchema = z.enum([

@@ -24,8 +24,7 @@ describe('EmptyState Component', () => {
         icon={TrendingUp}
         title="No matches"
         description="Get started"
-        action="Complete Profile"
-        onAction={handleAction}
+        action={{ label: 'Complete Profile', onClick: handleAction }}
       />
     );
 
@@ -41,8 +40,7 @@ describe('EmptyState Component', () => {
         icon={TrendingUp}
         title="No matches"
         description="Get started"
-        action="Complete Profile"
-        onAction={handleAction}
+        action={{ label: 'Complete Profile', onClick: handleAction }}
       />
     );
 

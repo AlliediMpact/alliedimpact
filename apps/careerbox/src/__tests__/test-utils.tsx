@@ -1,4 +1,4 @@
-import { render, RenderOptions } from '@testing-library/react';
+import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { ReactElement } from 'react';
 
 /**
@@ -7,7 +7,7 @@ import { ReactElement } from 'react';
 export function renderWithProviders(
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
-) {
+): RenderResult {
   return render(ui, { ...options });
 }
 
