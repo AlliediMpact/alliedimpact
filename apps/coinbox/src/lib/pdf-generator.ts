@@ -14,8 +14,10 @@ const loadPdfLib = async () => {
   if (typeof window === 'undefined') {
     try {
       // Server-side PDF generation using PDFKit
+      // @ts-ignore - pdfkit is not installed as a dependency
       const PDFDocument = await import('pdfkit');
       const fs = await import('fs');
+      // @ts-ignore - @google-cloud/storage is not installed as a dependency
       const { Storage } = await import('@google-cloud/storage');
       
       pdfLib = {

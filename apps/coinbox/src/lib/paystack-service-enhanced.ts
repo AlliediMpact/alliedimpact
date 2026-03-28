@@ -1,4 +1,4 @@
-import { MembershipTier, MEMBERSHIP_TIERS } from './membership-tiers';
+import { MembershipTier, MembershipTierType, MEMBERSHIP_TIERS } from './membership-tiers';
 import { receiptService } from './receipt-service';
 import axios from 'axios';
 
@@ -94,11 +94,11 @@ class EnhancedPaystackService {
     async initializeMembershipPayment(
         userId: string,
         email: string,
-        membershipTier: MembershipTier,
+        membershipTier: MembershipTierType,
         callbackUrl?: string
     ): Promise<{ authorizationUrl: string; reference: string }> {
         try {
-            const tierConfig = MEMBERSHIP_TIERS[membershipTier.toLowerCase()];
+            const tierConfig = MEMBERSHIP_TIERS[membershipTier];
             if (!tierConfig) {
                 throw new Error('Invalid membership tier');
             }

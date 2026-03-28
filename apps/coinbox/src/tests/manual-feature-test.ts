@@ -36,7 +36,12 @@ try {
 console.log('📈 Testing Advanced Analytics Service...');
 try {
   // Test analytics metrics
-  advancedAnalyticsService.getAnalyticsMetrics('7d').then(metrics => {
+  advancedAnalyticsService.getAnalyticsMetrics({
+    dateRange: {
+      start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      end: new Date()
+    }
+  }).then(metrics => {
     console.log('✅ Analytics metrics generated successfully');
     console.log('  - Total Users:', metrics.overview.totalUsers);
     console.log('  - Total Transactions:', metrics.overview.totalTransactions);
@@ -46,8 +51,8 @@ try {
   // Test predictive analytics
   advancedAnalyticsService.getPredictiveAnalytics().then(predictions => {
     console.log('✅ Predictive analytics generated successfully');
-    console.log('  - User Growth Predictions:', predictions.userGrowthPrediction.length, 'data points');
-    console.log('  - Revenue Predictions:', predictions.revenuePrediction.length, 'data points');
+    console.log('  - User Growth Predictions:', predictions.userGrowth.prediction.length, 'data points');
+    console.log('  - Revenue Predictions:', predictions.revenue.forecast.length, 'data points');
   });
   
   // Test user insights

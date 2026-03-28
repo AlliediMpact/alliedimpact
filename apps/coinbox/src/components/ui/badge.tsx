@@ -16,12 +16,14 @@ const badgeVariants = cva(
         outline: "text-foreground",
         success: "border-transparent bg-green-500 text-white shadow hover:bg-green-500/80",
         warning: "border-transparent bg-yellow-500 text-white shadow hover:bg-yellow-500/80",
-        membership: {
-          basic: "border-transparent bg-gray-500 text-white shadow hover:bg-gray-500/80",
-          ambassador: "border-transparent bg-blue-500 text-white shadow hover:bg-blue-500/80",
-          vip: "border-transparent bg-purple-500 text-white shadow hover:bg-purple-500/80",
-          business: "border-transparent bg-amber-500 text-white shadow hover:bg-amber-500/80",
-        }
+        membershipBasic:
+          "border-transparent bg-gray-500 text-white shadow hover:bg-gray-500/80",
+        membershipAmbassador:
+          "border-transparent bg-blue-500 text-white shadow hover:bg-blue-500/80",
+        membershipVip:
+          "border-transparent bg-purple-500 text-white shadow hover:bg-purple-500/80",
+        membershipBusiness:
+          "border-transparent bg-amber-500 text-white shadow hover:bg-amber-500/80",
       }
     },
     defaultVariants: {

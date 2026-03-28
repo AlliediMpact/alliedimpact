@@ -4,6 +4,7 @@
  */
 
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+// @ts-ignore - @/config/firebase path only exists in server-side code
 import { app } from "@/config/firebase";
 
 export const functions = getFunctions(app);

@@ -3,7 +3,7 @@
  * Handles API key generation, management, and validation
  */
 
-import { db } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { Timestamp, FieldValue } from 'firebase-admin/firestore';
 import crypto from 'crypto';
 
@@ -143,7 +143,7 @@ export async function createApiKey(
   };
 
   // Save to database
-  const docRef = await db.collection('apiKeys').add(apiKeyDoc);
+  const docRef = await adminDb.collection('apiKeys').add(apiKeyDoc);
   const id = docRef.id;
 
   const apiKey: ApiKey = {
@@ -179,7 +179,7 @@ export async function validateApiKey(key: string): Promise<ApiKeyValidation> {
     const hash = hashApiKey(key);
 
     // Find API key by hash
-    const snapshot = await db
+    const snapshot = await adminDb
       .collection('apiKeys')
       .where('keyHash', '==', hash)
       .limit(1)
@@ -234,7 +234,7 @@ export async function validateApiKey(key: string): Promise<ApiKeyValidation> {
  * Revoke an API key
  */
 export async function revokeApiKey(apiKeyId: string): Promise<void> {
-  const docRef = db.collection('apiKeys').doc(apiKeyId);
+  const docRef = adminDb.collection('apiKeys').doc(apiKeyId);
   const doc = await docRef.get();
 
   if (!doc.exists) {
@@ -262,7 +262,7 @@ export async function revokeApiKey(apiKeyId: string): Promise<void> {
 export async function rotateApiKey(
   apiKeyId: string
 ): Promise<{ apiKey: ApiKey; plainKey: string }> {
-  const docRef = db.collection('apiKeys').doc(apiKeyId);
+  const docRef = adminDb.collection('apiKeys').doc(apiKeyId);
   const doc = await docRef.get();
 
   if (!doc.exists) {
@@ -303,7 +303,7 @@ export async function listApiKeys(
     limit?: number;
   }
 ): Promise<ApiKey[]> {
-  let query = db.collection('apiKeys').where('userId', '==', userId);
+  let query = adminDb.collection('apiKeys').where('userId', '==', userId);
 
   if (options?.status) {
     query = query.where('status', '==', options.status);
@@ -327,7 +327,7 @@ export async function listApiKeys(
  * Get API key details by ID
  */
 export async function getApiKey(apiKeyId: string): Promise<ApiKey | null> {
-  const doc = await db.collection('apiKeys').doc(apiKeyId).get();
+  const doc = await adminDb.collection('apiKeys').doc(apiKeyId).get();
 
   if (!doc.exists) {
     return null;
@@ -350,7 +350,7 @@ export async function updateApiKey(
     tier?: 'basic' | 'pro' | 'enterprise';
   }
 ): Promise<void> {
-  const docRef = db.collection('apiKeys').doc(apiKeyId);
+  const docRef = adminDb.collection('apiKeys').doc(apiKeyId);
   const doc = await docRef.get();
 
   if (!doc.exists) {
@@ -389,7 +389,7 @@ export async function updateApiKey(
  * Increment API key usage
  */
 export async function incrementApiKeyUsage(apiKeyId: string): Promise<void> {
-  await db.collection('apiKeys').doc(apiKeyId).update({
+  await adminDb.collection('apiKeys').doc(apiKeyId).update({
     'usage.totalRequests': FieldValue.increment(1),
     'usage.lastUsed': Timestamp.now(),
   });
@@ -419,7 +419,7 @@ export async function getApiKeyUsage(
 
   if (timeRange) {
     // Query request logs for range
-    const snapshot = await db
+    const snapshot = await adminDb
       .collection('apiRequestLogs')
       .where('apiKeyId', '==', apiKeyId)
       .where('timestamp', '>=', Timestamp.fromDate(timeRange.start))
@@ -461,7 +461,7 @@ async function logApiKeyEvent(event: {
   event: 'created' | 'revoked' | 'rotated' | 'updated' | 'validated';
   metadata?: any;
 }): Promise<void> {
-  await db.collection('apiKeyEvents').add({
+  await adminDb.collection('apiKeyEvents').add({
     ...event,
     timestamp: Timestamp.now(),
   });
@@ -473,14 +473,14 @@ async function logApiKeyEvent(event: {
 export async function cleanupExpiredApiKeys(): Promise<number> {
   const now = Timestamp.now();
 
-  const snapshot = await db
+  const snapshot = await adminDb
     .collection('apiKeys')
     .where('status', '==', 'active')
     .where('expiresAt', '<=', now)
     .get();
 
   let count = 0;
-  const batch = db.batch();
+  const batch = adminDb.batch();
 
   snapshot.docs.forEach(doc => {
     batch.update(doc.ref, {

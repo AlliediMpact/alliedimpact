@@ -26,6 +26,8 @@ export interface UserMembership {
   joinDate: Timestamp;
   renewalDate: Timestamp;
   paymentStatus: 'active' | 'pending' | 'overdue';
+  loanLimit: number;
+  p2pCryptoLimit: number;
   metrics: {
     monthlyTradingVolume: number;
     totalReferrals: number;
@@ -174,7 +176,7 @@ class MembershipService {
       }
 
       // Notify user
-      await notificationService.createNotification({
+      await notificationService.create({
         userId,
         type: 'system',
         title: 'Membership Upgraded',
@@ -274,7 +276,7 @@ class MembershipService {
 
     if (qualifiedTier && qualifiedTier.id !== currentTier.id) {
       // Notify user of qualification for upgrade
-      await notificationService.createNotification({
+      await notificationService.create({
         userId,
         type: 'system',
         title: 'Membership Upgrade Available',

@@ -61,12 +61,12 @@ class LoanService extends ServiceClient {
       // Get user's membership tier to validate loan amount
       const userProfile = await membershipService.getUserMembership(userId);
       
-      if (!userProfile || !userProfile.tierName) {
+      if (!userProfile || !userProfile.currentTier) {
         throw new Error('User does not have an active membership');
       }
       
       // Validate loan amount based on user's tier
-      const isValidAmount = validateLoanAmount(userProfile.tierName, applicationData.amount || 0);
+      const isValidAmount = validateLoanAmount(userProfile.currentTier as any, applicationData.amount || 0);
       if (!isValidAmount) {
         throw new Error('Requested loan amount exceeds tier limit');
       }
@@ -99,12 +99,13 @@ class LoanService extends ServiceClient {
       const docRef = await addDoc(collection(this.db, 'loan_applications'), loanApplication);
       
       // Send notification to user
-      await notificationService.sendNotification({
+      await notificationService.create({
         userId,
-        type: 'Loan',
+        type: 'system',
         title: 'Loan Application Received',
         message: `Your loan application for ${applicationData.amount} has been received and is under review.`,
-        data: {
+        priority: 'medium',
+        metadata: {
           loanId: docRef.id,
           amount: applicationData.amount
         }
@@ -185,14 +186,15 @@ class LoanService extends ServiceClient {
       });
       
       // Send notification to user
-      await notificationService.sendNotification({
+      await notificationService.create({
         userId: loanData.userId,
-        type: 'Loan',
+        type: 'system',
         title: approved ? 'Loan Application Approved' : 'Loan Application Rejected',
         message: approved 
           ? `Your loan application for ${loanData.amount} has been approved! Funds will be transferred shortly.`
           : `Your loan application for ${loanData.amount} has been rejected. Reason: ${notes || 'Not specified'}`,
-        data: {
+        priority: 'high',
+        metadata: {
           loanId,
           amount: loanData.amount,
           approved
@@ -232,12 +234,13 @@ class LoanService extends ServiceClient {
       });
       
       // Send notification to user
-      await notificationService.sendNotification({
+      await notificationService.create({
         userId: loanData.userId,
-        type: 'Loan',
+        type: 'system',
         title: 'Loan Funded',
         message: `Your loan of ${loanData.amount} has been funded and is now available in your account.`,
-        data: {
+        priority: 'high',
+        metadata: {
           loanId,
           amount: loanData.amount,
           transactionId
@@ -317,12 +320,13 @@ class LoanService extends ServiceClient {
       const loanData = loanDoc.data() as LoanApplication;
       
       // Send notification to user
-      await notificationService.sendNotification({
+      await notificationService.create({
         userId,
-        type: 'Loan',
+        type: 'system',
         title: 'Loan Repayment Confirmed',
         message: `Your loan repayment of ${loanData.repaymentAmount} has been confirmed. ${loanData.borrowerWalletShare} has been added to your wallet.`,
-        data: {
+        priority: 'normal',
+        metadata: {
           loanId,
           repaymentAmount: loanData.repaymentAmount,
           walletShare: loanData.borrowerWalletShare,
@@ -409,10 +413,10 @@ class LoanService extends ServiceClient {
       let defaultedCount = 0;
       
       // Update each loan to defaulted status
-      const batch = this.db.batch;
-      snapshot.docs.forEach(doc => {
-        const loanRef = doc(this.db, 'loan_applications', doc.id);
-        batch.update(loanRef, {
+      // Using Promise.all for concurrent updates instead of batch operations
+      const updatePromises = snapshot.docs.map(async (doc) => {
+        const loanRef = doc.ref;
+        await updateDoc(loanRef, {
           status: 'Defaulted',
           updatedAt: new Date()
         });
@@ -420,12 +424,13 @@ class LoanService extends ServiceClient {
         
         // Send notification to user
         const loanData = doc.data() as LoanApplication;
-        notificationService.sendNotification({
+        await notificationService.create({
           userId: loanData.userId,
-          type: 'Loan',
+          type: 'system',
           title: 'Loan Payment Overdue',
           message: `Your loan payment of ${loanData.repaymentAmount} is overdue. Please make payment immediately to avoid penalties.`,
-          data: {
+          priority: 'high',
+          metadata: {
             loanId: doc.id,
             amount: loanData.amount,
             repaymentAmount: loanData.repaymentAmount
@@ -433,8 +438,8 @@ class LoanService extends ServiceClient {
         });
       });
       
-      if (defaultedCount > 0) {
-        await batch.commit();
+      if (updatePromises.length > 0) {
+        await Promise.all(updatePromises);
       }
       
       return defaultedCount;

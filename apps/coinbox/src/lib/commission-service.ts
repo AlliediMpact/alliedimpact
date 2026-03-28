@@ -110,13 +110,13 @@ class CommissionService {
       await this.updateReferralStats(referrerId, commissionAmount, transactionAmount);
       
       // Notify the referrer
-      await notificationService.createNotification({
+      await notificationService.create({
         userId: referrerId,
         type: 'commission',
         title: 'New Commission Earned',
         message: `You earned R${commissionAmount.toFixed(2)} from your referral's ${transactionType} transaction.`,
         priority: 'normal',
-        data: { commissionId: commissionRef.id }
+        metadata: { commissionId: commissionRef.id }
       });
 
       return {
@@ -313,6 +313,7 @@ class CommissionService {
   async withdrawCommissions(userId: string): Promise<CommissionResult> {
     try {
       let totalAmount = 0;
+      let commissionCount = 0;
 
       await runTransaction(db, async (transaction) => {
         // Get all pending commissions
@@ -329,6 +330,8 @@ class CommissionService {
         if (commissions.length === 0) {
           throw new Error('No pending commissions to withdraw');
         }
+
+        commissionCount = commissions.length;
 
         // Calculate total amount and update commission statuses
         for (const commission of commissions) {
@@ -375,7 +378,7 @@ class CommissionService {
           description: `Withdrawal of R${totalAmount.toFixed(2)} in referral commissions`,
           timestamp: Timestamp.now(),
           metadata: {
-            commissionCount: commissions.length
+            commissionCount
           }
         });
       });
@@ -394,7 +397,7 @@ class CommissionService {
             'referral_bonus',
             operationId,
             { 
-              commissionCount: commissions.length,
+              commissionCount,
               totalAmount 
             }
           );
@@ -405,12 +408,12 @@ class CommissionService {
       }
 
       // Notify user of successful withdrawal
-      await notificationService.createNotification({
+      await notificationService.create({
         userId,
         type: 'transaction',
         title: 'Commission Withdrawal Successful',
         message: `R${totalAmount.toFixed(2)} has been added to your wallet.`,
-        priority: 'high'
+        priority: 'normal'
       });
 
       return {

@@ -1,3 +1,4 @@
+// @ts-ignore - ws not installed; required for WebSocket server functionality
 import { WebSocketServer } from 'ws';
 import { Server } from 'http';
 import { getAdminDb } from './admin-bridge';

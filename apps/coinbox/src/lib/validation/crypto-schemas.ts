@@ -95,7 +95,7 @@ export function validateAndSanitize<T extends z.ZodSchema>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+      const errorMessage = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
       return { success: false, error: errorMessage };
     }
     return { success: false, error: 'Validation failed' };

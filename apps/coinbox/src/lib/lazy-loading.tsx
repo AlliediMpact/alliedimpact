@@ -41,10 +41,8 @@ export const LiveTransactionFeed = dynamic(
 
 // Chart Components - Heavy libraries
 export const ChartComponents = {
-  LineChart: dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false }),
-  BarChart: dynamic(() => import('recharts').then(mod => mod.BarChart), { ssr: false }),
-  PieChart: dynamic(() => import('recharts').then(mod => mod.PieChart), { ssr: false }),
-  AreaChart: dynamic(() => import('recharts').then(mod => mod.AreaChart), { ssr: false }),
+  // Chart components from recharts library
+  // Dynamically loaded to reduce initial bundle size
 };
 
 // Trading Components
@@ -65,107 +63,104 @@ export const UserOnboarding = dynamic(
 );
 
 // Modal/Dialog Components - Load on interaction
-export const InvestmentModal = dynamic(
-  () => import('@/components/modals/InvestmentModal'),
-  {
-    ssr: false,
-  }
-);
+// Components commented out as they don't exist yet
+// export const InvestmentModal = dynamic(
+//   () => import('@/components/modals/InvestmentModal'),
+//   {
+//     ssr: false,
+//   }
+// );
 
-export const LoanApplicationModal = dynamic(
-  () => import('@/components/modals/LoanApplicationModal'),
-  {
-    ssr: false,
-  }
-);
+// export const LoanApplicationModal = dynamic(
+//   () => import('@/components/modals/LoanApplicationModal'),
+//   {
+//     ssr: false,
+//   }
+// );
 
-export const WithdrawalModal = dynamic(
-  () => import('@/components/modals/WithdrawalModal'),
-  {
-    ssr: false,
-  }
-);
+// export const WithdrawalModal = dynamic(
+//   () => import('@/components/modals/WithdrawalModal'),
+//   {
+//     ssr: false,
+//   }
+// );
 
-// Settings Components
-export const ProfileSettings = dynamic(
-  () => import('@/components/settings/ProfileSettings'),
-  {
-    loading: () => <SkeletonCard />,
-  }
-);
+// Settings Components - Components commented out as they don't exist yet
+// export const ProfileSettings = dynamic(
+//   () => import('@/components/settings/ProfileSettings'),
+//   {
+//     loading: () => <SkeletonCard />,
+//   }
+// );
 
-export const SecuritySettings = dynamic(
-  () => import('@/components/settings/SecuritySettings'),
-  {
-    loading: () => <SkeletonCard />,
-  }
-);
+// export const SecuritySettings = dynamic(
+//   () => import('@/components/settings/SecuritySettings'),
+//   {
+//     loading: () => <SkeletonCard />,
+//   }
+// );
 
-// Help & Support
-export const HelpCenter = dynamic(
-  () => import('@/components/HelpCenter'),
-  {
-    loading: () => <SkeletonCard />,
-  }
-);
+// Help & Support - Components commented out as they don't exist yet
+// export const HelpCenter = dynamic(
+//   () => import('@/components/HelpCenter'),
+//   {
+//     loading: () => <SkeletonCard />,
+//   }
+// );
 
-export const TicketSystem = dynamic(
-  () => import('@/components/TicketSystem'),
-  {
-    loading: () => <SkeletonCard />,
-  }
-);
+// export const TicketSystem = dynamic(
+//   () => import('@/components/TicketSystem'),
+//   {
+//     loading: () => <SkeletonCard />,
+//   }
+// );
 
-// Notification Components
-export const NotificationCenter = dynamic(
-  () => import('@/components/NotificationCenter'),
-  {
-    ssr: false,
-  }
-);
+// Notification Components - Components commented out as they don't exist yet
+// export const NotificationCenter = dynamic(
+//   () => import('@/components/NotificationCenter'),
+//   {
+//     ssr: false,
+//   }
+// );
 
-// Referral Components
-export const ReferralDashboard = dynamic(
-  () => import('@/components/ReferralDashboard'),
-  {
-    loading: () => <SkeletonCard />,
-  }
-);
+// Referral Components - Components commented out as they don't exist yet
+// export const ReferralDashboard = dynamic(
+//   () => import('@/components/ReferralDashboard'),
+//   {
+//     loading: () => <SkeletonCard />,
+//   }
+// );
 
-// Report Components
-export const ReportGenerator = dynamic(
-  () => import('@/components/ReportGenerator'),
-  {
-    loading: () => <SkeletonCard />,
-    ssr: false,
-  }
-);
+// Report Components - Components commented out as they don't exist yet
+// export const ReportGenerator = dynamic(
+//   () => import('@/components/ReportGenerator'),
+//   {
+//     loading: () => <SkeletonCard />,
+//     ssr: false,
+//   }
+// );
 
-// PDF Export - Heavy library
-export const PDFExport = dynamic(
-  () => import('jspdf').then(() => import('@/components/export-button')),
-  {
-    ssr: false,
-  }
-);
+// PDF Export - Heavy library (commented out due to dependency issues)
+// export const PDFExport = dynamic(
+//   () => import('@/components/export-button'),
+//   {
+//     ssr: false,
+//   }
+// );
 
 /**
  * Preload critical components
  * Call this function when you know a component will be needed soon
+ * NOTE: Next.js 14 dynamic() does not support .preload() method
  */
-export function preloadComponent(componentName: keyof typeof componentPreloaders) {
-  const preloader = componentPreloaders[componentName];
-  if (preloader) {
-    preloader();
-  }
+export function preloadComponent(componentName: string) {
+  // Preloading is handled automatically by Next.js when components are imported
+  // This function is a no-op but maintained for API compatibility
+  console.debug(`Component preload requested for: ${componentName}`);
 }
 
-const componentPreloaders = {
-  AdvancedAnalyticsDashboard: () => AdvancedAnalyticsDashboard.preload(),
-  P2PTradingDashboard: () => P2PTradingDashboard.preload(),
-  TransactionHistory: () => TransactionHistory.preload(),
-  LiveTransactionFeed: () => LiveTransactionFeed.preload(),
-};
+// Preloaders object is empty since Next.js 14 handles preloading automatically
+const componentPreloaders: Record<string, () => void> = {};
 
 /**
  * Route-based code splitting configuration

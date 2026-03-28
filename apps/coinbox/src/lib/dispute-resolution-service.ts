@@ -180,7 +180,7 @@ class DisputeResolutionService {
         notificationService.notifyDispute(userId, disputeRef.id, ticketId),
         
         // Notify counterparty
-        notificationService.createNotification({
+        notificationService.create({
           userId: counterpartyId,
           type: 'dispute',
           title: 'Dispute Filed Against You',

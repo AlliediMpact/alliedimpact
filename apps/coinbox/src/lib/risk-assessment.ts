@@ -2,15 +2,26 @@
 
 interface RiskAssessmentInput {
     userId: string;
-    counterpartyId: string;
+    counterpartyId?: string;
     userProfile?: any;
     counterpartyProfile?: any;
+    tradeType?: string;
 }
 
 interface RiskAssessmentResult {
     riskScore: number; // Scale of 0-100, higher = more risky
     riskLevel: 'low' | 'medium' | 'high' | 'extreme';
     factors: string[];
+}
+
+export interface RiskEvent {
+    id?: string;
+    userId: string;
+    type: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    description: string;
+    timestamp: Date;
+    metadata?: Record<string, any>;
 }
 
 /**
@@ -75,4 +86,30 @@ export async function getRiskAssessment(input: RiskAssessmentInput): Promise<Ris
         riskLevel,
         factors
     };
+}
+
+/**
+ * Assess risk of a transaction
+ * @param input Assessment parameters
+ * @returns Risk assessment result
+ */
+export async function assessTransactionRisk(input: RiskAssessmentInput): Promise<RiskAssessmentResult> {
+    // Delegate to getRiskAssessment
+    return getRiskAssessment(input);
+}
+
+/**
+ * Report a risk event to the system
+ * @param event Risk event to report
+ */
+export async function reportRiskEvent(event: RiskEvent): Promise<void> {
+    try {
+        console.log('Risk event reported:', event);
+        // In a real implementation, this would:
+        // - Save to database
+        // - Alert security team
+        // - Trigger monitoring/investigation
+    } catch (error) {
+        console.error('Failed to report risk event:', error);
+    }
 }

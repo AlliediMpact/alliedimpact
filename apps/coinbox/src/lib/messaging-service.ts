@@ -342,6 +342,25 @@ class MessagingService {
       return 0;
     }
   }
+
+  /**
+   * Get conversations by metadata field (e.g., tradeId, ticketId)
+   */
+  async getConversationsByMetadata(field: string, value: string): Promise<Conversation[]> {
+    try {
+      const conversationsRef = collection(this.db, 'conversations');
+      const q = query(conversationsRef, where(field, '==', value));
+
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      } as Conversation));
+    } catch (error) {
+      console.error(`Error getting conversations by ${field}:`, error);
+      return [];
+    }
+  }
 }
 
 export const messagingService = new MessagingService();

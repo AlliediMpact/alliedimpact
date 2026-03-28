@@ -4,6 +4,7 @@
  */
 
 import { httpsCallable } from "firebase/functions";
+// @ts-ignore - firebase config import
 import { functions } from "@/config/firebase";
 
 export type KYCLevel = 0 | 1 | 2 | 3;

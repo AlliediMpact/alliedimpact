@@ -4,6 +4,7 @@
  */
 
 import { httpsCallable } from "firebase/functions";
+// @ts-ignore - firebase config import
 import { functions } from "@/config/firebase";
 
 export interface MatchingCriteria {

@@ -38,13 +38,13 @@ export class P2PTradeActions {
       throw new Error('Only the seller can accept this trade');
     }
 
-    if (trade.status !== 'pending') {
-      throw new Error('Trade is no longer pending');
+    if (trade.status !== 'matched') {
+      throw new Error('Trade is not matched');
     }
 
     // Update trade status
     await updateDoc(tradeRef, {
-      status: 'active',
+      status: 'escrowed',
       acceptedAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -53,23 +53,17 @@ export class P2PTradeActions {
     await p2pNotifications.notifyTradeStatusChange(
       trade.buyerId,
       trade,
-      'pending',
-      'active'
+      'matched',
+      'escrowed'
     );
 
     // Create conversation for in-trade messaging
-    await messagingService.createConversation(
-      [trade.sellerId, trade.buyerId],
-      {
-        [trade.sellerId]: trade.sellerName,
-        [trade.buyerId]: trade.buyerName,
-      },
-      {
-        type: 'p2p_trade',
-        tradeId: trade.id,
-        asset: trade.asset,
-        amount: trade.cryptoAmount,
-      }
+    await messagingService.getOrCreateConversation(
+      trade.sellerId,
+      trade.buyerId,
+      trade.sellerName,
+      trade.buyerName,
+      trade.id
     );
   }
 
@@ -94,8 +88,8 @@ export class P2PTradeActions {
       throw new Error('Only the seller can reject this trade');
     }
 
-    if (trade.status !== 'pending') {
-      throw new Error('Trade is no longer pending');
+    if (trade.status !== 'matched') {
+      throw new Error('Trade is not matched');
     }
 
     // Update trade status
@@ -111,7 +105,7 @@ export class P2PTradeActions {
     await p2pNotifications.notifyTradeStatusChange(
       trade.buyerId,
       trade,
-      'pending',
+      'matched',
       'cancelled'
     );
   }
@@ -138,13 +132,13 @@ export class P2PTradeActions {
       throw new Error('Only the buyer can submit payment');
     }
 
-    if (trade.status !== 'active' && trade.status !== 'payment_pending') {
+    if (trade.status !== 'escrowed' && trade.status !== 'payment-pending') {
       throw new Error('Cannot submit payment for this trade');
     }
 
     // Update trade with payment info
     await updateDoc(tradeRef, {
-      status: 'payment_submitted',
+      status: 'payment-confirmed',
       paymentProofUrl,
       paymentNotes: notes,
       paymentSubmittedAt: serverTimestamp(),
@@ -165,7 +159,8 @@ export class P2PTradeActions {
         conversations[0].id,
         buyerId,
         `💰 Payment proof submitted. Please verify and release crypto.`,
-        'system'
+        'system',
+        null
       );
     }
   }
@@ -190,7 +185,7 @@ export class P2PTradeActions {
       throw new Error('Only the seller can release crypto');
     }
 
-    if (trade.status !== 'payment_submitted' && trade.status !== 'in_escrow') {
+    if (trade.status !== 'payment-confirmed' && trade.status !== 'escrowed') {
       throw new Error('Cannot release crypto at this stage');
     }
 
@@ -214,9 +209,12 @@ export class P2PTradeActions {
     // Send system message
     const conversations = await messagingService.getConversationsByMetadata('tradeId', tradeId);
     if (conversations.length > 0) {
+      const otherParticipant = conversations[0].participants.find(p => p !== sellerId) || trade.buyerId;
       await messagingService.sendMessage(
         conversations[0].id,
         sellerId,
+        trade.sellerName,
+        otherParticipant,
         `✅ Trade completed! ${trade.cryptoAmount} ${trade.asset} released to buyer.`,
         'system'
       );
@@ -249,8 +247,8 @@ export class P2PTradeActions {
     }
 
     // Don't allow cancellation after payment submitted
-    if (trade.status === 'payment_submitted' || trade.status === 'in_escrow') {
-      throw new Error('Cannot cancel after payment. Please file a dispute if needed.');
+    if (trade.status === 'payment-confirmed' || trade.status === 'escrowed') {
+      throw new Error('Cannot cancel after payment. Please file a dispute if needed');
     }
 
     // Cancel trade
@@ -342,6 +340,7 @@ export class P2PTradeActions {
   static async sendQuickMessage(
     tradeId: string,
     userId: string,
+    userName: string,
     messageType: 'payment_sent' | 'payment_received' | 'question' | 'thanks'
   ): Promise<void> {
     const conversations = await messagingService.getConversationsByMetadata('tradeId', tradeId);
@@ -357,9 +356,12 @@ export class P2PTradeActions {
       thanks: '🙏 Thank you for the smooth transaction!',
     };
 
+    const otherParticipant = conversations[0].participants.find(p => p !== userId) || userId;
     await messagingService.sendMessage(
       conversations[0].id,
       userId,
+      userName,
+      otherParticipant,
       quickMessages[messageType],
       'text'
     );

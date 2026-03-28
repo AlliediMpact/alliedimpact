@@ -20,6 +20,18 @@ export class NotificationService {
   }
 
   /**
+   * Send generic notification
+   */
+  static async sendNotification(params: {
+    userId: string;
+    title: string;
+    body: string;
+    data?: any;
+  }): Promise<void> {
+    console.log(`Notification sent to ${params.userId}: ${params.title} - ${params.body}`, params.data);
+  }
+
+  /**
    * Send wallet notification
    */
   static async sendWalletNotification(params: {

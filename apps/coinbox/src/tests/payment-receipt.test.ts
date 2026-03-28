@@ -74,7 +74,7 @@ describe('Receipt Service', () => {
 
     expect(result).toBeDefined();
     expect(result.id).toBe('receipt-123');
-    expect(notificationService.createNotification).toHaveBeenCalled();
+    expect(notificationService.create).toHaveBeenCalled();
   });
 
   test('should retrieve receipts for a user', async () => {

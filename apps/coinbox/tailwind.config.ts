@@ -54,13 +54,6 @@ export default {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))'
         },
-        neutral: {
-          lightest: '#F8F9FA',
-          light: '#E9ECEF',
-          medium: '#ADB5BD',
-          dark: '#495057',
-          darkest: '#212529'
-        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
@@ -80,12 +73,6 @@ export default {
           foreground: '#FFFFFF',
           accent: '#5e17eb'
         },
-        status: {
-          success: '#10B981',
-          warning: '#F59E0B',
-          error: '#EF4444',
-          info: '#3B82F6',
-        }
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -104,9 +91,9 @@ export default {
         'caption': '0.75rem', // 12px
       },
       fontWeight: {
-        normal: 400,
-        medium: 500,
-        bold: 700,
+        normal: '400',
+        medium: '500',
+        bold: '700',
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(90deg, #193281 0%, #5e17eb 100%)',

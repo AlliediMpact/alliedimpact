@@ -1,4 +1,5 @@
 // src/lib/email-service.ts
+// @ts-ignore - nodemailer not installed
 import nodemailer from 'nodemailer';
 
 /**

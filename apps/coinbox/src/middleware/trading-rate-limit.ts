@@ -32,19 +32,20 @@ export function tradingRateLimit(reqOrOperation: any, maybeOperation?: 'create' 
   if (typeof reqOrOperation === 'string') {
     const operationType = reqOrOperation as 'create' | 'match' | 'confirm';
     // Return the middleware function synchronously (tests call this directly)
-    return async (req: any, res: any, next?: any) => {
+    return (async (req: any, res: any, next?: any) => {
       try {
         const allowed = await tradingRateLimit(req, operationType as any);
         if (typeof next === 'function') {
           if (allowed) return next();
-          return next(new RateLimitExceededError());
+          // For express-style middleware, we usually call next(err) or handle res
+          return next(new RateLimitExceededError('Trading rate limit exceeded'));
         }
         return allowed;
       } catch (err) {
         if (typeof next === 'function') return next(err);
         return true;
       }
-    };
+    }) as any;
   }
 
   const req = reqOrOperation;

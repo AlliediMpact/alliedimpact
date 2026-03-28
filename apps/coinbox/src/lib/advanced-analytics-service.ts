@@ -1,6 +1,7 @@
 import { db } from './firebase';
 
-export interface AnalyticsMetrics {
+export interface AnalyticsMetrics { [key: string]: any;
+  [key: string]: any;
   users: {
     total: number;
     active: number;

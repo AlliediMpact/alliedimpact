@@ -46,6 +46,8 @@ process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
 process.env.FIREBASE_AUTH_EMULATOR_HOST = '127.0.0.1:9099';
 
 // Increase test timeout for integration tests
-if (typeof jest !== 'undefined') {
+if (typeof vi !== 'undefined') {
+  // Use Vitest if available
+} else if (typeof jest !== 'undefined') {
   jest.setTimeout(30000);
 }

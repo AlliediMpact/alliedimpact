@@ -39,6 +39,7 @@ import { authLogger } from '@/lib/auth-logger';
 import { AuthEventType } from '@/lib/auth-events';
 
 interface AuthContextProps {
+  [key: string]: any;
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;

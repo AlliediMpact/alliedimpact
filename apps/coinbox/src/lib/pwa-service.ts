@@ -3,6 +3,9 @@
  * Handles service worker registration, installation prompts, and offline functionality
  */
 
+// Declare gtag as a global function (from Google Analytics)
+declare function gtag(...args: any[]): void;
+
 export interface InstallPromptEvent extends Event {
   readonly platforms: string[];
   readonly userChoice: Promise<{

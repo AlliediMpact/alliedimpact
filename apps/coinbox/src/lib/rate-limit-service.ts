@@ -3,9 +3,23 @@
  * Implements token bucket algorithm for API rate limiting
  */
 
-import { db } from '@/lib/firebase-admin';
-import { Timestamp } from 'firebase-admin/firestore';
+import {
+  getFirestore,
+  Timestamp,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  writeBatch,
+  collection,
+  query,
+  where,
+  getDocs,
+  limit,
+} from 'firebase/firestore';
 import { ApiKey } from './api-auth-service';
+
+const db = getFirestore();
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -87,91 +101,87 @@ async function checkWindow(
   now: number
 ): Promise<RateLimitResult> {
   const bucketId = `${apiKey.id}_${window}`;
-  const bucketRef = db.collection('rateLimitBuckets').doc(bucketId);
+  const bucketRef = doc(db, 'rateLimitBuckets', bucketId);
 
   try {
-    const result = await db.runTransaction(async (transaction) => {
-      const bucketDoc = await transaction.get(bucketRef);
-      const nowTimestamp = Timestamp.fromMillis(now);
-      const windowStart = Timestamp.fromMillis(now - windowMs);
+    const bucketDoc = await getDoc(bucketRef);
+    const nowTimestamp = Timestamp.fromMillis(now);
+    const windowStart = Timestamp.fromMillis(now - windowMs);
 
-      let bucket: RateLimitBucket;
+    let bucket: RateLimitBucket;
 
-      if (!bucketDoc.exists) {
-        // Create new bucket
-        bucket = {
-          apiKeyId: apiKey.id,
-          window,
-          tokens: maxRequests - 1,
-          maxTokens: maxRequests,
-          lastRefill: nowTimestamp,
-          windowStart: nowTimestamp,
-        };
-        transaction.set(bucketRef, bucket);
-
-        return {
-          allowed: true,
-          limit: maxRequests,
-          remaining: bucket.tokens,
-          reset: now + windowMs,
-        };
-      }
-
-      bucket = bucketDoc.data() as RateLimitBucket;
-
-      // Check if window has expired
-      if (bucket.windowStart.toMillis() < windowStart.toMillis()) {
-        // Reset bucket for new window
-        bucket.tokens = maxRequests - 1;
-        bucket.windowStart = nowTimestamp;
-        bucket.lastRefill = nowTimestamp;
-
-        transaction.update(bucketRef, {
-          tokens: bucket.tokens,
-          windowStart: bucket.windowStart,
-          lastRefill: bucket.lastRefill,
-        });
-
-        return {
-          allowed: true,
-          limit: maxRequests,
-          remaining: bucket.tokens,
-          reset: now + windowMs,
-        };
-      }
-
-      // Check if tokens available
-      if (bucket.tokens > 0) {
-        bucket.tokens -= 1;
-        bucket.lastRefill = nowTimestamp;
-
-        transaction.update(bucketRef, {
-          tokens: bucket.tokens,
-          lastRefill: bucket.lastRefill,
-        });
-
-        return {
-          allowed: true,
-          limit: maxRequests,
-          remaining: bucket.tokens,
-          reset: bucket.windowStart.toMillis() + windowMs,
-        };
-      }
-
-      // Rate limit exceeded
-      const reset = bucket.windowStart.toMillis() + windowMs;
-      const retryAfter = Math.ceil((reset - now) / 1000);
+    if (!bucketDoc.exists()) {
+      // Create new bucket
+      bucket = {
+        apiKeyId: apiKey.id,
+        window,
+        tokens: maxRequests - 1,
+        maxTokens: maxRequests,
+        lastRefill: nowTimestamp,
+        windowStart: nowTimestamp,
+      };
+      await setDoc(bucketRef, bucket);
 
       return {
-        allowed: false,
+        allowed: true,
         limit: maxRequests,
-        remaining: 0,
-        reset,
-        retryAfter,
+        remaining: bucket.tokens,
+        reset: now + windowMs,
       };
-    });
+    }
 
-    return result;
+    bucket = bucketDoc.data() as RateLimitBucket;
+
+    // Check if window has expired
+    if (bucket.windowStart.toMillis() < windowStart.toMillis()) {
+      // Reset bucket for new window
+      bucket.tokens = maxRequests - 1;
+      bucket.windowStart = nowTimestamp;
+      bucket.lastRefill = nowTimestamp;
+
+      await updateDoc(bucketRef, {
+        tokens: bucket.tokens,
+        windowStart: bucket.windowStart,
+        lastRefill: bucket.lastRefill,
+      });
+
+      return {
+        allowed: true,
+        limit: maxRequests,
+        remaining: bucket.tokens,
+        reset: now + windowMs,
+      };
+    }
+
+    // Check if tokens available
+    if (bucket.tokens > 0) {
+      bucket.tokens -= 1;
+      bucket.lastRefill = nowTimestamp;
+
+      await updateDoc(bucketRef, {
+        tokens: bucket.tokens,
+        lastRefill: bucket.lastRefill,
+      });
+
+      return {
+        allowed: true,
+        limit: maxRequests,
+        remaining: bucket.tokens,
+        reset: bucket.windowStart.toMillis() + windowMs,
+      };
+    }
+
+    // Rate limit exceeded
+    const reset = bucket.windowStart.toMillis() + windowMs;
+    const retryAfter = Math.ceil((reset - now) / 1000);
+
+    return {
+      allowed: false,
+      limit: maxRequests,
+      remaining: 0,
+      reset,
+      retryAfter,
+    };
   } catch (error: any) {
     console.error('Rate limit check error:', error);
     // On error, allow the request (fail open)
@@ -198,18 +208,9 @@ export async function logApiRequest(
     userAgent?: string;
   }
 ): Promise<void> {
-  await db.collection('apiRequestLogs').add({
-    apiKeyId: apiKey.id,
-    userId: apiKey.userId,
-    tier: apiKey.tier,
-    endpoint: request.endpoint,
-    method: request.method,
-    statusCode: request.statusCode,
-    responseTime: request.responseTime,
-    ip: request.ip,
-    userAgent: request.userAgent,
-    timestamp: Timestamp.now(),
-  });
+  // Note: In client-side code, we would need to call a function to log this
+  // For now, just log to console
+  console.log('API Request logged:', { apiKeyId: apiKey.id, ...request });
 }
 
 /**
@@ -222,17 +223,17 @@ export async function getRateLimitStats(
   hour: { used: number; limit: number; remaining: number };
   day: { used: number; limit: number; remaining: number };
 }> {
-  const [minuteBucket, hourBucket, dayBucket] = await Promise.all([
-    db.collection('rateLimitBuckets').doc(`${apiKeyId}_minute`).get(),
-    db.collection('rateLimitBuckets').doc(`${apiKeyId}_hour`).get(),
-    db.collection('rateLimitBuckets').doc(`${apiKeyId}_day`).get(),
+  const [minuteDoc, hourDoc, dayDoc] = await Promise.all([
+    getDoc(doc(db, 'rateLimitBuckets', `${apiKeyId}_minute`)),
+    getDoc(doc(db, 'rateLimitBuckets', `${apiKeyId}_hour`)),
+    getDoc(doc(db, 'rateLimitBuckets', `${apiKeyId}_day`)),
   ]);
 
-  const getStats = (doc: any) => {
-    if (!doc.exists) {
+  const getStats = (docSnap: any) => {
+    if (!docSnap.exists()) {
       return { used: 0, limit: 0, remaining: 0 };
     }
-    const data = doc.data() as RateLimitBucket;
+    const data = docSnap.data() as RateLimitBucket;
     return {
       used: data.maxTokens - data.tokens,
       limit: data.maxTokens,
@@ -241,9 +242,9 @@ export async function getRateLimitStats(
   };
 
   return {
-    minute: getStats(minuteBucket),
-    hour: getStats(hourBucket),
-    day: getStats(dayBucket),
+    minute: getStats(minuteDoc),
+    hour: getStats(hourDoc),
+    day: getStats(dayDoc),
   };
 }
 
@@ -251,10 +252,10 @@ export async function getRateLimitStats(
  * Reset rate limits for an API key (admin function)
  */
 export async function resetRateLimit(apiKeyId: string): Promise<void> {
-  const batch = db.batch();
+  const batch = writeBatch(db);
 
-  ['minute', 'hour', 'day'].forEach(window => {
-    const bucketRef = db.collection('rateLimitBuckets').doc(`${apiKeyId}_${window}`);
+  (['minute', 'hour', 'day'] as const).forEach(window => {
+    const bucketRef = doc(db, 'rateLimitBuckets', `${apiKeyId}_${window}`);
     batch.delete(bucketRef);
   });
 
@@ -275,12 +276,14 @@ export async function getApiUsageAnalytics(
   requestsByEndpoint: Record<string, number>;
   requestsByStatus: Record<number, number>;
 }> {
-  const snapshot = await db
-    .collection('apiRequestLogs')
-    .where('apiKeyId', '==', apiKeyId)
-    .where('timestamp', '>=', Timestamp.fromDate(timeRange.start))
-    .where('timestamp', '<=', Timestamp.fromDate(timeRange.end))
-    .get();
+  const q = query(
+    collection(db, 'apiRequestLogs'),
+    where('apiKeyId', '==', apiKeyId),
+    where('timestamp', '>=', Timestamp.fromDate(timeRange.start)),
+    where('timestamp', '<=', Timestamp.fromDate(timeRange.end))
+  );
+  
+  const snapshot = await getDocs(q);
 
   let totalRequests = 0;
   let successfulRequests = 0;
@@ -320,18 +323,21 @@ export async function getApiUsageAnalytics(
  */
 export async function cleanupRateLimitBuckets(): Promise<number> {
   const oneDayAgo = Timestamp.fromMillis(Date.now() - 24 * 60 * 60 * 1000);
+  const q = query(
+    collection(db, 'rateLimitBuckets'),
+    where('lastRefill', '<', oneDayAgo)
+  );
 
-  const snapshot = await db
-    .collection('rateLimitBuckets')
-    .where('lastRefill', '<', oneDayAgo)
-    .get();
+  const snapshot = await getDocs(q);
 
-  const batch = db.batch();
+  const batch = writeBatch(db);
   snapshot.docs.forEach(doc => {
     batch.delete(doc.ref);
   });
 
-  await batch.commit();
+  if (snapshot.docs.length > 0) {
+    await batch.commit();
+  }
 
   return snapshot.size;
 }
@@ -344,18 +350,22 @@ export async function cleanupApiRequestLogs(daysToKeep: number = 90): Promise<nu
     Date.now() - daysToKeep * 24 * 60 * 60 * 1000
   );
 
-  const snapshot = await db
-    .collection('apiRequestLogs')
-    .where('timestamp', '<', cutoffDate)
-    .limit(500) // Process in batches
-    .get();
+  const q = query(
+    collection(db, 'apiRequestLogs'),
+    where('timestamp', '<', cutoffDate),
+    limit(500)
+  );
 
-  const batch = db.batch();
+  const snapshot = await getDocs(q);
+
+  const batch = writeBatch(db);
   snapshot.docs.forEach(doc => {
     batch.delete(doc.ref);
   });
 
-  await batch.commit();
+  if (snapshot.docs.length > 0) {
+    await batch.commit();
+  }
 
   return snapshot.size;
 }

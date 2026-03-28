@@ -3,7 +3,7 @@
  * Handles bulk data exports for various collections
  */
 
-import { db } from '@/lib/firebase-admin';
+import { adminDb } from '@/lib/firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 
 export interface ExportRequest {
@@ -54,7 +54,7 @@ export async function exportLoans(request: ExportRequest): Promise<ExportResult>
 
   try {
     // Build query
-    let query = db.collection('loanTickets').where('borrowerId', '==', userId);
+    let query = adminDb.collection('loanTickets').where('borrowerId', '==', userId);
 
     if (filters?.startDate) {
       query = query.where('createdAt', '>=', Timestamp.fromDate(filters.startDate));
@@ -146,7 +146,7 @@ export async function exportInvestments(request: ExportRequest): Promise<ExportR
   const { userId, format, filters, includeFields, maxRecords = 10000 } = request;
 
   try {
-    let query = db.collection('investments').where('investorId', '==', userId);
+    let query = adminDb.collection('investments').where('investorId', '==', userId);
 
     if (filters?.startDate) {
       query = query.where('createdAt', '>=', Timestamp.fromDate(filters.startDate));
@@ -233,7 +233,7 @@ export async function exportTransactions(request: ExportRequest): Promise<Export
   const { userId, format, filters, includeFields, maxRecords = 10000 } = request;
 
   try {
-    let query = db.collection('transactions').where('userId', '==', userId);
+    let query = adminDb.collection('transactions').where('userId', '==', userId);
 
     if (filters?.startDate) {
       query = query.where('createdAt', '>=', Timestamp.fromDate(filters.startDate));
@@ -320,7 +320,7 @@ export async function exportCryptoOrders(request: ExportRequest): Promise<Export
   const { userId, format, filters, includeFields, maxRecords = 10000 } = request;
 
   try {
-    let query = db.collection('cryptoOrders').where('userId', '==', userId);
+    let query = adminDb.collection('cryptoOrders').where('userId', '==', userId);
 
     if (filters?.startDate) {
       query = query.where('createdAt', '>=', Timestamp.fromDate(filters.startDate));
@@ -495,7 +495,7 @@ function convertToCSV(data: any[]): string {
  * Log export operation
  */
 async function logExport(log: ExportLog): Promise<void> {
-  await db.collection('exportLogs').doc(log.exportId).set(log);
+  await adminDb.collection('exportLogs').doc(log.exportId).set(log);
 }
 
 /**
@@ -505,7 +505,7 @@ export async function getExportHistory(
   userId: string,
   limit: number = 50
 ): Promise<ExportLog[]> {
-  const snapshot = await db
+  const snapshot = await adminDb
     .collection('exportLogs')
     .where('userId', '==', userId)
     .orderBy('createdAt', 'desc')
@@ -519,7 +519,7 @@ export async function getExportHistory(
  * Get export by ID
  */
 export async function getExport(exportId: string): Promise<ExportLog | null> {
-  const doc = await db.collection('exportLogs').doc(exportId).get();
+  const doc = await adminDb.collection('exportLogs').doc(exportId).get();
   
   if (!doc.exists) {
     return null;
@@ -534,12 +534,12 @@ export async function getExport(exportId: string): Promise<ExportLog | null> {
 export async function cleanupExpiredExports(): Promise<number> {
   const now = Timestamp.now();
   
-  const snapshot = await db
+  const snapshot = await adminDb
     .collection('exportLogs')
     .where('expiresAt', '<=', now)
     .get();
 
-  const batch = db.batch();
+  const batch = adminDb.batch();
   snapshot.docs.forEach(doc => {
     batch.delete(doc.ref);
   });

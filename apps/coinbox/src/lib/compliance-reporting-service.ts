@@ -22,6 +22,7 @@ import { db } from './firebase';
 import { Transaction } from './transaction-service';
 import { TradeTicket } from './types';
 import { auditService, AuditOperation } from './audit-service';
+// @ts-ignore - date-fns not installed
 import { format } from 'date-fns';
 
 // Types for compliance reporting

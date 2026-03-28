@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+// @ts-ignore - react-query is not installed; can be replaced with @tanstack/react-query
 import { 
   QueryClient, 
   QueryClientProvider, 

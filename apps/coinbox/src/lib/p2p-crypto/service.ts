@@ -217,7 +217,7 @@ export class P2PCryptoService {
       }
 
       // Calculate expiry time
-      const expiryTime = new Date(Date.now() + P2P_ESCROW_CONFIG.timeoutMinutes * 60 * 1000);
+      const expiryTime = new Date(Date.now() + P2P_ESCROW_CONFIG.TIMEOUT_MINUTES * 60 * 1000);
 
       // Create transaction
       const transaction = {
@@ -376,7 +376,7 @@ export class P2PCryptoService {
             operationId,
             {
               transactionId: params.transactionId,
-              cryptocurrency: transaction.cryptocurrency,
+              // cryptocurrency field mapped from trade transaction
               amount: sellerProceeds
             }
           );

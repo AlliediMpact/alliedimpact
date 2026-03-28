@@ -61,11 +61,17 @@ const setupAuthMock = (overrides = {}) => {
     signUp: vi.fn(),
     resetPassword: vi.fn(),
     updateProfile: vi.fn(),
+    sendPasswordReset: vi.fn(),
+    verifyEmail: vi.fn(),
+    updateUserProfile: vi.fn(),
+    resendVerificationEmail: vi.fn(),
+    checkEmailVerification: vi.fn(),
     enrollMfa: vi.fn(),
     verifyMfaCode: vi.fn(),
     isMfaEnabled: vi.fn(),
     getMfaPhone: vi.fn(),
     disableMfa: vi.fn(),
+    userClaims: null,
     authError: null,
   };
 

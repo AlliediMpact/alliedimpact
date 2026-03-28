@@ -401,7 +401,7 @@ export class TransactionMonitoringService {
         await this.saveAlert(alert);
         
         // Send notification to user
-        await notificationService.createNotification({
+        await notificationService.create({
           userId: transaction.userId,
           type: 'security',
           title: 'Unusual Trading Activity Detected',
@@ -453,7 +453,7 @@ export class TransactionMonitoringService {
       for (const adminDoc of adminsSnapshot.docs) {
         const adminId = adminDoc.id;
         
-        await notificationService.createNotification({
+        await notificationService.create({
           userId: adminId,
           type: 'admin',
           title: `${rule.severity.toUpperCase()} Security Alert`,
@@ -491,7 +491,7 @@ export class TransactionMonitoringService {
       if (this.userNotifier?.notifyUser) {
         try { this.userNotifier.notifyUser(alert.userId, 'Security alert'); } catch {}
       } else {
-        await notificationService.createNotification({
+        await notificationService.create({
           userId: alert.userId,
           type: 'security',
           title: `${alert.ruleName} Detected`,

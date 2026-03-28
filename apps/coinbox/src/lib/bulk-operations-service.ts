@@ -20,6 +20,7 @@ import {
   writeBatch,
   runTransaction
 } from 'firebase/firestore';
+// @ts-ignore - wallet-service not yet implemented
 import { walletService } from './wallet-service';
 import { membershipService } from './membership-service';
 import { notificationService } from './notification-service';
@@ -173,12 +174,13 @@ class BulkOperationsService {
 
       // Send notification
       if (result.successful > 0) {
-        await notificationService.createNotification({
+        await notificationService.create({
           userId,
-          type: 'info',
+          type: 'system',
           title: 'Bulk Loans Created',
           message: `Successfully created ${result.successful} out of ${loans.length} loan requests`,
-          priority: 'normal'
+          priority: 'normal',
+          metadata: { successful: result.successful, total: loans.length }
         });
       }
 
@@ -328,12 +330,13 @@ class BulkOperationsService {
 
       // Send notification
       if (result.successful > 0) {
-        await notificationService.createNotification({
+        await notificationService.create({
           userId,
-          type: 'success',
+          type: 'system',
           title: 'Bulk Investments Completed',
           message: `Successfully invested in ${result.successful} out of ${investments.length} loans`,
-          priority: 'normal'
+          priority: 'normal',
+          metadata: { successful: result.successful, total: investments.length }
         });
       }
 
@@ -459,7 +462,7 @@ class BulkOperationsService {
 
       // Send notification
       if (result.successful > 0) {
-        await notificationService.createNotification({
+        await notificationService.create({
           userId,
           type: 'success',
           title: 'Bulk Crypto Orders Placed',
@@ -543,13 +546,13 @@ class BulkOperationsService {
           }
 
           // Send notification
-          await notificationService.createNotification({
+          await notificationService.create({
             userId: recipientId,
             type: 'message',
             title: messageRequest.subject,
             message: messageRequest.message,
             priority: messageRequest.priority || 'normal',
-            data: {
+            metadata: {
               senderId,
               batchId
             }

@@ -153,7 +153,7 @@ describe('User Journey Integration Tests', () => {
     it('should allow a user to apply for, receive, and repay a loan', async () => {
       // Step 1: Apply for a loan
       vi.spyOn(loanService, 'applyForLoan').mockImplementation(async () => {
-        await notificationService.createNotification({ userId, type: 'system', title: 'Loan Applied', message: 'Loan applied', priority: 'normal' });
+        await notificationService.create({ userId, type: 'system', title: 'Loan Applied', message: 'Loan applied', priority: 'medium' });
         return 'loan-123';
       });
       
@@ -167,26 +167,26 @@ describe('User Journey Integration Tests', () => {
       
       // Step 2: Admin reviews
       vi.spyOn(loanService, 'reviewLoan').mockImplementation(async () => {
-        await notificationService.createNotification({ userId, type: 'system', title: 'Loan Approved', message: 'Loan approved', priority: 'high' });
+        await notificationService.create({ userId, type: 'system', title: 'Loan Approved', message: 'Loan approved', priority: 'high' });
       });
       
       await loanService.reviewLoan(loanId, adminId, true, 'Approved');
       
       // Step 3: Fund Loan
       vi.spyOn(loanService, 'fundLoan').mockImplementation(async () => {
-        await notificationService.createNotification({ userId, type: 'transaction', title: 'Loan Funded', message: 'Loan funded', priority: 'high' });
+        await notificationService.create({ userId, type: 'system', title: 'Loan Funded', message: 'Loan funded', priority: 'high' });
       });
       
       await loanService.fundLoan(loanId, 'tx-456');
       
       // Step 4: Repay Loan
       vi.spyOn(loanService, 'repayLoan').mockImplementation(async () => {
-        await notificationService.createNotification({ userId, type: 'transaction', title: 'Loan Repaid', message: 'Loan repaid', priority: 'high' });
+        await notificationService.create({ userId, type: 'system', title: 'Loan Repaid', message: 'Loan repaid', priority: 'high' });
       });
       
       await loanService.repayLoan(loanId, userId, 'tx-789');
       
-      expect(notificationService.createNotification).toHaveBeenCalledTimes(4);
+      expect(notificationService.create).toHaveBeenCalledTimes(4);
     });
   });
   

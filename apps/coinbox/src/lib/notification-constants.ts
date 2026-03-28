@@ -24,10 +24,19 @@ export type NotificationType =
   | 'trade_cancelled'
   | 'wallet_update'
   | 'login_alert'
-  | 'achievement';
+  | 'achievement'
+  | 'referral'
+  | 'security'
+  | 'admin'
+  // Additional types for bulk operations
+  | 'trade'
+  | 'success'
+  | 'message'
+  | 'transaction'
+  | 'info';
 
 // Notification priority levels
-export type NotificationPriority = 'low' | 'medium' | 'high';
+export type NotificationPriority = 'low' | 'medium' | 'high' | 'normal' | 'urgent';
 
 // Notification status
 export type NotificationStatus = 'unread' | 'read' | 'archived' | 'deleted';
@@ -62,7 +71,15 @@ export const NOTIFICATION_CATEGORY_MAP: Record<NotificationType, NotificationCat
   trade_complete: 'trades',
   trade_cancelled: 'trades',
   wallet_update: 'account',
-  login_alert: 'security'
+  login_alert: 'security',
+  referral: 'account',
+  security: 'security',
+  admin: 'system',
+  trade: 'trades',
+  success: 'transactions',
+  message: 'system',
+  transaction: 'transactions',
+  info: 'system'
 };
 
 // Sound notification settings
@@ -94,7 +111,15 @@ export const NOTIFICATION_ICONS: Record<NotificationType, string> = {
   trade_cancelled: 'XIcon',
   wallet_update: 'WalletIcon',
   login_alert: 'LogInIcon',
-  achievement: 'TrophyIcon'
+  achievement: 'TrophyIcon',
+  referral: 'UsersIcon',
+  security: 'ShieldIcon',
+  admin: 'SettingsIcon',
+  trade: 'HandshakeIcon',
+  success: 'CheckCircleIcon',
+  message: 'MessageSquareIcon',
+  transaction: 'ArrowRightLeftIcon',
+  info: 'InfoIcon'
 };
 
 // Default notification expiry in days

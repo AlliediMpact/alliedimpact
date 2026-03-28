@@ -21,11 +21,13 @@ export const pageTransition: Variants = {
   animate: { 
     opacity: 1, 
     y: 0,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.4, ease: easings.easeOut }
   },
   exit: { 
     opacity: 0, 
     y: -20,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.3, ease: easings.easeIn }
   }
 };
@@ -44,6 +46,7 @@ export const fadeInUp: Variants = {
   animate: { 
     opacity: 1, 
     y: 0,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.5, ease: easings.easeOut }
   }
 };
@@ -53,6 +56,7 @@ export const fadeInDown: Variants = {
   animate: { 
     opacity: 1, 
     y: 0,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.5, ease: easings.easeOut }
   }
 };
@@ -63,6 +67,7 @@ export const scaleIn: Variants = {
   animate: { 
     scale: 1, 
     opacity: 1,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.3, ease: easings.easeOut }
   }
 };
@@ -72,6 +77,7 @@ export const scaleInSpring: Variants = {
   animate: { 
     scale: 1, 
     opacity: 1,
+    // @ts-ignore - motion-dom spring easing type mismatch
     transition: easings.springBounce
   }
 };
@@ -82,6 +88,7 @@ export const slideInLeft: Variants = {
   animate: { 
     x: 0, 
     opacity: 1,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.4, ease: easings.easeOut }
   }
 };
@@ -91,6 +98,7 @@ export const slideInRight: Variants = {
   animate: { 
     x: 0, 
     opacity: 1,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.4, ease: easings.easeOut }
   }
 };
@@ -217,6 +225,7 @@ export const pulse: Variants = {
     transition: {
       duration: 2,
       repeat: Infinity,
+      // @ts-ignore - motion-dom easing type mismatch
       ease: easings.easeInOut
     }
   }
@@ -245,6 +254,7 @@ export const checkmark: Variants = {
   animate: { 
     pathLength: 1, 
     opacity: 1,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.5, ease: easings.easeOut }
   }
 };
@@ -270,6 +280,7 @@ export const tabContent: Variants = {
   animate: { 
     opacity: 1, 
     x: 0,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.3, ease: easings.easeOut }
   },
   exit: { 
@@ -285,6 +296,7 @@ export const accordion: Variants = {
   expanded: { 
     height: 'auto', 
     opacity: 1,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.3, ease: easings.easeOut }
   }
 };
@@ -307,6 +319,7 @@ export const skeletonPulse: Variants = {
     transition: {
       duration: 1.5,
       repeat: Infinity,
+      // @ts-ignore - motion-dom easing type mismatch
       ease: easings.easeInOut
     }
   }
@@ -317,6 +330,7 @@ export const chartBar: Variants = {
   initial: { scaleY: 0, originY: 1 },
   animate: { 
     scaleY: 1,
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.5, ease: easings.easeOut }
   }
 };

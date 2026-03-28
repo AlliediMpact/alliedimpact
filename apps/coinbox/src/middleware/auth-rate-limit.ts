@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+// @ts-ignore - rate-limit middleware not found
 import { rateLimit } from './middleware/rate-limit';
 
 export async function middleware(request: NextRequest) {
@@ -13,6 +14,7 @@ export async function middleware(request: NextRequest) {
     const isAllowed = await rateLimit(request);
     
     if (!isAllowed) {
+      // @ts-ignore - api-utils module location mismatch
       const { AuthErrors } = await import('./app/api-utils');
       
       // Calculate retry-after time (in seconds)

@@ -2,7 +2,8 @@ import * as functions from "firebase-functions";
 import { KYCService } from "./kycService";
 import { validate, ValidationException, sanitize } from "../utils/validate";
 import { ERROR_CODES } from "../config/constants";
-import { CloudFunctionResponse, KYCLevel } from "../types";
+import { CloudFunctionResponse } from "../types";
+import { KYCLevel } from "../types/kyc";
 
 /**
  * Submit Level 1 KYC

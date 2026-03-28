@@ -12,7 +12,12 @@ describe('Advanced Analytics Service', () => {
   });
 
   test('should generate analytics metrics', async () => {
-    const metrics = await advancedAnalyticsService.getAnalyticsMetrics('7d');
+    const metrics = await advancedAnalyticsService.getAnalyticsMetrics({
+      dateRange: {
+        start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        end: new Date()
+      }
+    });
     
     expect(metrics).toBeDefined();
     expect(metrics.overview).toBeDefined();
@@ -41,16 +46,16 @@ describe('Advanced Analytics Service', () => {
     const predictions = await advancedAnalyticsService.getPredictiveAnalytics();
     
     expect(predictions).toBeDefined();
-    expect(predictions.userGrowthPrediction).toBeDefined();
-    expect(predictions.revenuePrediction).toBeDefined();
-    expect(predictions.churnPrediction).toBeDefined();
-    expect(predictions.transactionVolumePrediction).toBeDefined();
+    expect(predictions.userGrowth).toBeDefined();
+    expect(predictions.revenue).toBeDefined();
+    expect(predictions.defaultRisk).toBeDefined();
+    expect(predictions.transactionVolume).toBeDefined();
 
     // Check prediction structure
-    expect(Array.isArray(predictions.userGrowthPrediction)).toBe(true);
-    expect(Array.isArray(predictions.revenuePrediction)).toBe(true);
-    expect(typeof predictions.churnPrediction.riskScore).toBe('number');
-    expect(Array.isArray(predictions.churnPrediction.highRiskUsers)).toBe(true);
+    expect(Array.isArray(predictions.userGrowth.prediction)).toBe(true);
+    expect(Array.isArray(predictions.revenue.forecast)).toBe(true);
+    expect(typeof predictions.defaultRisk.prediction).toBe('number');
+    expect(Array.isArray(predictions.defaultRisk.riskFactors)).toBe(true);
   });
 
   test('should get user insights', async () => {
@@ -102,17 +107,32 @@ describe('Advanced Analytics Service', () => {
   });
 
   test('should handle different time ranges', async () => {
-    const timeRanges = ['7d', '30d', '90d', '1y'];
+    const timeRanges = [
+      { days: 7, name: '7d' },
+      { days: 30, name: '30d' },
+      { days: 90, name: '90d' },
+      { days: 365, name: '1y' }
+    ];
     
     for (const range of timeRanges) {
-      const metrics = await advancedAnalyticsService.getAnalyticsMetrics(range);
+      const metrics = await advancedAnalyticsService.getAnalyticsMetrics({
+        dateRange: {
+          start: new Date(Date.now() - range.days * 24 * 60 * 60 * 1000),
+          end: new Date()
+        }
+      });
       expect(metrics).toBeDefined();
       expect(metrics.overview).toBeDefined();
     }
   });
 
   test('should calculate revenue metrics correctly', async () => {
-    const metrics = await advancedAnalyticsService.getAnalyticsMetrics('30d');
+    const metrics = await advancedAnalyticsService.getAnalyticsMetrics({
+      dateRange: {
+        start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        end: new Date()
+      }
+    });
     
     expect(metrics.revenueMetrics).toBeDefined();
     expect(Array.isArray(metrics.revenueMetrics.revenueData)).toBe(true);
@@ -129,7 +149,12 @@ describe('Advanced Analytics Service', () => {
   });
 
   test('should handle user segmentation', async () => {
-    const metrics = await advancedAnalyticsService.getAnalyticsMetrics('30d');
+    const metrics = await advancedAnalyticsService.getAnalyticsMetrics({
+      dateRange: {
+        start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        end: new Date()
+      }
+    });
     
     expect(metrics.userMetrics.segmentData).toBeDefined();
     expect(Array.isArray(metrics.userMetrics.segmentData)).toBe(true);
@@ -144,7 +169,12 @@ describe('Advanced Analytics Service', () => {
   });
 
   test('should track performance metrics', async () => {
-    const metrics = await advancedAnalyticsService.getAnalyticsMetrics('7d');
+    const metrics = await advancedAnalyticsService.getAnalyticsMetrics({
+      dateRange: {
+        start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        end: new Date()
+      }
+    });
     
     expect(metrics.performanceMetrics).toBeDefined();
     expect(typeof metrics.performanceMetrics.averageResponseTime).toBe('number');

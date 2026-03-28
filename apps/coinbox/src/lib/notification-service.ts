@@ -18,6 +18,7 @@ import {
   Timestamp,
   addDoc
 } from 'firebase/firestore';
+import { getMessaging, getToken } from 'firebase/messaging';
 import { NotificationType, NotificationPriority, NotificationStatus, NotificationCategory } from './notification-constants';
 
 export interface Notification {
@@ -40,6 +41,9 @@ export interface Notification {
     imageUrl?: string;
     link?: string;
     expiresAt?: Timestamp;
+    loanId?: string;
+    transactionId?: string;
+    [key: string]: any;
   };
   createdAt: Timestamp;
   readAt?: Timestamp;
@@ -54,7 +58,11 @@ class NotificationService {
   /**
    * Creates a new notification and delivers it through specified channels
    */
-  async createNotification(notification: Omit<Notification, 'id' | 'createdAt' | 'status'>) {
+  async create(notification: Omit<Notification, 'id' | 'createdAt' | 'status'>) {
+    return this.createNotification(notification);
+  }
+
+  private async createNotification(notification: Omit<Notification, 'id' | 'createdAt' | 'status'>) {
     const now = Timestamp.now();
     
     // Add category based on type if not provided
@@ -537,6 +545,50 @@ class NotificationService {
       // - Trigger monitoring alerts
     } catch (error) {
       console.error('Failed to send system alert:', error);
+    }
+  }
+
+  /**
+   * Notify security team of suspicious activity
+   */
+  async notifySecurityTeam(alert: {
+    userId: string;
+    type: string;
+    description: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    metadata?: Record<string, any>;
+  }): Promise<void> {
+    try {
+      // Save security alert to database
+      await addDoc(collection(db, 'security_alerts'), {
+        ...alert,
+        createdAt: serverTimestamp(),
+        reviewed: false
+      });
+
+      // Send notification to security team admins
+      const securityTeamRef = collection(db, 'users');
+      const q = query(securityTeamRef, where('role', '==', 'security_admin'));
+      const securityTeam = await getDocs(q);
+
+      for (const doc of securityTeam.docs) {
+        const adminId = doc.id;
+        await this.create({
+          userId: adminId,
+          type: 'security',
+          title: `Security Alert: ${alert.type}`,
+          message: alert.description,
+          priority: alert.severity === 'critical' ? 'high' : 'medium',
+          metadata: {
+            alertType: alert.type,
+            suspiciousUserId: alert.userId,
+            severity: alert.severity,
+            ...alert.metadata
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to notify security team:', error);
     }
   }
 }

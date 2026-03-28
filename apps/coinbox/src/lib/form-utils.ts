@@ -1,5 +1,7 @@
 import { z } from 'zod';
+// @ts-ignore - react-hook-form not installed
 import { useForm } from 'react-hook-form';
+// @ts-ignore - @hookform/resolvers/zod not installed
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';

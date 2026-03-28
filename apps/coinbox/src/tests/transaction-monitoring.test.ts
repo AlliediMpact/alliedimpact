@@ -1046,7 +1046,7 @@ describe('TransactionMonitoringService', () => {
       await (monitoringService as any).notifyAdmins(transaction, rule);
       
       const notifService = await import('../lib/notification-service');
-      expect(notifService.notificationService.createNotification).toHaveBeenCalled();
+      expect(notifService.notificationService.create).toHaveBeenCalled();
     });
 
     it('should handle notification errors in notifyAdmins', async () => {

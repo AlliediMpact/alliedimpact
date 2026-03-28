@@ -143,13 +143,13 @@ class ReferralService {
       await this.updateReferrerStats(referrerId, newUserId);
 
       // Notify referrer
-      await notificationService.createNotification({
+      await notificationService.create({
         userId: referrerId,
-        type: 'referral',
+        type: 'system',
         title: 'New Referral',
         message: 'Someone has signed up using your referral code!',
         priority: 'normal',
-        data: {
+        metadata: {
           referralId: referralDoc.id
         }
       });
@@ -263,13 +263,13 @@ class ReferralService {
         await membershipService.checkAndUpdateTier(referralData.referrerId);
         
         // Notify referrer
-        await notificationService.createNotification({
+        await notificationService.create({
           userId: referralData.referrerId,
-          type: 'referral',
+          type: 'system',
           title: 'Referral Completed',
           message: 'One of your referrals has been activated! You can now earn commissions from their activity.',
           priority: 'normal',
-          data: {
+          metadata: {
             referralId: referral.id
           }
         });

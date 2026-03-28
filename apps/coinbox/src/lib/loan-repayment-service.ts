@@ -87,9 +87,9 @@ class LoanRepaymentService {
           : `Reminder: Your loan repayment of R${loan.repaymentAmount} is due in ${daysUntilDue} days.`;
 
       // Send in-app notification
-      await notificationService.createNotification({
+      await notificationService.create({
         userId: loan.borrowerId,
-        type: 'loan_reminder',
+        type: 'system',
         title: 'Loan Repayment Due Soon',
         message: reminderMessage,
         priority: daysUntilDue === 1 ? 'high' : 'medium',
@@ -152,9 +152,9 @@ class LoanRepaymentService {
       if (!borrower) return;
 
       // Send overdue notification
-      await notificationService.createNotification({
+      await notificationService.create({
         userId: loan.borrowerId,
-        type: 'alert',
+        type: 'system',
         title: '⚠️ Loan Payment Overdue',
         message: `Your loan repayment of R${loan.repaymentAmount} is now overdue. Please make payment immediately to avoid penalties.`,
         priority: 'high',
@@ -179,9 +179,9 @@ class LoanRepaymentService {
       });
 
       // Notify admin
-      await notificationService.createNotification({
+      await notificationService.create({
         userId: 'admin',
-        type: 'alert',
+        type: 'system',
         title: 'Loan Payment Overdue',
         message: `Loan ${loanId} by ${borrower.fullName} is now overdue (R${loan.repaymentAmount}).`,
         priority: 'high',
@@ -277,9 +277,9 @@ class LoanRepaymentService {
     loan: any
   ): Promise<void> {
     // Notify borrower
-    await notificationService.createNotification({
+    await notificationService.create({
       userId: loan.borrowerId,
-      type: 'transaction',
+      type: 'system',
       title: '✅ Loan Repayment Successful',
       message: `Your loan of R${loan.amount} has been successfully repaid. Thank you!`,
       priority: 'medium',
@@ -287,9 +287,9 @@ class LoanRepaymentService {
     });
 
     // Notify investor
-    await notificationService.createNotification({
+    await notificationService.create({
       userId: loan.investorId,
-      type: 'transaction',
+      type: 'system',
       title: '💰 Loan Repayment Received',
       message: `You have received R${loan.repaymentAmount} from a loan repayment.`,
       priority: 'medium',
