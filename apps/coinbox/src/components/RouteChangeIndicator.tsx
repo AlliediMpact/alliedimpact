@@ -16,7 +16,8 @@ const progressContainerVariants: Variants = {
     y: 0,
     transition: { 
       duration: 0.3,
-      ease: animations.easings.easeOut
+      // @ts-ignore - motion-dom easing type mismatch
+      ease: animations.easings.easeOut as any
     }
   },
   exit: {

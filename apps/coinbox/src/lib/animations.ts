@@ -163,6 +163,7 @@ export const progressBar: Variants = {
   initial: { width: 0 },
   animate: { 
     width: '100%',
+    // @ts-ignore - motion-dom easing type mismatch
     transition: { duration: 0.5, ease: easings.easeOut }
   }
 };

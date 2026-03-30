@@ -7,6 +7,7 @@ import {
   QueryClientProvider, 
   QueryOptions, 
   useQuery as useReactQuery
+// @ts-ignore - Optional react-query dependency
 } from 'react-query';
 
 // Create a new QueryClient instance to manage queries

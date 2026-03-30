@@ -137,13 +137,18 @@ async function handleSuccessfulPayment(data: any) {
     }
     
     // Send payment confirmation email
-    await emailService.sendPaymentConfirmationEmail({
-      email: customer.email,
-      amount: amount / 100,
-      currency: data.currency,
-      reference,
-      date: new Date().toISOString()
-    });
+    const fullName = customer.first_name && customer.last_name 
+      ? `${customer.first_name} ${customer.last_name}`
+      : customer.email;
+    const membershipTier = metadata?.membershipTier || 'standard';
+    
+    await emailService.sendPaymentConfirmation(
+      customer.email,
+      fullName,
+      amount / 100,
+      membershipTier,
+      reference
+    );
     
     console.log(`Payment processed successfully: ${reference} for user ${userId}`);
     

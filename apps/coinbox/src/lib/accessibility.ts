@@ -78,7 +78,7 @@ export function registerKeyboardShortcut(
 ) {
   const handleKeyPress = (e: KeyboardEvent) => {
     const matchesKey = e.key === shortcut.key;
-    const matchesCtrl = shortcut.ctrlKey ? e.ctrlKey || e.metaKey : true;
+    const matchesCtrl = 'ctrlKey' in shortcut ? (shortcut.ctrlKey ? e.ctrlKey || e.metaKey : true) : true;
     
     if (matchesKey && matchesCtrl) {
       e.preventDefault();

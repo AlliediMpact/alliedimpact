@@ -184,7 +184,7 @@ export default function ReceiptViewer({ receiptId, onBack }: ReceiptViewerProps)
         <div className="bg-muted/50 p-4 rounded-md">
           <div className="flex justify-between items-center">
             <h3 className="text-sm font-medium">Total Amount</h3>
-            <p className="text-xl font-bold">{formatCurrency(receipt.amount, receipt.currency)}</p>
+            <p className="text-xl font-bold">{formatCurrency(receipt.amount)}</p>
           </div>
         </div>
 
@@ -207,8 +207,8 @@ export default function ReceiptViewer({ receiptId, onBack }: ReceiptViewerProps)
                     <tr key={index}>
                       <td className="px-4 py-2 whitespace-nowrap text-sm">{item.description}</td>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-right">{item.quantity}</td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-right">{formatCurrency(item.unitPrice, receipt.currency)}</td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-right">{formatCurrency(item.totalPrice, receipt.currency)}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-right">{formatCurrency(item.unitPrice)}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-right">{formatCurrency(item.totalPrice)}</td>
                     </tr>
                   ))}
                 </tbody>

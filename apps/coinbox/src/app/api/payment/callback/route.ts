@@ -47,11 +47,9 @@ export async function POST(request: NextRequest) {
         }
 
         // Validate core payload structure
-        const parsed = safeParseBody(depositBodySchema, {
+        const parsed = depositBodySchema.safeParse({
             amountKobo: data?.amount,
-            currency: data?.currency,
             reference: data?.reference,
-            email: data?.customer?.email,
         });
         if (!parsed.success) {
             return NextResponse.json(

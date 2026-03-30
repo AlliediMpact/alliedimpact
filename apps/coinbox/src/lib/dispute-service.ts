@@ -132,11 +132,14 @@ export class DisputeService extends ServiceClient {
   }
 
   async getAllDisputes(status?: string): Promise<Dispute[]> {
-    const queryConstraints = [orderBy('createdAt', 'desc')];
+    // @ts-ignore - queryConstraint type union is complex
+    const queryConstraints: any[] = [];
     
     if (status) {
-      queryConstraints.unshift(firestoreWhere('status', '==', status));
+      queryConstraints.push(firestoreWhere('status', '==', status));
     }
+    
+    queryConstraints.push(orderBy('createdAt', 'desc'));
     
     return this.queryCollection<Dispute>('disputes', queryConstraints);
   }

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { MonitoringRule } from '@/lib/transaction-monitoring-service';
 // Defer importing the service until after mocks are applied
 let TransactionMonitoringService: any;
 let RuleSeverity: any;

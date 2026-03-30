@@ -197,6 +197,8 @@ class MembershipService {
       joinDate: now,
       renewalDate: Timestamp.fromDate(new Date(now.toDate().setMonth(now.toDate().getMonth() + 1))),
       paymentStatus: 'active',
+      loanLimit: 0,
+      p2pCryptoLimit: 0,
       metrics: {
         monthlyTradingVolume: 0,
         totalReferrals: 0,

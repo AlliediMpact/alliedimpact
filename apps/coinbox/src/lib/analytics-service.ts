@@ -367,7 +367,7 @@ class AnalyticsService {
       const disputes = disputeSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as Array<{ id: string; status: string; createdAt: any; resolution?: any; reason?: string }>;
       
       // Calculate metrics
       const totalDisputes = disputes.length;
@@ -454,7 +454,7 @@ class AnalyticsService {
       const referrals = referralSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      }));
+      })) as Array<{ id: string; hasCompletedTransaction?: boolean; commissionPaid?: number; referrerId?: string }>;
       
       const totalReferrals = referrals.length;
       
@@ -686,7 +686,15 @@ class AnalyticsService {
       const fileName = `coinbox-${type}-${timestamp}.${options.format === 'excel' ? 'xlsx' : options.format}`;
       
       // Create export record
-      const exportId = await this.createExportRecord(options.userId, type, options);
+      const reportOptions: ReportOptions = {
+        format: (options.format === 'excel' ? 'xlsx' : options.format) as 'csv' | 'xlsx' | 'pdf' | 'json',
+        dateRange: {
+          start: options.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          end: options.endDate || new Date()
+        },
+        filters: options.filters
+      };
+      const exportId = await this.recordExport('transactions', reportOptions);
       
       // Generate file and get URL
       const url = await this.generateExportFile(data, options.format, fileName);
@@ -795,151 +803,23 @@ class AnalyticsService {
       throw new Error('Failed to export analytics to file');
     }
   }
-  
-  /**
-   * Export transactions to a specified format
-   */
-  async exportTransactions(options: ReportOptions): Promise<ExportResult> {
-    try {
-      const { format, dateRange, filters, includeFields } = options;
-      
-      // Create a record of this export
-      const exportId = await this.recordExport('transactions', options);
-      
-      // Query transactions based on filters
-      const transactionsQuery = query(
-        collection(db, 'transactions'),
-        where('timestamp', '>=', Timestamp.fromDate(dateRange.start)),
-        where('timestamp', '<=', Timestamp.fromDate(dateRange.end))
-      );
-      
-      const transactionSnap = await getDocs(transactionsQuery);
-      const transactions = transactionSnap.docs.map(doc => {
-        const data = doc.data();
-        
-        // Apply field filtering if specified
-        if (includeFields && includeFields.length > 0) {
-          const filteredData: Record<string, any> = { id: doc.id };
-          includeFields.forEach(field => {
-            if (data[field] !== undefined) {
-              filteredData[field] = data[field];
-            }
-          });
-          return filteredData;
-        }
-        
-        return {
-          id: doc.id,
-          ...data
-        };
-      });
-      
-      // Apply any additional filters
-      const filteredTransactions = filters 
-        ? transactions.filter(tx => this.applyFilters(tx, filters))
-        : transactions;
-      
-      // Generate the export file
-      const fileName = `transactions_export_${Date.now()}.${format}`;
-      const exportUrl = await this.generateExportFile(filteredTransactions, format, fileName);
-      
-      // Update the export record with the url
-      await this.updateExportRecord(exportId, exportUrl);
-      
-      // Create expiration date (30 days from now)
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 30);
-      
-      return {
-        url: exportUrl,
-        fileName,
-        format,
-        generatedAt: new Date(),
-        expiresAt
-      };
-    } catch (error) {
-      console.error('Failed to export transactions:', error);
-      throw new Error('Failed to export transactions');
-    }
-  }
-  
-  /**
-   * Export user data to a specified format
-   */
-  async exportUsers(options: ReportOptions): Promise<ExportResult> {
-    try {
-      const { format, filters, includeFields } = options;
-      
-      // Create a record of this export
-      const exportId = await this.recordExport('users', options);
-      
-      // Query users
-      const usersQuery = query(collection(db, 'users'));
-      const userSnap = await getDocs(usersQuery);
-      
-      const users = userSnap.docs.map(doc => {
-        const data = doc.data();
-        
-        // Always remove sensitive fields
-        const { password, authToken, ...safeData } = data;
-        
-        // Apply field filtering if specified
-        if (includeFields && includeFields.length > 0) {
-          const filteredData: Record<string, any> = { id: doc.id };
-          includeFields.forEach(field => {
-            if (safeData[field] !== undefined) {
-              filteredData[field] = safeData[field];
-            }
-          });
-          return filteredData;
-        }
-        
-        return {
-          id: doc.id,
-          ...safeData
-        };
-      });
-      
-      // Apply any additional filters
-      const filteredUsers = filters 
-        ? users.filter(user => this.applyFilters(user, filters))
-        : users;
-      
-      // Generate the export file
-      const fileName = `users_export_${Date.now()}.${format}`;
-      const exportUrl = await this.generateExportFile(filteredUsers, format, fileName);
-      
-      // Update the export record with the url
-      await this.updateExportRecord(exportId, exportUrl);
-      
-      // Create expiration date (30 days from now)
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 30);
-      
-      return {
-        url: exportUrl,
-        fileName,
-        format,
-        generatedAt: new Date(),
-        expiresAt
-      };
-    } catch (error) {
-      console.error('Failed to export users:', error);
-      throw new Error('Failed to export users');
-    }
-  }
-  
+
   /**
    * Get comprehensive platform metrics
    */
   async getPlatformMetrics(period: 'week' | 'month' | 'quarter' = 'month'): Promise<PlatformMetrics> {
     try {
+      // Convert period to supported values for each metric type
+      const transactionPeriod = (period === 'quarter' ? 'month' : period) as 'day' | 'week' | 'month' | 'year';
+      const userPeriod = (period === 'quarter' ? 'month' : period) as 'day' | 'week' | 'month';
+      const referralPeriod = (period === 'week' ? 'month' : period) as 'month' | 'year' | 'quarter';
+
       // Fetch all metrics in parallel for efficiency
       const [transactions, users, disputes, referrals] = await Promise.all([
-        this.getTransactionMetrics(undefined, period),
-        this.getUserActivityMetrics(period),
+        this.getTransactionMetrics(undefined, transactionPeriod),
+        this.getUserActivityMetrics(userPeriod),
         this.getDisputeMetrics(period),
-        this.getReferralMetrics(period)
+        this.getReferralMetrics(referralPeriod)
       ]);
       
       // Get system health metrics

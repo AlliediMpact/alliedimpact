@@ -105,7 +105,7 @@ export default function SettingsPage() {
   };
 
   if (loading || !user) {
-    return <PageLoader message="Loading settings..." />;
+    return <PageLoader />;
   }
 
   return (

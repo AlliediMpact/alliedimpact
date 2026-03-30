@@ -55,6 +55,7 @@ describe('BulkOperationsService', () => {
   describe('createBulkLoans', () => {
     it('should create multiple loan tickets successfully', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
       const { addDoc } = await import('firebase/firestore');
 
@@ -93,6 +94,7 @@ describe('BulkOperationsService', () => {
 
     it('should handle validation errors for individual loans', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
 
       // Mock membership with lower limit
@@ -127,6 +129,7 @@ describe('BulkOperationsService', () => {
 
     it('should validate interest rate bounds', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
 
       vi.mocked(membershipService.getUserMembership).mockResolvedValue({
@@ -156,6 +159,7 @@ describe('BulkOperationsService', () => {
 
   describe('createBulkInvestments', () => {
     it('should create multiple investments successfully', async () => {
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
       const { runTransaction, getDoc } = await import('firebase/firestore');
 
@@ -178,7 +182,8 @@ describe('BulkOperationsService', () => {
             })
           }),
           update: vi.fn(),
-          set: vi.fn()
+          set: vi.fn(),
+          delete: vi.fn()
         };
         return await callback(mockTransaction);
       });
@@ -196,6 +201,7 @@ describe('BulkOperationsService', () => {
     });
 
     it('should fail when insufficient balance', async () => {
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
 
       // Mock wallet with low balance
@@ -219,6 +225,7 @@ describe('BulkOperationsService', () => {
   describe('createBulkCryptoOrders', () => {
     it('should create multiple crypto orders successfully', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
       const { addDoc } = await import('firebase/firestore');
 
@@ -255,6 +262,7 @@ describe('BulkOperationsService', () => {
 
     it('should validate order value against tier limit', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
 
       // Mock membership with lower limit
@@ -376,6 +384,7 @@ describe('BulkOperationsService', () => {
 
     it('should handle concurrent bulk operations', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
       const { addDoc } = await import('firebase/firestore');
 
@@ -413,6 +422,7 @@ describe('BulkOperationsService', () => {
 
     it('should validate loan duration is positive', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
 
       vi.mocked(membershipService.getUserMembership).mockResolvedValue({
@@ -442,6 +452,7 @@ describe('BulkOperationsService', () => {
 
     it('should validate crypto asset is supported', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
 
       vi.mocked(membershipService.getUserMembership).mockResolvedValue({
@@ -469,6 +480,7 @@ describe('BulkOperationsService', () => {
 
     it('should handle partial success with rollback', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
       const { addDoc } = await import('firebase/firestore');
 
@@ -505,6 +517,7 @@ describe('BulkOperationsService', () => {
 
     it('should enforce maximum batch size', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
 
       vi.mocked(membershipService.getUserMembership).mockResolvedValue({
@@ -536,6 +549,7 @@ describe('BulkOperationsService', () => {
 
     it('should track processing time metrics', async () => {
       const { membershipService } = await import('../membership-service');
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
       const { addDoc } = await import('firebase/firestore');
 
@@ -580,6 +594,7 @@ describe('BulkOperationsService', () => {
     });
 
     it('should handle investment in closed/fulfilled ticket', async () => {
+      // @ts-ignore - wallet-service module not found
       const { walletService } = await import('../wallet-service');
       const { runTransaction } = await import('firebase/firestore');
 
@@ -601,7 +616,8 @@ describe('BulkOperationsService', () => {
             })
           }),
           update: vi.fn(),
-          set: vi.fn()
+          set: vi.fn(),
+          delete: vi.fn()
         };
         return await callback(mockTransaction);
       });

@@ -251,6 +251,70 @@ class EnhancedKycService {
       verifications
     };
   }
+
+  // Admin API methods
+  async getPendingVerifications(): Promise<KycVerification[]> {
+    const q = query(
+      collection(db, 'kyc_verifications'),
+      where('status', '==', 'pending_review')
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as KycVerification));
+  }
+
+  async getAllVerifications(): Promise<KycVerification[]> {
+    const q = query(collection(db, 'kyc_verifications'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as KycVerification));
+  }
+
+  async getKycStatus(userId: string): Promise<KycVerification | null> {
+    return this.getVerificationStatus(userId);
+  }
+
+  async updateDocumentStatus(
+    documentId: string, 
+    status: 'approved' | 'rejected', 
+    notes?: string
+  ): Promise<void> {
+    const docRef = doc(db, 'kyc_documents', documentId);
+    await setDoc(docRef, {
+      status,
+      verificationNotes: notes || '',
+      updatedAt: new Date()
+    }, { merge: true });
+  }
+
+  async updateKycStatus(
+    userId: string, 
+    status: 'approved' | 'rejected' | 'incomplete' | 'pending_review',
+    notes?: string
+  ): Promise<void> {
+    const verificationRef = doc(db, 'kyc_verifications', userId);
+    await setDoc(verificationRef, {
+      status,
+      verificationNotes: notes || '',
+      updatedAt: new Date()
+    }, { merge: true });
+
+    if (status === 'approved') {
+      await notificationService.sendNotification({
+        userId: userId,
+        type: 'kyc_approved',
+        title: 'KYC Verification Approved',
+        message: 'Your identity verification has been approved. You now have full access to all features.',
+        timestamp: new Date()
+      });
+    } else if (status === 'rejected') {
+      await notificationService.sendNotification({
+        userId: userId,
+        type: 'kyc_rejected',
+        title: 'KYC Verification Rejected',
+        message: notes || 'Your KYC verification was rejected. Please resubmit your documents.',
+        timestamp: new Date()
+      });
+    }
+  }
 }
 
 export const enhancedKycService = new EnhancedKycService();

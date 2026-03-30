@@ -24,7 +24,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { exportCSV, exportJSON, processDateFields, formatDateForFileName } from "@/lib/export-utils";
-import { Print } from "lucide-react";
+import { PrinterIcon } from "lucide-react";
 import { 
   LineChart, 
   BarChart, 
@@ -700,7 +700,7 @@ export function ReferralAnalytics({ stats, commissions, referrals, startDate, en
                   variant="outline" 
                   onClick={printPreviewData}
                 >
-                  <Print className="mr-2 h-4 w-4" />
+                  <PrinterIcon className="mr-2 h-4 w-4" />
                   Print
                 </Button>
               </div>

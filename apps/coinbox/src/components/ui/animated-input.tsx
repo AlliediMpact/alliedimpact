@@ -88,8 +88,8 @@ export function AnimatedInput({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           onChange={handleChange}
-          animate={hasError && hasInteracted ? shake.animate : {}}
-          {...props}
+          animate={hasError && hasInteracted ? (shake.animate as any) : {}}
+          {...(props as any)}
         />
         
         {/* Status icons */}
@@ -271,8 +271,8 @@ export function AnimatedTextarea({
         )}
         value={value}
         maxLength={maxLength}
-        animate={hasError ? shake.animate : {}}
-        {...props}
+        animate={hasError ? (shake.animate as any) : {}}
+        {...(props as any)}
       />
       
       <div className="flex justify-between items-center mt-1">

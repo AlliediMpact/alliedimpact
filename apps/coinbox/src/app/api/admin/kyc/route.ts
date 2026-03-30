@@ -37,9 +37,18 @@ export async function GET(request: Request) {
           documents: userDocuments 
         });
 
-      case 'reports':
-        const reports = await enhancedKycService.generateComplianceReport();
+      case 'reports': {
+        // Get date range from query params or use last 30 days
+        const startDate = url.searchParams.get('startDate') 
+          ? new Date(url.searchParams.get('startDate')!) 
+          : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const endDate = url.searchParams.get('endDate') 
+          ? new Date(url.searchParams.get('endDate')!) 
+          : new Date();
+          
+        const reports = await enhancedKycService.getComplianceReport(startDate, endDate);
         return NextResponse.json({ reports });
+      }
 
       case 'all_verifications':
         const allVerifications = await enhancedKycService.getAllVerifications();

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -30,24 +30,7 @@ export default function RoleManagement() {
   // Check if the user has admin role
   const isAdmin = userClaims?.role === 'admin';
 
-  // Fetch users when component mounts
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-  
-  // Filter users when search query changes
-  useEffect(() => {
-    if (searchQuery) {
-      const filtered = users.filter(user => 
-        user.email?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        user.fullName?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers(users);
-    }
-  }, [searchQuery, users]);
-
+  // Fetch users callback
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {

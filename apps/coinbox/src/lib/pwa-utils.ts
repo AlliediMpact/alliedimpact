@@ -128,7 +128,7 @@ export async function subscribeToPushNotifications(vapidPublicKey: string) {
       // Create new subscription
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
       });
     }
 
@@ -181,7 +181,7 @@ export async function showNotification(
     return await registration.showNotification(title, {
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-72x72.png',
-      vibrate: [200, 100, 200],
+      // vibrate: [200, 100, 200], // NotificationOptions doesn't support vibrate
       ...options,
     });
   } catch (error) {

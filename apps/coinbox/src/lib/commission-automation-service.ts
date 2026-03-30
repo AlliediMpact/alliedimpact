@@ -434,13 +434,42 @@ class CommissionAutomationService {
     };
   }
 
-  private async updateCommissionStatus(commissionIds: string[], status: Commission['status']) {
+  async updateCommissionStatus(commissionIds: string[], status: Commission['status']) {
     const updatePromises = commissionIds.map(id => {
       const commissionRef = doc(db, 'commissions', id);
       return setDoc(commissionRef, { status, updatedAt: new Date() }, { merge: true });
     });
 
     await Promise.all(updatePromises);
+  }
+
+  // Public method to create bulk payout
+  async createBulkPayout(
+    referrerId: string,
+    commissionIds: string[],
+    totalAmount: number
+  ): Promise<CommissionPayout> {
+    const payoutId = `payout_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const payout: Omit<CommissionPayout, 'id'> = {
+      referrerId,
+      totalAmount,
+      commissionCount: commissionIds.length,
+      paymentReference: '',
+      status: 'pending',
+      commissionIds,
+      createdAt: new Date()
+    };
+
+    const payoutRef = doc(db, 'commission_payouts', payoutId);
+    await setDoc(payoutRef, payout);
+
+    return { ...payout, id: payoutId } as CommissionPayout;
+  }
+
+  // Public method to update payout status
+  async updatePayoutStatus(payoutId: string, status: CommissionPayout['status']): Promise<void> {
+    const payoutRef = doc(db, 'commission_payouts', payoutId);
+    await setDoc(payoutRef, { status, completedAt: new Date() }, { merge: true });
   }
 }
 

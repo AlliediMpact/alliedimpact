@@ -194,6 +194,7 @@ describe('Authentication Integration Tests', () => {
       
       // Mock a sign-in function that will trigger logging
       const mockSignIn = vi.fn().mockImplementation(async () => {
+        // @ts-ignore - AuthEventType string assignment
         await authLogger.logEvent('SIGN_IN_SUCCESS', '123', { email: 'test@example.com' });
         return 'success';
       });

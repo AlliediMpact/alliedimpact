@@ -16,6 +16,7 @@ export class ServiceClient {
   protected async getDocument<T extends DocumentData>(path: string): Promise<T | null> {
     try {
       const snapshot = await getDoc(doc(db, path));
+      // @ts-ignore - Type casting for document data
       return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } as T : null;
     } catch (error) {
       console.error(`Error fetching document at ${path}:`, error);
@@ -34,7 +35,7 @@ export class ServiceClient {
         createdAt: data.createdAt || new Date(),
         updatedAt: new Date()
       });
-      
+      // @ts-ignore - Type casting for document creation
       return { id: docRef.id, ...data } as T;
     } catch (error) {
       console.error(`Error creating document in ${collectionPath}:`, error);

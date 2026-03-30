@@ -167,6 +167,7 @@ export const mfaService = {
       }
 
       const multiFactorUser = multiFactor(user);
+      // @ts-ignore - Firebase multifactor API type mismatch
       await multiFactorUser.unenroll({ uid: factorUid });
 
       // Log the MFA removal

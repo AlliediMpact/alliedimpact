@@ -30,13 +30,21 @@ export async function GET(request: Request) {
           totalPendingAmount: pendingCommissions.reduce((sum, c) => sum + c.amount, 0)
         });
 
-      case 'leaderboard':
-        const leaderboard = await commissionAutomationService.getLeaderboard();
+      case 'leaderboard': {
+        const limit = parseInt(url.searchParams.get('limit') || '10');
+        const leaderboard = await commissionAutomationService.getReferralLeaderboard(limit);
         return NextResponse.json({ leaderboard });
+      }
 
-      case 'reports':
-        const reports = await commissionAutomationService.generateComplianceReport();
-        return NextResponse.json({ reports });
+      case 'reports': {
+        // This action provides commission summary stats instead of a full report
+        const pendingCommissions = await commissionAutomationService.getPendingCommissions();
+        return NextResponse.json({ 
+          totalPending: pendingCommissions.length,
+          totalAmount: pendingCommissions.reduce((sum, c) => sum + c.amount, 0),
+          commissions: pendingCommissions 
+        });
+      }
 
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

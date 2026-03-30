@@ -262,7 +262,7 @@ class DisputeResolutionService {
       
       // Send notification to counterparty
       const counterpartyId = disputeData.userId === userId ? disputeData.counterpartyId : disputeData.userId;
-      await notificationService.createNotification({
+      await notificationService.create({
         userId: counterpartyId,
         type: 'dispute_update',
         title: 'New Evidence Submitted',
@@ -509,7 +509,8 @@ class DisputeResolutionService {
    */
   private async notifyAdmins(disputeId: string, ticketId: string): Promise<void> {
     try {
-      const adminIds = await getUsersWithRole('admin');
+      const adminUsers = await getUsersWithRole('admin');
+      const adminIds = adminUsers.map(user => (typeof user === 'string' ? user : user.id));
       
       if (adminIds.length > 0) {
         await disputeNotificationService.notifyAdminNewDispute(adminIds, disputeId, ticketId);
@@ -525,7 +526,7 @@ class DisputeResolutionService {
    */
   private async sendCommentNotification(userId: string, disputeId: string, ticketId: string): Promise<void> {
     try {
-      await notificationService.createNotification({
+      await notificationService.create({
         userId,
         type: 'dispute_update',
         title: 'New Comment on Dispute',

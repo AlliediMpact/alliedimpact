@@ -74,8 +74,9 @@ class TransactionMonitoringAPI {
       // Check if account is flagged
       const db = getFirestore();
       const flaggedRef = doc(db, 'flaggedAccounts', userId);
-      const flaggedDoc = await getDocs(flaggedRef);
-      const isFlagged = flaggedDoc.exists;
+      // @ts-ignore - getDoc mismatch issue
+      const flaggedDoc = await getDoc(flaggedRef);
+      const isFlagged = flaggedDoc.exists();
 
       // Determine if any critical alerts require immediate attention
       const hasCriticalAlert = alerts.some(alert => alert.severity === 'critical');

@@ -122,13 +122,13 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         verifyEmail: async () => { throw new Error('Firebase not initialized'); },
         updateUserProfile: async () => { throw new Error('Firebase not initialized'); },
         resendVerificationEmail: async () => { throw new Error('Firebase not initialized'); },
-        refreshUserClaims: async () => { return null; },
-        isFlagged: false,
-        isPremium: false,
-        role: 'user',
-        mfaEnabled: false,
-        enrolledFactors: [],
-        premiumUntil: null,
+        checkEmailVerification: async () => false,
+        enrollMfa: async () => { throw new Error('Firebase not initialized'); },
+        verifyMfaCode: async () => false,
+        isMfaEnabled: async () => false,
+        getMfaPhone: async () => null,
+        disableMfa: async () => false,
+        userClaims: null,
       }}>
         <div style={{padding: '20px', background: '#fff3cd', border: '1px solid #ffc107', margin: '20px'}}>
           <strong>⚠️ Firebase Authentication Not Configured</strong>
@@ -153,13 +153,13 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         verifyEmail: async () => { throw new Error('Firebase initializing'); },
         updateUserProfile: async () => { throw new Error('Firebase initializing'); },
         resendVerificationEmail: async () => { throw new Error('Firebase initializing'); },
-        refreshUserClaims: async () => { return null; },
-        isFlagged: false,
-        isPremium: false,
-        role: 'user',
-        mfaEnabled: false,
-        enrolledFactors: [],
-        premiumUntil: null,
+        checkEmailVerification: async () => false,
+        enrollMfa: async () => { throw new Error('Firebase initializing'); },
+        verifyMfaCode: async () => false,
+        isMfaEnabled: async () => false,
+        getMfaPhone: async () => null,
+        disableMfa: async () => false,
+        userClaims: null,
       }}>
         {children}
       </AuthContext.Provider>

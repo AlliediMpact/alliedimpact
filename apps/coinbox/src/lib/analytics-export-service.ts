@@ -11,21 +11,29 @@ try {
   // Only set `vfs` when it's undefined. Assigning to a non-configurable
   // property can throw in some test environments (causing the "Cannot redefine
   // property: vfs" error). Check for existence first to avoid redefinition.
+  // @ts-ignore - pdfMake is a global loaded via external script
   const existingVfs = (pdfMake as any).vfs;
   if (typeof existingVfs === 'undefined') {
+    // @ts-ignore - pdfFonts is a global loaded via external script
     if ((pdfFonts as any)?.pdfMake?.vfs) {
+      // @ts-ignore - pdfMake and pdfFonts are globals
       (pdfMake as any).vfs = (pdfFonts as any).pdfMake.vfs;
+      // @ts-ignore - pdfFonts is a global
     } else if ((pdfFonts as any)?.vfs) {
+      // @ts-ignore - pdfMake and pdfFonts are globals
       (pdfMake as any).vfs = (pdfFonts as any).vfs;
     } else {
       // Provide an empty vfs to avoid runtime errors in tests
+      // @ts-ignore - pdfMake is a global
       (pdfMake as any).vfs = {};
     }
   }
 } catch (e) {
   // Swallow and fallback — tests should not break due to pdf vfs issues
   try {
+    // @ts-ignore - pdfMake is a global
     if (typeof (pdfMake as any).vfs === 'undefined') {
+      // @ts-ignore - pdfMake is a global
       (pdfMake as any).vfs = {};
     }
   } catch (inner) {
@@ -343,6 +351,7 @@ class AnalyticsExportService {
       const row = headers.map(header => ({
         text: String(item[header] || ''),
         style: 'tableCell',
+        bold: false,
       }));
       tableBody.push(row);
     });

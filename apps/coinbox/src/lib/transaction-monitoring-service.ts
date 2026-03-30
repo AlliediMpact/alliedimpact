@@ -26,17 +26,18 @@ export interface MonitoringRule {
   id: string;
   name: string;
   description: string;
-  thresholds: {
+  thresholds?: {
     timeWindow: number; // in minutes
     maxTransactions?: number;
     maxAmount?: number;
     minAmount?: number;
     patternType?: 'rapid' | 'escalating' | 'unusual-hours' | 'multiple-counterparties';
   };
+  condition?: (transaction: any, history: any[]) => boolean;
   severity: 'low' | 'medium' | 'high' | 'critical';
   enabled: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   // New properties for adaptive thresholds
   adaptiveThreshold?: boolean;
   userRiskProfileAdjustment?: boolean;

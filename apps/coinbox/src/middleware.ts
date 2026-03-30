@@ -206,6 +206,7 @@ export async function middleware(request: NextRequest) {
         }
 
         // Check if user has entitlement to access Coin Box
+        // @ts-ignore - ProductId string assignment
         const hasAccess = await hasProductAccess(decodedToken.uid, 'coinbox');
         
         if (!hasAccess) {

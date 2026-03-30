@@ -29,7 +29,7 @@ export function AnimatedCard({
   return (
     <motion.div
       className={cn(baseStyles, cardStyles, onClick && 'cursor-pointer', className)}
-      variants={hover ? cardHover : undefined}
+      variants={hover ? (cardHover as any) : undefined}
       initial="rest"
       whileHover={hover ? "hover" : undefined}
       whileTap={hover && onClick ? "tap" : undefined}
@@ -55,7 +55,7 @@ export function GlassCard({
         'rounded-xl p-6 backdrop-blur-lg bg-white/10 dark:bg-gray-900/30 border border-white/20 shadow-xl',
         className
       )}
-      variants={cardHover}
+      variants={cardHover as any}
       initial="rest"
       whileHover="hover"
     >
@@ -71,9 +71,13 @@ interface StatCardProps {
   change?: number;
   icon?: React.ReactNode;
   trend?: 'up' | 'down';
+  prefix?: string;
+  suffix?: string;
+  format?: 'number' | 'currency' | 'percentage';
+  className?: string;
 }
 
-export function StatCard({ title, value, change, icon, trend }: StatCardProps) {
+export function StatCard({ title, value, change, icon, trend, prefix, suffix, format, className }: StatCardProps) {
   return (
     <AnimatedCard hover glow gradient>
       <div className="flex items-start justify-between">

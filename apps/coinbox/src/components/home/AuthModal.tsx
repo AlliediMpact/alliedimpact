@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import AuthPage from '@/app/auth/page';
 import SignUpWizard from '@/components/home/SignUpWizard';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface AuthModalProps {
   openLogin: boolean;
@@ -24,7 +25,7 @@ const modalVariants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { type: 'spring', stiffness: 260, damping: 24 },
+    transition: { type: 'spring' as any, stiffness: 260, damping: 24 } as any,
   },
   exit: { opacity: 0, y: 30, scale: 0.96 },
 };
@@ -99,7 +100,18 @@ export default function AuthModal({
 
                 {/* Content area */}
                 <div className="mt-4 bg-slate-950/60 rounded-2xl border border-white/5 p-4 sm:p-5 max-h-[70vh] overflow-y-auto">
-                  {openSignup ? <SignUpWizard /> : <AuthPage />}
+                  {openSignup ? (
+                    <SignUpWizard />
+                  ) : (
+                    <div className="space-y-4">
+                      <Input type="email" placeholder="Email address" />
+                      <Input type="password" placeholder="Password" />
+                      <Button className="w-full">Sign In</Button>
+                      <p className="text-center text-xs text-slate-400">
+                        Don't have an account? Switch to signup above.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

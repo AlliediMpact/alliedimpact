@@ -134,3 +134,5 @@ if (typeof window === 'undefined') {
 }
 
 export { adminAuth, adminDb };
+export const auth = adminAuth;  // Alias for backward compatibility
+export const db = adminDb;  // Alias for backward compatibility

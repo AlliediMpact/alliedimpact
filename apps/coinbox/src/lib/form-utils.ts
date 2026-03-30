@@ -19,10 +19,10 @@ export function useFormWithValidation<T extends z.ZodType>(
 
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: options?.defaultValues
+    defaultValues: options?.defaultValues as any
   });
 
-  const handleSubmit = form.handleSubmit(async (values) => {
+  const handleSubmit = form.handleSubmit(async (values: z.infer<T>) => {
     try {
       setLoading(true);
       await onSubmit(values);

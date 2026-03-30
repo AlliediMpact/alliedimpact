@@ -84,7 +84,7 @@ export default function ProfilePage() {
     }, [user, router]);
 
     if (isLoading) {
-        return <PageLoader message="Loading profile..." />;
+        return <PageLoader />;
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -94,7 +94,7 @@ export default function ProfilePage() {
         try {
             await updateUserProfile({
                 ...profileData,
-                profileCompleted: true,
+                membershipTier: profileData.membershipTier as 'Basic' | 'Ambassador' | 'Business',
             });
 
             toast({
@@ -141,7 +141,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     fullName: e.target.value
                                 }))}
-                                icon={User}
+                                icon={<User className="w-4 h-4" />}
                                 placeholder="Enter your full name"
                                 required
                             />
@@ -154,7 +154,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     email: e.target.value
                                 }))}
-                                icon={Mail}
+                                icon={<Mail className="w-4 h-4" />}
                                 placeholder="your.email@example.com"
                                 disabled
                                 helperText="Email cannot be changed"
@@ -168,7 +168,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     phone: e.target.value
                                 }))}
-                                icon={Phone}
+                                icon={<Phone className="w-4 h-4" />}
                                 placeholder="+27 12 345 6789"
                                 required
                             />
@@ -181,7 +181,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     dateOfBirth: e.target.value
                                 }))}
-                                icon={Calendar}
+                                icon={<Calendar className="w-4 h-4" />}
                                 required
                             />
                             <AnimatedInput
@@ -192,7 +192,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     idNumber: e.target.value
                                 }))}
-                                icon={CreditCard}
+                                icon={<CreditCard className="w-4 h-4" />}
                                 placeholder="1234567890123"
                                 required
                             />
@@ -204,7 +204,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     address: e.target.value
                                 }))}
-                                icon={MapPin}
+                                icon={<MapPin className="w-4 h-4" />}
                                 placeholder="123 Main Street"
                                 required
                             />
@@ -216,7 +216,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     city: e.target.value
                                 }))}
-                                icon={Building}
+                                icon={<Building className="w-4 h-4" />}
                                 placeholder="Johannesburg"
                                 required
                             />
@@ -228,7 +228,7 @@ export default function ProfilePage() {
                                     ...prev,
                                     country: e.target.value
                                 }))}
-                                icon={Globe}
+                                icon={<Globe className="w-4 h-4" />}
                                 placeholder="South Africa"
                                 required
                             />
@@ -240,7 +240,6 @@ export default function ProfilePage() {
                                     ...prev,
                                     postalCode: e.target.value
                                 }))}
-                                icon={Mail}
                                 placeholder="2000"
                                 required
                             />

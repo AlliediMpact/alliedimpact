@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { 
   Card, 
@@ -439,7 +439,7 @@ export default function SystemMonitoringDashboard() {
                           </p>
                         </TableCell>
                         <TableCell>{alert.component}</TableCell>
-                        <TableCell>{format(new Date(alert.timestamp), 'HH:mm:ss')}</TableCell>
+                        <TableCell>{format(alert.timestamp instanceof Date ? alert.timestamp : alert.timestamp.toDate(), 'HH:mm:ss')}</TableCell>
                         <TableCell>
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             alert.status === 'active' ? 'bg-red-100 text-red-800' : 

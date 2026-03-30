@@ -71,7 +71,7 @@ export function useNotifications(options: NotificationFilterOptions = {}) {
   const markAsRead = useCallback(async (notificationId: string) => {
     if (!user) return;
     try {
-      await notificationService.markAsRead(user.uid, notificationId);
+      await notificationService.markAsRead(notificationId);
     } catch (err) {
       console.error("Error marking notification as read:", err);
     }

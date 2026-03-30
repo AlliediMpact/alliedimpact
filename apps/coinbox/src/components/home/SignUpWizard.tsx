@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Loader2, Lock, ArrowRight } from 'lucide-react';
-import SignUpPage from '@/app/auth/signup/page';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
-// This wrapper turns the existing signup page into a 4-step themed wizard
+// This wrapper provides a 4-step themed wizard for signup
 
 const steps = [
   'Account details',
@@ -53,9 +54,60 @@ export default function SignUpWizard() {
         </p>
       </div>
 
-      {/* Content: for now we mount the existing SignUpPage which already owns validation and payment. */}
-      <div className="mt-2">
-        <SignUpPage />
+      {/* Content: Placeholder for signup form steps */}
+      <div className="mt-2 space-y-4">
+        {currentStep === 0 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            <Input type="text" placeholder="First name" />
+            <Input type="text" placeholder="Last name" />
+            <Input type="email" placeholder="Email address" />
+          </motion.div>
+        )}
+        {currentStep === 1 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            <Input type="password" placeholder="Create password" />
+            <Input type="password" placeholder="Confirm password" />
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" className="rounded" />
+              <span>Enable two-factor authentication</span>
+            </label>
+          </motion.div>
+        )}
+        {currentStep === 2 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            <p className="text-sm text-slate-300">Select your membership tier</p>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 p-3 border border-slate-600 rounded cursor-pointer">
+                <input type="radio" name="tier" defaultChecked /> Standard
+              </label>
+              <label className="flex items-center gap-2 p-3 border border-blue-600 rounded cursor-pointer bg-blue-950/30">
+                <input type="radio" name="tier" /> Premium
+              </label>
+            </div>
+          </motion.div>
+        )}
+        {currentStep === 3 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            <p className="text-sm text-slate-300">Review your information and complete signup</p>
+            <Button className="w-full">Complete Signup</Button>
+          </motion.div>
+        )}
+        <div className="flex gap-2 pt-4">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+            disabled={currentStep === 0}
+          >
+            Back
+          </Button>
+          <Button
+            onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
+            disabled={currentStep === steps.length - 1}
+            className="flex-1"
+          >
+            Next <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
       </div>
     </div>
   );

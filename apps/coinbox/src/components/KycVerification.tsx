@@ -265,6 +265,7 @@ export default function KycVerification() {
                     animate={{ width: `${progress.totalProgress}%` }}
                     transition={{ 
                         duration: 0.8,
+                        // @ts-ignore - motion-dom easing type mismatch
                         ease: animations.easings.spring
                     }}
                 />
@@ -543,6 +544,7 @@ export default function KycVerification() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{
                                         duration: 0.5,
+                                        // @ts-ignore - motion-dom easing type mismatch
                                         ease: animations.easings.easeInOut,
                                         delay: 0.4
                                     }}
@@ -604,7 +606,7 @@ export default function KycVerification() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{
                                         duration: 0.5,
-                                        ease: animations.easings.easeInOut,
+                                        ease: animations.easings.easeInOut as any,
                                         delay: 0.5
                                     }}
                                 >

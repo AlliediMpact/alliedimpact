@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { locales } from '@/i18n/config';
-import { GeistSans, GeistMono } from 'geist/font';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/components/AuthProvider';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -11,9 +10,13 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { SkipToMainContent } from '@/hooks/use-accessibility';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import OnlineStatus from '@/components/OnlineStatus';
-import { CookieConsentBanner } from '@alliedimpact/ui';
 import Script from 'next/script';
+import { Geist, Geist_Mono } from 'next/font/geist';
+import { CookieConsentBanner } from '@/components/ui';
 import '../globals.css';
+
+const geistSans = Geist({ subsets: ['latin'] });
+const geistMono = Geist_Mono({ subsets: ['latin'] });
 
 // Pre-loaded i18n messages (static imports to avoid runtime import failures)
 import enMessages from '@/i18n/messages/en.json';
@@ -50,7 +53,7 @@ export default function LocaleLayout({ children, params: { locale } }: Props) {
   }
 
   return (
-    <html lang={locale} className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang={locale} className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -96,11 +99,11 @@ export default function LocaleLayout({ children, params: { locale } }: Props) {
                       {children}
                     </HeaderSidebarLayout>
                     <Toaster />
-                    <CookieConsentBanner 
+                    {/* <CookieConsentBanner 
                       appName="CoinBox" 
                       privacyLink={`/${locale}/privacy`} 
                       cookieLink={`/${locale}/cookies`} 
-                    />
+                    /> */
                 </OnboardingProvider>
               </AuthProvider>
             </NextIntlClientProvider>

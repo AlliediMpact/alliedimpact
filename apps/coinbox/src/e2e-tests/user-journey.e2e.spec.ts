@@ -126,8 +126,7 @@ test.describe('End-to-End User Journey', () => {
     test.step('Create a dispute for the trade', async () => {
       await page.goto('/dashboard/trade/completed');
       disputeId = await createDispute(page, {
-        type: 'Other issue',
-        description: 'There was an issue with this transaction'
+        reason: 'Other issue - There was an issue with this transaction'
       });
       
       // Verify dispute creation was successful

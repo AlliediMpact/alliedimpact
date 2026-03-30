@@ -149,9 +149,10 @@ export function CircularProgress({
 interface StepProgressProps {
   steps: string[];
   currentStep: number;
+  onStepClick?: (stepIndex: number) => void;
 }
 
-export function StepProgress({ steps, currentStep }: StepProgressProps) {
+export function StepProgress({ steps, currentStep, onStepClick }: StepProgressProps) {
   return (
     <div className="w-full">
       <div className="flex justify-between mb-2">
@@ -159,6 +160,8 @@ export function StepProgress({ steps, currentStep }: StepProgressProps) {
           <div
             key={index}
             className="flex flex-col items-center flex-1"
+            onClick={() => onStepClick?.(index)}
+            style={{ cursor: onStepClick ? 'pointer' : 'default' }}
           >
             <motion.div
               className={cn(

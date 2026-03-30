@@ -168,13 +168,13 @@ export default function WalletManagement() {
         return;
       }
       const documentSnapshots = await getDocs(transactionQuery);
-      const newTransactions = documentSnapshots.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const newTransactions = documentSnapshots.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
       setLastDoc(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
       setHasMore(newTransactions.length === ITEMS_PER_PAGE);
       if (loadMore) {
-        setTransactions(prev => [...prev, ...newTransactions]);
+        setTransactions(prev => [...prev, ...(newTransactions as Transaction[])]);
       } else {
-        setTransactions(newTransactions);
+        setTransactions(newTransactions as Transaction[]);
       }
     } catch (error) {
       console.error("Error loading transactions:", error);
@@ -374,7 +374,7 @@ export default function WalletManagement() {
                     <DialogTitle>Deposit / Withdraw Funds</DialogTitle>
                     <DialogDescription>Select a payment method and enter the deposit amount.</DialogDescription>
                   </DialogHeader>
-                  <form onSubmit={depositForm.handleSubmit(handleDepositSubmit)}>
+                  <form onSubmit={handleDepositSubmit}>
                     <div className="grid gap-4 py-4">
                       <div className="grid gap-2">
                         <label htmlFor="depositMethod">Payment Method</label>

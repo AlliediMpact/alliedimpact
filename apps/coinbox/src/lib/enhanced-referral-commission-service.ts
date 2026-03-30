@@ -339,7 +339,7 @@ class EnhancedReferralCommissionService {
       });
       
       // Send notification
-      await notificationService.createNotification({
+      await notificationService.create({
         userId: referrerId,
         type: 'commission',
         title: `Level ${level} Commission Earned!`,
@@ -446,7 +446,7 @@ class EnhancedReferralCommissionService {
       });
       
       // Send notification
-      await notificationService.createNotification({
+      await notificationService.create({
         userId,
         type: 'achievement',
         title: `🏆 ${qualifiedBadge.name} Badge Unlocked!`,

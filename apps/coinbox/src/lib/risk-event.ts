@@ -52,7 +52,7 @@ export async function reportRiskEvent(
       const { notificationService } = await import('./notification-service');
       await notificationService.notifySecurityTeam({
         type: 'security_alert',
-        message: `High severity ${eventType} detected for user ${data.userId}`,
+        description: `High severity ${eventType} detected for user ${data.userId}`,
         details: data.details
       });
     }

@@ -178,7 +178,7 @@ export default function ReceiptManager() {
                             {formatDate(receipt.date)}
                           </td>
                           <td className="p-3 text-sm">
-                            {formatCurrency(receipt.amount, receipt.currency)}
+                            {formatCurrency(receipt.amount)}
                           </td>
                           <td className="p-3">
                             <Badge className={getStatusColor(receipt.status)}>

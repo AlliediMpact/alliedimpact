@@ -102,24 +102,24 @@ class LoanRepaymentService {
       });
 
       // Send email notification
-      await emailService.sendEmail({
-        to: borrower.email,
-        subject: `Loan Repayment Reminder - Due in ${daysUntilDue} Day${daysUntilDue > 1 ? 's' : ''}`,
-        template: 'loan_reminder',
-        data: {
-          borrowerName: borrower.fullName,
-          loanAmount: loan.amount,
-          interestAmount: (loan.repaymentAmount - loan.amount).toFixed(2),
-          repaymentAmount: loan.repaymentAmount,
-          dueDate: loan.dueDate.toDate().toLocaleDateString('en-ZA', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }),
-          daysUntilDue,
-          paymentUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/trading`,
-        },
-      });
+      const htmlContent = `
+        <p>Hi ${borrower.fullName},</p>
+        <p>This is a reminder that your loan of R${loan.amount.toFixed(2)} is due in ${daysUntilDue} day${daysUntilDue > 1 ? 's' : ''}.</p>
+        <p><strong>Loan Details:</strong></p>
+        <ul>
+          <li>Loan Amount: R${loan.amount.toFixed(2)}</li>
+          <li>Interest: R${(loan.repaymentAmount - loan.amount).toFixed(2)}</li>
+          <li>Total Repayment: R${loan.repaymentAmount.toFixed(2)}</li>
+          <li>Due Date: ${loan.dueDate.toDate().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' })}</li>
+        </ul>
+        <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/trading">Make Payment</a></p>
+      `;
+      
+      await emailService.sendEmail(
+        borrower.email,
+        `Loan Repayment Reminder - Due in ${daysUntilDue} Day${daysUntilDue > 1 ? 's' : ''}`,
+        htmlContent
+      );
 
       console.log(
         `Sent ${daysUntilDue}-day reminder for loan ${loanId} to ${borrower.email}`
@@ -165,18 +165,25 @@ class LoanRepaymentService {
       });
 
       // Send overdue email
-      await emailService.sendEmail({
-        to: borrower.email,
-        subject: 'URGENT: Loan Payment Overdue - Immediate Action Required',
-        template: 'loan_overdue',
-        data: {
-          borrowerName: borrower.fullName,
-          repaymentAmount: loan.repaymentAmount,
-          dueDate: loan.dueDate.toDate().toLocaleDateString('en-ZA'),
-          daysOverdue: Math.abs(this.calculateDaysUntilDue(loan.dueDate.toDate())),
-          paymentUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/trading`,
-        },
-      });
+      const overdueDays = Math.abs(this.calculateDaysUntilDue(loan.dueDate.toDate()));
+      const overdueHtmlContent = `
+        <p><strong>URGENT:</strong> Dear ${borrower.fullName},</p>
+        <p>Your loan payment is now <strong>${overdueDays} day(s) overdue</strong>.</p>
+        <p><strong>Payment Details:</strong></p>
+        <ul>
+          <li>Amount Due: R${loan.repaymentAmount.toFixed(2)}</li>
+          <li>Due Date: ${loan.dueDate.toDate().toLocaleDateString('en-ZA')}</li>
+          <li>Days Overdue: ${overdueDays}</li>
+        </ul>
+        <p>Please make payment immediately to avoid further consequences.</p>
+        <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/trading">Make Payment Now</a></p>
+      `;
+      
+      await emailService.sendEmail(
+        borrower.email,
+        'URGENT: Loan Payment Overdue - Immediate Action Required',
+        overdueHtmlContent
+      );
 
       // Notify admin
       await notificationService.create({

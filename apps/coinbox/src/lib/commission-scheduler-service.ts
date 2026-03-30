@@ -121,7 +121,8 @@ class CommissionSchedulerService {
       // Create payout using commission automation service
       const payout = await commissionAutomationService.createBulkPayout(
         referrerId,
-        commissions.map(c => c.id!)
+        commissions.map(c => c.id!),
+        totalAmount
       );
 
       // Process the payout through Paystack

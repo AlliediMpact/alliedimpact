@@ -20,36 +20,37 @@ interface ContentPlaceholderProps {
  * @example
  * <ContentPlaceholder type="card" count={3} />
  */
+
+// Animation variants for container
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      when: "beforeChildren"
+    }
+  }
+};
+
+// Animation variants for individual items
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut" as any
+    } as any
+  }
+};
+
 export default function ContentPlaceholder({
   type,
   count = 1,
   className = ''
 }: ContentPlaceholderProps) {
-  // Animation variants for container
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        when: "beforeChildren"
-      }
-    }
-  };
-  
-  // Animation variants for individual items
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut"
-      }
-    }
-  };
-  
   const renderContent = () => {
     switch (type) {
       case 'card':

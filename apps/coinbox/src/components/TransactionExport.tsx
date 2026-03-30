@@ -27,7 +27,7 @@ import {
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Download, FileSpreadsheet, FileJson, FileText } from "lucide-react";
 import { auditService } from '@/lib/audit-service';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface TransactionExportProps {
   userId?: string; // If provided, export only this user's transactions

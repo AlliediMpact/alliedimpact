@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, ArrowRight, Sparkles } from 'lucide-react';
-import { AIAsset, predictionColors, assetIcons } from '@/lib/ai-mock-data';
+import { AIAsset, predictionColors } from '@/lib/ai-mock-data';
 import { fadeIn } from '@/lib/animations';
 
 interface AssetPredictionCardProps {

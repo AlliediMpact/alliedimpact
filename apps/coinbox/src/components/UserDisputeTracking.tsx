@@ -8,9 +8,20 @@ import { getFirestore, collection, query, where, getDocs, orderBy, Timestamp } f
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatDistanceToNow } from "date-fns";
+
+// Helper function to convert Timestamp or Date to Date object
+const toDate = (value: any): Date => {
+  if (value instanceof Timestamp) {
+    return value.toDate();
+  }
+  if (value instanceof Date) {
+    return value;
+  }
+  return new Date(value);
+};
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatDistanceToNow } from "date-fns";
 import { AlertCircle, AlertTriangle, CheckCircle, Clock, HelpCircle, Shield } from "lucide-react";
 import ContentPlaceholder from "@/components/ContentPlaceholder";
 import { motion } from "framer-motion";
@@ -143,14 +154,10 @@ export default function UserDisputeTracking() {
                       {dispute.reason}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Filed {dispute.createdAt instanceof Date || dispute.createdAt instanceof Timestamp
-                        ? formatDistanceToNow(
-                            dispute.createdAt instanceof Date 
-                              ? dispute.createdAt 
-                              : dispute.createdAt.toDate(), 
+                      Filed {formatDistanceToNow(
+                            toDate(dispute.createdAt),
                             { addSuffix: true }
-                          )
-                        : "Unknown"}
+                          )}
                     </p>
                   </div>
                   
@@ -198,26 +205,14 @@ export default function UserDisputeTracking() {
                       <div>
                         <p className="text-sm text-gray-500">Submitted On</p>
                         <p className="text-sm font-medium">
-                          {selectedDispute.createdAt instanceof Date || selectedDispute.createdAt instanceof Timestamp
-                            ? new Date(
-                                selectedDispute.createdAt instanceof Date 
-                                  ? selectedDispute.createdAt 
-                                  : selectedDispute.createdAt.toDate()
-                              ).toLocaleString()
-                            : "Unknown"}
+                          {toDate(selectedDispute.createdAt).toLocaleString()}
                         </p>
                       </div>
                       {selectedDispute.status === "Resolved" || selectedDispute.status === "Rejected" ? (
                         <div>
                           <p className="text-sm text-gray-500">Resolved On</p>
                           <p className="text-sm font-medium">
-                            {selectedDispute.resolvedAt instanceof Date || selectedDispute.resolvedAt instanceof Timestamp
-                              ? new Date(
-                                  selectedDispute.resolvedAt instanceof Date 
-                                    ? selectedDispute.resolvedAt 
-                                    : selectedDispute.resolvedAt.toDate()
-                                ).toLocaleString()
-                              : "Not resolved yet"}
+                            {selectedDispute.resolvedAt ? toDate(selectedDispute.resolvedAt).toLocaleString() : "Not resolved yet"}
                           </p>
                         </div>
                       ) : (
@@ -257,13 +252,7 @@ export default function UserDisputeTracking() {
                         <div>
                           <p className="text-sm text-gray-500">Created On</p>
                           <p className="text-sm font-medium">
-                            {selectedDispute.ticket.createdAt instanceof Date || selectedDispute.ticket.createdAt instanceof Timestamp
-                              ? new Date(
-                                  selectedDispute.ticket.createdAt instanceof Date 
-                                    ? selectedDispute.ticket.createdAt 
-                                    : selectedDispute.ticket.createdAt.toDate()
-                                ).toLocaleString()
-                              : "Unknown"}
+                            {selectedDispute.ticket ? toDate(selectedDispute.ticket.createdAt).toLocaleString() : "Unknown"}
                           </p>
                         </div>
                       </div>
@@ -322,13 +311,7 @@ export default function UserDisputeTracking() {
                       <div className="p-3 bg-gray-50 rounded-md">
                         <p className="text-sm text-gray-500">Resolved on</p>
                         <p className="text-sm font-medium">
-                          {selectedDispute.resolvedAt instanceof Date || selectedDispute.resolvedAt instanceof Timestamp
-                            ? new Date(
-                                selectedDispute.resolvedAt instanceof Date 
-                                  ? selectedDispute.resolvedAt 
-                                  : selectedDispute.resolvedAt.toDate()
-                              ).toLocaleString()
-                            : "Unknown"}
+                          {selectedDispute.resolvedAt ? toDate(selectedDispute.resolvedAt).toLocaleString() : "Unknown"}
                         </p>
                       </div>
                     </>

@@ -78,6 +78,23 @@ export const emailService = {
         </div>
       `,
     });
+  },
+
+  /**
+   * Send generic email
+   * @param to Recipient email address
+   * @param subject Email subject
+   * @param html Email HTML content
+   */
+  async sendEmail(to: string, subject: string, html: string) {
+    const transporter = getTransporter();
+    
+    await transporter.sendMail({
+      from: `"CoinBox Connect" <${process.env.EMAIL_FROM || 'noreply@coinboxconnect.com'}>`,
+      to,
+      subject,
+      html
+    });
   }
 };
 

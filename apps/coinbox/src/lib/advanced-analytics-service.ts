@@ -1,6 +1,6 @@
 import { db } from './firebase';
 
-export interface AnalyticsMetrics { [key: string]: any;
+export interface AnalyticsMetrics {
   [key: string]: any;
   users: {
     total: number;
@@ -162,7 +162,7 @@ class AdvancedAnalyticsService {
           averageResponseTime: systemMetrics.responseTime || 0,
           uptime: systemMetrics.uptime || 0,
           errorRate: systemMetrics.errorRate || 0,
-          throughput: Math.round((transactionMetrics.total || 0) / (30 || 1))
+          throughput: Math.round((transactionMetrics.total || 0) / 30)
         }
       };
 
@@ -224,7 +224,7 @@ class AdvancedAnalyticsService {
             averageResponseTime: systemMetrics.responseTime || 0,
             uptime: systemMetrics.uptime || 0,
             errorRate: systemMetrics.errorRate || 0,
-            throughput: Math.round((transactionMetrics.total || 0) / (30 || 1))
+            throughput: Math.round((transactionMetrics.total || 0) / 30)
           }
         };
 

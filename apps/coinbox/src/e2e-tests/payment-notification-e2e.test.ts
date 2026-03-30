@@ -47,7 +47,7 @@ test.describe('Payment System and Notification E2E Tests', () => {
     await expect(paymentModal).toBeVisible();
 
     // Fill out payment form
-    const mockPaymentData = generateMockPayment();
+    const mockPaymentData = await generateMockPayment();
     await page.getByLabel(/amount/i).fill(mockPaymentData.amount.toString());
     await page.getByLabel(/description/i).fill(mockPaymentData.description);
     if (mockPaymentData.recipient) {
@@ -69,7 +69,7 @@ test.describe('Payment System and Notification E2E Tests', () => {
     expect(paymentSuccess).toBeTruthy();
 
     // Check that a receipt was generated
-    const receipt = await verifyReceiptGenerated(page);
+    const receipt = await verifyReceiptGenerated(page, mockPaymentData.id);
     expect(receipt).toBeTruthy();
     expect(receipt.id).toBeDefined();
     expect(receipt.amount).toEqual(mockPaymentData.amount);
@@ -78,10 +78,13 @@ test.describe('Payment System and Notification E2E Tests', () => {
     const notification = await waitForNotification(page);
     expect(notification).toBeTruthy();
 
+    // Get notification id from data attribute
+    const notificationId = await notification.evaluate(el => (el as HTMLElement).getAttribute('data-notification-id')) || 'unknown';
+
     // Check notification content
     const hasCorrectContent = await checkNotificationContent(
       page, 
-      notification.id, 
+      notificationId, 
       { 
         type: 'payment', 
         contains: ['successful', 'payment', receipt.id.substring(0, 8)] 
@@ -134,9 +137,12 @@ test.describe('Payment System and Notification E2E Tests', () => {
     const notification = await waitForNotification(page);
     expect(notification).toBeTruthy();
     
+    // Get notification id from data attribute
+    const notificationId = await notification.evaluate(el => (el as HTMLElement).getAttribute('data-notification-id')) || 'unknown';
+
     const hasErrorContent = await checkNotificationContent(
       page, 
-      notification.id, 
+      notificationId, 
       { 
         type: 'payment_error', 
         contains: ['failed', 'payment', 'error'] 

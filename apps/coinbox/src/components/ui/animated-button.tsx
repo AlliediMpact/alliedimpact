@@ -66,13 +66,13 @@ export function AnimatedButton({
   return (
     <motion.button
       className={cn(baseStyles, variants[variant], sizes[size], className)}
-      variants={buttonHover}
+      variants={buttonHover as any}
       initial="rest"
       whileHover={!disabled && !loading ? "hover" : "rest"}
       whileTap={!disabled && !loading ? "tap" : "rest"}
       onClick={handleClick}
       disabled={disabled || loading}
-      {...props}
+      {...(props as any)}
     >
       {/* Ripple effects */}
       <AnimatePresence>
@@ -87,7 +87,7 @@ export function AnimatedButton({
               height: 20,
               transform: 'translate(-50%, -50%)'
             }}
-            variants={buttonRipple}
+            variants={buttonRipple as any}
             initial="initial"
             animate="animate"
             exit={{ opacity: 0 }}

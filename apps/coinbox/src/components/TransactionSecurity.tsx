@@ -55,7 +55,7 @@ export default function TransactionSecurity() {
     try {
       // Check trading status
       const status = await transactionMonitoringAPI.checkUserTradingStatus(user.uid);
-      setTradingStatus(status);
+      setTradingStatus(status as 'normal' | 'restricted');
       
       // Get user alerts
       const alerts = await transactionMonitoringAPI.getUserAlerts(user.uid);

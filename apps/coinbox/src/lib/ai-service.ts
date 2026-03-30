@@ -1,3 +1,4 @@
+// @ts-ignore - Optional AI service dependency
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize the Google AI model

@@ -8,11 +8,10 @@ import {
   HelpCircle, 
   Activity, 
   Shield, 
-  Github, 
-  Twitter, 
-  Linkedin, 
-  Facebook,
-  Mail 
+  Mail,
+  GithubIcon,
+  TwitterIcon,
+  LinkedinIcon,
 } from 'lucide-react';
 
 export default function SiteFooter() {
@@ -94,16 +93,13 @@ export default function SiteFooter() {
             <h3 className="font-semibold text-sm mb-3">Connect with Us</h3>
             <div className="flex space-x-2 mb-4">
               <Link href="https://twitter.com/coinbox" target="_blank" className="p-2 rounded-full hover:bg-muted">
-                <Twitter className="w-5 h-5" />
+                <TwitterIcon className="w-5 h-5" />
               </Link>
               <Link href="https://linkedin.com/company/coinbox" target="_blank" className="p-2 rounded-full hover:bg-muted">
-                <Linkedin className="w-5 h-5" />
-              </Link>
-              <Link href="https://facebook.com/coinboxapp" target="_blank" className="p-2 rounded-full hover:bg-muted">
-                <Facebook className="w-5 h-5" />
+                <LinkedinIcon className="w-5 h-5" />
               </Link>
               <Link href="https://github.com/coinbox" target="_blank" className="p-2 rounded-full hover:bg-muted">
-                <Github className="w-5 h-5" />
+                <GithubIcon className="w-5 h-5" />
               </Link>
             </div>
             <Link href="mailto:contact@coinbox.com" className="flex items-center text-sm hover:underline">

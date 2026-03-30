@@ -3,7 +3,7 @@
  * Supports hybrid model: Luno custody + internal matching
  */
 
-export type CryptoAsset = 'BTC' | 'ETH' | 'USDC' | 'XRP';
+export type CryptoAsset = 'BTC' | 'ETH' | 'USDC' | 'USDT' | 'XRP' | 'SOL';
 
 export interface AssetBalance {
   // Luno custody (secure storage)

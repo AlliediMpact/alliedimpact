@@ -31,20 +31,21 @@ export function DashboardStat({
   className,
 }: DashboardStatProps) {
   return (
-    <StatCard
-      title={title}
-      value={typeof value === 'number' ? value : 0}
-      change={change}
-      icon={icon}
-      prefix={prefix}
-      suffix={suffix}
-      format={format}
-      className={className}
-    >
+    <>
+      <StatCard
+        title={title}
+        value={typeof value === 'number' ? value : 0}
+        change={change}
+        icon={icon}
+        prefix={prefix}
+        suffix={suffix}
+        format={format}
+        className={className}
+      />
       {changeLabel && (
         <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">{changeLabel}</p>
       )}
-    </StatCard>
+    </>
   );
 }
 
