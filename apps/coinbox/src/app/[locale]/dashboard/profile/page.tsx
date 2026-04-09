@@ -157,7 +157,6 @@ export default function ProfilePage() {
                                 icon={<Mail className="w-4 h-4" />}
                                 placeholder="your.email@example.com"
                                 disabled
-                                helperText="Email cannot be changed"
                             />
                             <AnimatedInput
                                 id="phone"

@@ -61,7 +61,7 @@ export default function AnalyticsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <AdvancedAnalyticsDashboard userId={user.uid} />
+                <AdvancedAnalyticsDashboard />
               </CardContent>
             </Card>
           </div>

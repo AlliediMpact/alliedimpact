@@ -4,9 +4,10 @@ import { withApiMiddleware, apiSuccess, apiError } from '@/lib/api-middleware';
 import { db } from '@/lib/firebase';
 
 export const GET = withApiMiddleware(
-  async (request: NextRequest, context: any, { params }: { params: { id: string } }) => {
+  async (request: NextRequest, context: { apiKey: any }) => {
     try {
-      const loanDoc = await db.collection('loans').doc(params.id).get();
+      const urlParts = new URL(request.url).pathname.split('/');
+      const id = urlParts[urlParts.length - 1];
 
       if (!loanDoc.exists) {
         return apiError('Loan not found', 404);

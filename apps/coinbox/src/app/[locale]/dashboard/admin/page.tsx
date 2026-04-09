@@ -217,32 +217,24 @@ export default function AdminDashboardPage() {
           title="KYC Pending"
           value={stats.kyc.pending.toString()}
           subtitle={`${stats.kyc.totalVerifications} total verifications`}
-          icon={Shield}
-          trend={{ value: 12, isPositive: false }}
           variant="warning"
         />
         <StatCard
           title="Pending Commissions"
           value={formatCurrency(stats.commissions.totalPendingAmount)}
           subtitle={`${stats.commissions.pending} pending payouts`}
-          icon={DollarSign}
-          trend={{ value: 8, isPositive: true }}
           variant="success"
         />
         <StatCard
           title="Payment Volume"
           value={formatCurrency(stats.payments.totalVolume)}
           subtitle={`${stats.payments.totalTransactions} transactions`}
-          icon={CreditCard}
-          trend={{ value: 15, isPositive: true }}
           variant="info"
         />
         <StatCard
           title="System Health"
           value={stats.system.uptime}
           subtitle={`${stats.system.alerts} active alerts`}
-          icon={Activity}
-          trend={{ value: 99.8, isPositive: true }}
           variant={stats.system.alerts > 0 ? "warning" : "success"}
         />
       </DashboardStatsGrid>
@@ -600,7 +592,6 @@ export default function AdminDashboardPage() {
 
       {/* FAB for Quick Admin Actions */}
       <FAB
-        icon={Settings}
         label="Quick Actions"
         actions={[
           {

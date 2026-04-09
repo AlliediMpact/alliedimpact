@@ -55,7 +55,7 @@ export const GET = withApiMiddleware(
       return apiError('Failed to list crypto orders', 500);
     }
   },
-  ['read:crypto']
+  { requiredPermission: 'read:crypto' }
 );
 
 export const POST = withApiMiddleware(
@@ -130,5 +130,5 @@ export const POST = withApiMiddleware(
       return apiError('Failed to create crypto order', 500);
     }
   },
-  ['write:crypto']
+  { requiredPermission: 'write:crypto' }
 );

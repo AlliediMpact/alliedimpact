@@ -11,9 +11,10 @@ import {
 } from '@/lib/webhook-service';
 
 export const GET = withApiMiddleware(
-  async (request: NextRequest, context: any, { params }: { params: { id: string } }) => {
+  async (request: NextRequest, context: { apiKey: any }) => {
     try {
-      const subscription = await getWebhookSubscription(params.id);
+      const urlParts = new URL(request.url).pathname.split('/');
+      const id = urlParts[urlParts.length - 1];
 
       if (!subscription) {
         return apiError('Webhook not found', 404);
@@ -47,9 +48,11 @@ export const GET = withApiMiddleware(
 );
 
 export const PUT = withApiMiddleware(
-  async (request: NextRequest, context: any, { params }: { params: { id: string } }) => {
+  async (request: NextRequest, context: { apiKey: any }) => {
     try {
-      const subscription = await getWebhookSubscription(params.id);
+      const urlParts = new URL(request.url).pathname.split('/');
+      const id = urlParts[urlParts.length - 1];
+      const subscription = await getWebhookSubscription(id);
 
       if (!subscription) {
         return apiError('Webhook not found', 404);
@@ -89,7 +92,7 @@ export const PUT = withApiMiddleware(
         return apiError('Invalid status. Must be active or inactive', 400);
       }
 
-      await updateWebhookSubscription(params.id, {
+      await updateWebhookSubscription(id, {
         url,
         events,
         status,
@@ -106,9 +109,11 @@ export const PUT = withApiMiddleware(
 );
 
 export const DELETE = withApiMiddleware(
-  async (request: NextRequest, context: any, { params }: { params: { id: string } }) => {
+  async (request: NextRequest, context: { apiKey: any }) => {
     try {
-      const subscription = await getWebhookSubscription(params.id);
+      const urlParts = new URL(request.url).pathname.split('/');
+      const id = urlParts[urlParts.length - 1];
+      const subscription = await getWebhookSubscription(id);
 
       if (!subscription) {
         return apiError('Webhook not found', 404);
@@ -119,7 +124,7 @@ export const DELETE = withApiMiddleware(
         return apiError('Forbidden', 403);
       }
 
-      await deleteWebhookSubscription(params.id);
+      await deleteWebhookSubscription(id);
 
       return apiSuccess({ message: 'Webhook deleted successfully' });
     } catch (error) {

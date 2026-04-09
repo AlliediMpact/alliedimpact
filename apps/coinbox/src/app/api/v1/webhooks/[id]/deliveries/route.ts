@@ -7,9 +7,11 @@ import {
 } from '@/lib/webhook-service';
 
 export const GET = withApiMiddleware(
-  async (request: NextRequest, context: any, { params }: { params: { id: string } }) => {
+  async (request: NextRequest, context: { apiKey: any }) => {
     try {
-      const subscription = await getWebhookSubscription(params.id);
+      const urlParts = new URL(request.url).pathname.split('/');
+      const id = urlParts[urlParts.length - 3];
+      const subscription = await getWebhookSubscription(id);
 
       if (!subscription) {
         return apiError('Webhook not found', 404);
@@ -23,7 +25,7 @@ export const GET = withApiMiddleware(
       const { searchParams } = new URL(request.url);
       const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 100);
 
-      const deliveries = await getWebhookDeliveries(params.id, limit);
+      const deliveries = await getWebhookDeliveries(id, limit);
 
       return apiSuccess({ 
         deliveries,

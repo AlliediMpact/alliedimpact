@@ -51,7 +51,7 @@ export const GET = withApiMiddleware(
       return apiError('Failed to list loans', 500);
     }
   },
-  ['read:loans']
+  { requiredPermission: 'read:loans' }
 );
 
 export const POST = withApiMiddleware(
@@ -129,5 +129,5 @@ export const POST = withApiMiddleware(
       return apiError('Failed to create loan', 500);
     }
   },
-  ['write:loans']
+  { requiredPermission: 'write:loans' }
 );

@@ -38,7 +38,7 @@ export const GET = withApiMiddleware(
       return apiError('Failed to list webhooks', 500);
     }
   },
-  ['read:webhooks']
+  { requiredPermission: 'read:webhooks' }
 );
 
 export const POST = withApiMiddleware(
@@ -101,5 +101,5 @@ export const POST = withApiMiddleware(
       return apiError(error.message || 'Failed to create webhook', 500);
     }
   },
-  ['write:webhooks']
+  { requiredPermission: 'write:webhooks' }
 );

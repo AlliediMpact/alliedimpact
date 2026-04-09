@@ -38,7 +38,7 @@ export default function TransactionExport({ userId, isAdmin = false }: Transacti
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [exportFormat, setExportFormat] = useState<'csv' | 'json' | 'pdf' | 'xlsx'>('csv');
+  const [exportFormat, setExportFormat] = useState<'csv' | 'json' | 'pdf'>('csv');
   const [startDate, setStartDate] = useState<Date | undefined>(
     new Date(new Date().setMonth(new Date().getMonth() - 1))
   );
@@ -139,7 +139,6 @@ export default function TransactionExport({ userId, isAdmin = false }: Transacti
               <SelectItem value="csv">CSV (Spreadsheet)</SelectItem>
               <SelectItem value="json">JSON</SelectItem>
               <SelectItem value="pdf">PDF</SelectItem>
-              <SelectItem value="xlsx">Excel (XLSX)</SelectItem>
             </SelectContent>
           </Select>
         </div>

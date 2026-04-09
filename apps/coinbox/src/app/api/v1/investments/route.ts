@@ -51,7 +51,7 @@ export const GET = withApiMiddleware(
       return apiError('Failed to list investments', 500);
     }
   },
-  ['read:investments']
+  { requiredPermission: 'read:investments' }
 );
 
 export const POST = withApiMiddleware(
@@ -128,5 +128,5 @@ export const POST = withApiMiddleware(
       return apiError('Failed to create investment', 500);
     }
   },
-  ['write:investments']
+  { requiredPermission: 'write:investments' }
 );

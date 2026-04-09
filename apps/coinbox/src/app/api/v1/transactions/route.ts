@@ -57,5 +57,5 @@ export const GET = withApiMiddleware(
       return apiError('Failed to list transactions', 500);
     }
   },
-  ['read:transactions']
+  { requiredPermission: 'read:transactions' }
 );

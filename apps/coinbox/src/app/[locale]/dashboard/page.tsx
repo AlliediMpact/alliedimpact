@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Coins, CreditCard, Home as HomeIcon, ReferralCode, Share2, Shield, Users, Wallet, BarChart3, Loader2, TrendingUp, TrendingDown, Activity, DollarSign, ArrowUpRight } from 'lucide-react';
+import { Coins, CreditCard, Home as HomeIcon, Share2, Shield, Users, Wallet, BarChart3, Loader2, TrendingUp, TrendingDown, Activity, DollarSign, ArrowUpRight } from 'lucide-react';
 import RiskAssessmentTool from "@/components/RiskAssessmentTool";
 import SummaryComponent from "@/components/SummaryComponent";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";

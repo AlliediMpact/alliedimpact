@@ -72,14 +72,14 @@ export default function PaymentsPage() {
     }
   }, [user, loadPaymentData]);
 
-  const handleMembershipUpgrade = async (targetTier: MembershipTier) => {
+  const handleMembershipUpgrade = async (targetTier: string) => {
     try {
       setProcessingPayment(targetTier);
       
       const { authorizationUrl } = await enhancedPaystackService.initializeMembershipPayment(
         user!.uid,
         user!.email!,
-        targetTier,
+        targetTier as MembershipTier,
         `${window.location.origin}/dashboard/payments?upgrade=success`
       );
 
@@ -283,8 +283,6 @@ export default function PaymentsPage() {
                   <div className="space-y-2 text-sm">
                     <p>Loan Limit: {formatCurrency(details.loanLimit)}</p>
                     <p>Investment Limit: {formatCurrency(details.investmentLimit)}</p>
-                    <p>Commission: {details.commission}%</p>
-                    <p>Admin Fee: {formatCurrency(details.adminFee)}</p>
                   </div>
                   
                   {membership?.currentTier === tier ? (

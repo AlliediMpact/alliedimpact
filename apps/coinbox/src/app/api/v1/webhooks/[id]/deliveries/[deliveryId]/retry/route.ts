@@ -8,13 +8,14 @@ import {
 import { db } from '@/lib/firebase';
 
 export const POST = withApiMiddleware(
-  async (
-    request: NextRequest, 
-    context: any, 
-    { params }: { params: { id: string; deliveryId: string } }
-  ) => {
+  async (request: NextRequest, context: { apiKey: any }) => {
     try {
-      const subscription = await getWebhookSubscription(params.id);
+      const urlParts = new URL(request.url).pathname.split('/');
+      // Path structure: /api/v1/webhooks/[id]/deliveries/[deliveryId]/retry
+      const deliveryId = urlParts[urlParts.length - 2];
+      const webhookId = urlParts[urlParts.length - 5];
+      
+      const subscription = await getWebhookSubscription(webhookId);
 
       if (!subscription) {
         return apiError('Webhook not found', 404);
@@ -26,7 +27,7 @@ export const POST = withApiMiddleware(
       }
 
       // Verify delivery belongs to this subscription
-      const deliveryDoc = await db.collection('webhookDeliveries').doc(params.deliveryId).get();
+      const deliveryDoc = await db.collection('webhookDeliveries').doc(deliveryId).get();
       
       if (!deliveryDoc.exists) {
         return apiError('Delivery not found', 404);

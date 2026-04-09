@@ -315,7 +315,7 @@ export default function HelpCenter() {
           {/* Interactive Tutorials Tab */}
           <TabsContent value="tutorials">
             <div className="p-6 border rounded-lg bg-muted/50">
-              <UserOnboarding disableAutoShow={true} />
+              <UserOnboarding />
               <div className="text-center">
                 <h3 className="text-lg font-medium mb-2">Interactive Tutorials</h3>
                 <p className="text-sm text-muted-foreground mb-4">
