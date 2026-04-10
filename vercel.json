@@ -1,0 +1,8 @@
+{
+  "builds": [
+    {
+      "src": "apps/coinbox/package.json",
+      "use": "@vercel/next"
+    }
+  ]
+}
