@@ -62,7 +62,7 @@ export class ServiceClient {
     try {
       const q = query(collection(db, collectionPath), ...constraints);
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as T));
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as T));
     } catch (error) {
       console.error(`Error querying collection ${collectionPath}:`, error);
       throw new Error('Failed to query collection');

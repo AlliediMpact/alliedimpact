@@ -293,14 +293,11 @@ export default function DisputeManagement() {
                         </td>
                         <td className="py-3 text-sm">#{dispute.ticketId?.substring(0, 8) || "N/A"}</td>
                         <td className="py-3 text-sm">
-                          {dispute.createdAt instanceof Date || dispute.createdAt instanceof Timestamp
-                            ? formatDistanceToNow(
-                                dispute.createdAt instanceof Date 
-                                  ? dispute.createdAt 
-                                  : dispute.createdAt.toDate(), 
-                                { addSuffix: true }
-                              )
-                            : "Unknown"}
+                          {((dispute.createdAt as any)?.toDate ? 
+                            formatDistanceToNow((dispute.createdAt as any).toDate(), { addSuffix: true })
+                            : dispute.createdAt instanceof Date
+                            ? formatDistanceToNow(dispute.createdAt, { addSuffix: true })
+                            : "Unknown")}
                         </td>
                         <td className="py-3 text-sm">
                           {getStatusBadge(dispute.status)}
@@ -361,12 +358,10 @@ export default function DisputeManagement() {
                   <div>
                     <p className="text-sm text-gray-500">Submitted On</p>
                     <p className="text-sm font-medium">
-                      {selectedDispute.createdAt instanceof Date || selectedDispute.createdAt instanceof Timestamp
-                        ? new Date(
-                            selectedDispute.createdAt instanceof Date 
-                              ? selectedDispute.createdAt 
-                              : selectedDispute.createdAt.toDate()
-                          ).toLocaleString()
+                      {selectedDispute.createdAt instanceof Date 
+                        ? new Date(selectedDispute.createdAt).toLocaleString()
+                        : (selectedDispute.createdAt as any)?.toDate?.()
+                        ? new Date((selectedDispute.createdAt as any).toDate()).toLocaleString()
                         : "Unknown"}
                     </p>
                   </div>
@@ -419,12 +414,10 @@ export default function DisputeManagement() {
                     <div>
                       <p className="text-sm text-gray-500">Created On</p>
                       <p className="text-sm font-medium">
-                        {selectedDispute.ticket.createdAt instanceof Date || selectedDispute.ticket.createdAt instanceof Timestamp
-                          ? new Date(
-                              selectedDispute.ticket.createdAt instanceof Date 
-                                ? selectedDispute.ticket.createdAt 
-                                : selectedDispute.ticket.createdAt.toDate()
-                            ).toLocaleString()
+                        {selectedDispute.ticket.createdAt instanceof Date 
+                          ? new Date(selectedDispute.ticket.createdAt).toLocaleString()
+                          : (selectedDispute.ticket.createdAt as any)?.toDate?.()
+                          ? new Date((selectedDispute.ticket.createdAt as any).toDate()).toLocaleString()
                           : "Unknown"}
                       </p>
                     </div>

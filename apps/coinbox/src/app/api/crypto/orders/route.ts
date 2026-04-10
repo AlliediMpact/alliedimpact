@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     const validation = validateAndSanitize(CreateOrderSchema, body);
     if (!validation.success) {
       return NextResponse.json(
-        { error: 'Validation failed', details: validation.error },
+        { error: 'Validation failed', details: (validation as any).error },
         { status: 400 }
       );
     }
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     // Check balance
     if (type === 'SELL') {
       const balance = await cryptoBalanceService.getBalance(userId, asset);
-      if (balance.trading < amount) {
+      if ((balance as any).trading < amount) {
         return NextResponse.json(
           { error: 'Insufficient balance' },
           { status: 400 }
@@ -149,7 +149,6 @@ export async function POST(request: NextRequest) {
         asset,
         amount,
         orderId: '', // Will be set after order is created
-        orderType: type,
       });
     }
 

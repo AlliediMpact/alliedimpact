@@ -49,7 +49,13 @@ export const GET = withApiMiddleware(
         ...doc.data(),
       }));
 
-      return apiPaginated(orders, page, limit, total);
+      const totalPages = Math.ceil(total / limit);
+      return apiPaginated(orders, {
+        page,
+        perPage: limit,
+        total,
+        totalPages,
+      });
     } catch (error) {
       console.error('Error listing crypto orders:', error);
       return apiError('Failed to list crypto orders', 500);
@@ -98,28 +104,26 @@ export const POST = withApiMiddleware(
       }
 
       // Create crypto order
-      const order = await createCryptoOrder({
-        userId: context.apiKey.userId,
-        crypto: crypto.toUpperCase(),
-        orderType,
-        amount,
-        price: price || null,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        createdVia: 'api',
-        apiKeyId: context.apiKey.id,
-      });
+      const result = await createCryptoOrder(
+        context.apiKey.userId,
+        {
+          asset: crypto.toUpperCase() as any,
+          type: orderType.toUpperCase() as any,
+          amount,
+          price: price || 0,
+        }
+      );
 
       return apiSuccess(
         {
           order: {
-            id: order.id,
-            crypto: order.crypto,
-            orderType: order.orderType,
-            amount: order.amount,
-            price: order.price,
-            status: order.status,
-            createdAt: order.createdAt,
+            id: result.data.id,
+            crypto: result.data.asset,
+            orderType: result.data.type,
+            amount: result.data.amount,
+            price: result.data.price,
+            status: 'pending',
+            createdAt: new Date().toISOString(),
           },
           message: 'Crypto order created successfully',
         },

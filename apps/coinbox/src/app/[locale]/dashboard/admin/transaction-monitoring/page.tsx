@@ -18,7 +18,7 @@ export default function AdminTransactionMonitoringPage() {
     const checkAdmin = async () => {
       try {
         const token = await user.getIdTokenResult();
-        const hasAdminRole = token.claims?.roles?.includes('admin') || false;
+        const hasAdminRole = (token.claims?.roles as any)?.includes('admin') || false;
         setIsAdmin(hasAdminRole);
       } catch (error) {
         console.error("Error checking admin status:", error);

@@ -34,11 +34,11 @@ export const POST = withApiMiddleware(
       }
 
       const delivery = deliveryDoc.data();
-      if (delivery?.subscriptionId !== params.id) {
+      if (delivery?.subscriptionId !== webhookId) {
         return apiError('Delivery does not belong to this webhook', 400);
       }
 
-      await retryWebhookDelivery(params.deliveryId);
+      await retryWebhookDelivery(deliveryId);
 
       return apiSuccess({ message: 'Webhook delivery retry initiated' });
     } catch (error: any) {
@@ -46,5 +46,5 @@ export const POST = withApiMiddleware(
       return apiError(error.message || 'Failed to retry webhook delivery', 500);
     }
   },
-  ['write:webhooks']
+  { requiredPermission: 'write:webhooks' }
 );

@@ -124,7 +124,7 @@ describe('PWA Service', () => {
     vi.spyOn(pwaService, 'cacheResources').mockImplementation(async (resources) => {
       if (typeof caches === 'undefined') return { success: false };
       const cache = await caches.open('test');
-      await cache.addAll(resources);
+      await cache.addAll((resources as unknown as string[]) || []);
       return { success: true };
     });
 

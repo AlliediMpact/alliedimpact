@@ -79,7 +79,7 @@ export default function PaymentsPage() {
       const { authorizationUrl } = await enhancedPaystackService.initializeMembershipPayment(
         user!.uid,
         user!.email!,
-        targetTier as MembershipTier,
+        targetTier as any,
         `${window.location.origin}/dashboard/payments?upgrade=success`
       );
 

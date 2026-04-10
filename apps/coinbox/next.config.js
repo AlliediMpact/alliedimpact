@@ -17,8 +17,10 @@ const nextConfig = {
   transpilePackages: ['firebase', '@firebase'],
   // Exclude server-only packages from client bundle
   experimental: {
-    serverComponentsExternalPackages: ['firebase-admin', '@google-cloud/firestore'],
+    serverComponentsExternalPackages: ['firebase-admin', '@google-cloud/firestore', 'nodemailer', 'pdfkit', 'farmhash-modern'],
     optimizePackageImports: ['recharts', 'lucide-react', 'framer-motion'],
+    asyncWebAssembly: true,
+    syncWebAssembly: true,
   },
   // Enable modern build optimizations
   swcMinify: true,

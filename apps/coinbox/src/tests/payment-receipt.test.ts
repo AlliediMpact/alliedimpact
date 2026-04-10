@@ -63,13 +63,11 @@ describe('Receipt Service', () => {
 
   test('should generate a receipt for a valid payment', async () => {
     const result = await receiptService.generateReceipt({
-      paymentId: 'payment-123',
       userId: 'user-123',
       amount: 1000,
       currency: 'ZAR',
-      date: new Date(),
-      description: 'Test Payment',
-      status: 'paid'
+      reference: 'payment-123',
+      description: 'Test Payment'
     });
 
     expect(result).toBeDefined();

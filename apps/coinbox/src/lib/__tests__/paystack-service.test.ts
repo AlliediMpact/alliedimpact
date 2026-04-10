@@ -5,7 +5,7 @@ import { resetAdminCache } from '../admin-bridge';
 
 // Mock axios
 vi.mock('axios');
-const mockedAxios = axios as vi.Mocked<typeof axios>;
+const mockedAxios = axios as any;
 
 // Define mocks
 const mockAdminDb = {

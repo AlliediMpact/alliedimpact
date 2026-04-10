@@ -200,7 +200,7 @@ export default function AdminDashboard() {
               <UsersIcon className="h-6 w-6" />
               <CardTitle>User Management</CardTitle>
             </div>
-            <Pagination>
+            <div className="flex items-center gap-2">
               <PaginationPrevious onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>
                 <ArrowLeft />
               </PaginationPrevious>
@@ -209,10 +209,10 @@ export default function AdminDashboard() {
                   <PaginationLink onClick={() => setCurrentPage(n + 1)}>{n + 1}</PaginationLink>
                 </PaginationItem>
               ))}
-              <PaginationNext onClick={() => setCurrentPage(p => setCurrentPage(p + 1))}>
+              <PaginationNext onClick={() => setCurrentPage(p => Math.min(p + 1, Math.ceil(users.length / usersPerPage)))}>
                 <ArrowRight />
               </PaginationNext>
-            </Pagination>
+            </div>
           </div>
           <Table>
             <TableHeader>

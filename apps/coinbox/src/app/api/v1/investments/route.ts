@@ -45,7 +45,13 @@ export const GET = withApiMiddleware(
         ...doc.data(),
       }));
 
-      return apiPaginated(investments, page, limit, total);
+      const totalPages = Math.ceil(total / limit);
+      return apiPaginated(investments, {
+        page,
+        perPage: limit,
+        total,
+        totalPages,
+      });
     } catch (error) {
       console.error('Error listing investments:', error);
       return apiError('Failed to list investments', 500);
@@ -94,30 +100,26 @@ export const POST = withApiMiddleware(
       }
 
       // Create investment
-      const investment = await createInvestment({
-        userId: context.apiKey.userId,
-        amount,
-        type,
-        asset,
-        expectedReturn: expectedReturn || 0,
-        duration: duration || 12,
-        status: 'active',
-        createdAt: new Date().toISOString(),
-        createdVia: 'api',
-        apiKeyId: context.apiKey.id,
-      });
+      const result = await createInvestment(
+        context.apiKey.userId,
+        {
+          userId: context.apiKey.userId,
+          amount,
+          ticker: type,
+        }
+      );
 
       return apiSuccess(
         {
           investment: {
-            id: investment.id,
-            amount: investment.amount,
-            type: investment.type,
-            asset: investment.asset,
-            expectedReturn: investment.expectedReturn,
-            duration: investment.duration,
-            status: investment.status,
-            createdAt: investment.createdAt,
+            id: result.data.id,
+            amount: result.data.amount,
+            type,
+            asset,
+            expectedReturn: expectedReturn || 0,
+            duration: duration || 12,
+            status: 'active',
+            createdAt: new Date().toISOString(),
           },
           message: 'Investment created successfully',
         },

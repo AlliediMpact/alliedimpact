@@ -65,7 +65,7 @@ export default function BulkOperationsDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
-  const isAdmin = user?.role === 'admin' || user?.role === 'support';
+  const isAdmin = (user as any)?.role === 'admin' || (user as any)?.role === 'support';
 
   return (
     <div className="container mx-auto p-6 space-y-6">

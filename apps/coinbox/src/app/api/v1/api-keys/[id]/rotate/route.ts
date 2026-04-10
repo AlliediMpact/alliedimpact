@@ -35,18 +35,18 @@ export async function POST(
       return apiError('Cannot rotate inactive API key', 400);
     }
 
-    const newKey = await rotateApiKey(params.id);
+    const result = await rotateApiKey(params.id);
 
     return apiSuccess({
       message: 'API key rotated successfully',
       newKey: {
-        id: newKey.id,
-        key: newKey.key, // Only returned once!
-        keyPrefix: newKey.keyPrefix,
-        name: newKey.name,
-        tier: newKey.tier,
-        permissions: newKey.permissions,
-        expiresAt: newKey.expiresAt,
+        id: result.apiKey.id,
+        key: result.plainKey, // Only returned once!
+        keyPrefix: result.apiKey.keyHash?.substring(0, 4) || '',
+        name: result.apiKey.name,
+        tier: result.apiKey.tier,
+        permissions: result.apiKey.permissions,
+        expiresAt: result.apiKey.expiresAt,
       },
       warning: 'This is the only time the new key will be shown. Please store it securely.',
     });

@@ -45,11 +45,12 @@ import { ExportButton } from '@/components/export-button';
 const COLORS = ['#193281', '#5e17eb', '#cb6ce6', '#8b5cf6', '#a855f7', '#c084fc'];
 
 const defaultMetrics: AnalyticsMetrics = {
-  overview: { totalRevenue: 0, totalTransactions: 0, activeUsers: 0, conversionRate: 0, averageTransactionValue: 0, revenueGrowth: 0, userGrowth: 0 },
-  users: { total: 0, active: 0, new: 0, returning: 0, churnRate: 0, retentionRate: 0, demographics: { ageGroups: [], locations: [] }, behavior: { averageSessionDuration: 0, pageViewsPerSession: 0, bounceRate: 0 } },
-  transactions: { total: 0, successful: 0, failed: 0, pending: 0, volume: 0, averageValue: 0, byType: [], byStatus: [], timeline: [] },
-  revenue: { total: 0, byPeriod: [], bySource: [], growth: 0, forecast: [] },
-  conversion: { rate: 0, funnel: [], dropoffPoints: [] }
+  users: { total: 0, active: 0, newThisMonth: 0, retentionRate: 0, byMembershipTier: {} },
+  transactions: { total: 0, volume: 0, averageAmount: 0, successRate: 0, byType: {}, monthlyTrend: [] },
+  loans: { totalIssued: 0, totalVolume: 0, defaultRate: 0, averageAmount: 0, repaymentRate: 0, riskDistribution: {} },
+  commissions: { totalPaid: 0, pendingAmount: 0, topReferrers: [], monthlyPayouts: [] },
+  financial: { revenue: { total: 0, monthly: 0, bySource: {} }, costs: { commissions: 0, operational: 0, defaults: 0 }, profit: 0, margins: 0 },
+  system: { uptime: 0, responseTime: 0, errorRate: 0, activeConnections: 0 }
 };
 
 export default function AdvancedAnalyticsDashboard() {
@@ -217,7 +218,7 @@ export default function AdvancedAnalyticsDashboard() {
               {
                 metric: 'Total Revenue',
                 value: formatCurrency(metrics.financial.revenue.total),
-                growth: formatPercentage(metrics.financial.revenue.growth || 0),
+                growth: formatPercentage(((metrics.financial.profit / Math.max(metrics.financial.revenue.total, 1)) * 100) || 0),
               },
               {
                 metric: 'Total Users',

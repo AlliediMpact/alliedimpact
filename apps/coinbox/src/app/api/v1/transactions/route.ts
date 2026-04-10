@@ -51,7 +51,13 @@ export const GET = withApiMiddleware(
         ...doc.data(),
       }));
 
-      return apiPaginated(transactions, page, limit, total);
+      const totalPages = Math.ceil(total / limit);
+      return apiPaginated(transactions, {
+        page,
+        perPage: limit,
+        total,
+        totalPages,
+      });
     } catch (error) {
       console.error('Error listing transactions:', error);
       return apiError('Failed to list transactions', 500);

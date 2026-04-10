@@ -2,6 +2,17 @@
  * Auth Configuration - Stub Implementation
  */
 import { NextAuthOptions } from 'next-auth';
+import type { User, Session } from 'next-auth';
+
+// Extend the default User type to include id
+declare module 'next-auth' {
+  interface User {
+    id: string;
+  }
+  interface Session {
+    user: User;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [],

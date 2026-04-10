@@ -93,7 +93,8 @@ function DisputeDetail({ dispute, onBack, onResolve, currentUserRole }: DisputeD
     if (!newComment.trim()) return;
 
     try {
-      const role = currentUserRole;
+      // Map user role to dispute role (user maps to buyer for dispute context)
+      const role = currentUserRole === 'user' ? 'buyer' : (currentUserRole as any);
       await disputeResolutionService.addComment(
         dispute.id,
         dispute.userId, // This should be the current user's ID in a real implementation

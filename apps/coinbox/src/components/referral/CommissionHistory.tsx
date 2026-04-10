@@ -138,13 +138,11 @@ export function CommissionHistory({ commissions }: CommissionHistoryProps) {
         : new Date(commission.createdAt?.toDate?.() || commission.createdAt);
       
       const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
-      const displayDate = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
       
       if (!monthlyCommissions[monthYear]) {
         monthlyCommissions[monthYear] = { 
           totalAmount: 0, 
-          count: 0,
-          displayDate 
+          count: 0
         };
       }
       
@@ -315,10 +313,13 @@ export function CommissionHistory({ commissions }: CommissionHistoryProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {getCommissionsByMonth().map((monthly) => (
+                    {getCommissionsByMonth().map((monthly) => {
+                      const [year, month] = monthly.monthYear.split('-');
+                      const displayDate = `${new Date(parseInt(year), parseInt(month) - 1).toLocaleString('default', { month: 'long' })} ${year}`;
+                      return (
                       <TableRow key={monthly.monthYear}>
                         <TableCell className="font-medium">
-                          {monthly.displayDate}
+                          {displayDate}
                         </TableCell>
                         <TableCell>
                           {monthly.count} commission{monthly.count !== 1 ? 's' : ''}
@@ -333,7 +334,8 @@ export function CommissionHistory({ commissions }: CommissionHistoryProps) {
                           </Button>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    );
+                    })}
                   </TableBody>
                 </Table>
               </div>

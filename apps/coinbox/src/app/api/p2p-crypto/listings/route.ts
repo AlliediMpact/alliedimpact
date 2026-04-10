@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       listings,
-      count: listings.length,
+      count: (listings as any)?.length || 0,
     });
   } catch (error) {
     console.error('Get listings API error:', error);

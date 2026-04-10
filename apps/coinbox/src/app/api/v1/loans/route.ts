@@ -45,7 +45,13 @@ export const GET = withApiMiddleware(
         ...doc.data(),
       }));
 
-      return apiPaginated(loans, page, limit, total);
+      const totalPages = Math.ceil(total / limit);
+      return apiPaginated(loans, {
+        page,
+        perPage: limit,
+        total,
+        totalPages,
+      });
     } catch (error) {
       console.error('Error listing loans:', error);
       return apiError('Failed to list loans', 500);
@@ -98,27 +104,23 @@ export const POST = withApiMiddleware(
       const loan = await createLoan({
         userId: context.apiKey.userId,
         amount,
-        interestRate,
+        interest: interestRate,
         term,
-        type,
         purpose: purpose || '',
-        collateral: collateral || null,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        createdVia: 'api',
-        apiKeyId: context.apiKey.id,
+        status: 'Pending' as const,
+        createdAt: new Date()
       });
 
       return apiSuccess(
         {
           loan: {
-            id: loan.id,
-            amount: loan.amount,
-            interestRate: loan.interestRate,
-            term: loan.term,
-            type: loan.type,
-            status: loan.status,
-            createdAt: loan.createdAt,
+            id: (loan as any).id,
+            amount: (loan as any).amount,
+            interestRate: (loan as any).interestRate,
+            term: (loan as any).term,
+            type: (loan as any).type,
+            status: (loan as any).status,
+            createdAt: (loan as any).createdAt,
           },
           message: 'Loan created successfully',
         },

@@ -144,7 +144,7 @@ export async function getCachedTransactions(userId: string, limit: number = 10):
   
   const transactions = snapshot.docs
     .map(doc => ({ id: doc.id, ...doc.data() }))
-    .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+    .sort((a, b) => (b as any).createdAt?.toMillis?.() - (a as any).createdAt?.toMillis?.() || 0)
     .slice(0, limit);
 
   // Cache for 5 minutes

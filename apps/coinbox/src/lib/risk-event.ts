@@ -51,9 +51,11 @@ export async function reportRiskEvent(
     if (data.severity === 'high' || data.severity === 'critical') {
       const { notificationService } = await import('./notification-service');
       await notificationService.notifySecurityTeam({
+        userId: data.userId,
         type: 'security_alert',
         description: `High severity ${eventType} detected for user ${data.userId}`,
-        details: data.details
+        severity: data.severity,
+        metadata: data.details
       });
     }
   } catch (error) {

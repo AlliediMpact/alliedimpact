@@ -201,14 +201,21 @@ if (require.main === module) {
   // Stop after 60 seconds or on SIGINT
   const timeout = setTimeout(() => {
     const report = monitor.stop();
-    console.log('\n📊 Performance Report:');
-    console.log('Duration:', report.summary.duration.toFixed(2) + 's');
-    console.log('Memory Usage:', report.memory.avg, '(peak:', report.memory.max + ')');
-    console.log('CPU Usage:', report.cpu.avg, '(peak:', report.cpu.max + ')');
     
-    if (report.warnings.length > 0) {
+    if ('error' in report) {
+      console.error('Monitoring error:', (report as any).error);
+      process.exit(1);
+    }
+    
+    const successReport = report as any;
+    console.log('\n📊 Performance Report:');
+    console.log('Duration:', successReport.summary.duration.toFixed(2) + 's');
+    console.log('Memory Usage:', successReport.memory.avg, '(peak:', successReport.memory.max + ')');
+    console.log('CPU Usage:', successReport.cpu.avg, '(peak:', successReport.cpu.max + ')');
+    
+    if (successReport.warnings.length > 0) {
       console.log('\n⚠️  Warnings:');
-      report.warnings.forEach(w => console.log('  -', w));
+      successReport.warnings.forEach((w: string) => console.log('  -', w));
     }
     
     monitor.saveReport();

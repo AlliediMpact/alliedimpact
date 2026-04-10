@@ -177,11 +177,15 @@ interface ActivityItem {
 }
 
 interface ActivityFeedProps {
-  items: ActivityItem[];
+  items?: ActivityItem[];
+  activities?: ActivityItem[];
+  maxItems?: number;
   className?: string;
 }
 
-export function ActivityFeed({ items, className }: ActivityFeedProps) {
+export function ActivityFeed({ items, activities, maxItems, className }: ActivityFeedProps) {
+  const feedItems = items || activities || [];
+  const displayItems = typeof maxItems === 'number' ? feedItems.slice(0, maxItems) : feedItems;
   const getVariantColors = (variant?: string) => {
     switch (variant) {
       case 'success':
@@ -202,7 +206,7 @@ export function ActivityFeed({ items, className }: ActivityFeedProps) {
       animate="animate"
       className={cn('space-y-4', className)}
     >
-      {items.map((item) => (
+      {displayItems.map((item) => (
         <motion.div
           key={item.id}
           variants={fadeInUp}

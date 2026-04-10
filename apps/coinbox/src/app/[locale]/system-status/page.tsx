@@ -115,16 +115,16 @@ export default function SystemStatusPage() {
                 {Object.entries(status.components).map(([name, component]) => (
                   <div key={name} className="flex items-center justify-between py-3 border-b last:border-0">
                     <div className="flex items-center">
-                      {renderStatusIndicator(component.status)}
+                      {renderStatusIndicator((component as any).status)}
                       <span className="ml-2 capitalize">{name}</span>
                     </div>
                     <div>
                       <span className={`capitalize px-2 py-1 text-xs rounded-full ${
-                        component.status === 'operational' ? 'bg-green-100 text-green-800' : 
-                        component.status === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
+                        (component as any).status === 'operational' ? 'bg-green-100 text-green-800' : 
+                        (component as any).status === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-red-100 text-red-800'
                       }`}>
-                        {component.status}
+                        {(component as any).status}
                       </span>
                     </div>
                   </div>

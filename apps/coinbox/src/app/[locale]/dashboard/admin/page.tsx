@@ -149,43 +149,43 @@ export default function AdminDashboardPage() {
   const recentActivities = [
     {
       id: '1',
-      action: 'KYC Approved',
-      user: 'john.doe@email.com',
-      timestamp: new Date(Date.now() - 1000 * 60 * 15),
-      status: 'success' as const
+      title: 'KYC Approved',
+      description: 'john.doe@email.com',
+      timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+      variant: 'success' as const
     },
     {
       id: '2',
-      action: 'Commission Payout',
-      user: 'System',
-      timestamp: new Date(Date.now() - 1000 * 60 * 45),
-      status: 'success' as const
+      title: 'Commission Payout',
+      description: 'System',
+      timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+      variant: 'success' as const
     },
     {
       id: '3',
-      action: 'Payment Failed',
-      user: 'jane.smith@email.com',
-      timestamp: new Date(Date.now() - 1000 * 60 * 90),
-      status: 'error' as const
+      title: 'Payment Failed',
+      description: 'jane.smith@email.com',
+      timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+      variant: 'danger' as const
     },
     {
       id: '4',
-      action: 'KYC Pending Review',
-      user: 'mike.wilson@email.com',
-      timestamp: new Date(Date.now() - 1000 * 60 * 120),
-      status: 'pending' as const
+      title: 'KYC Pending Review',
+      description: 'mike.wilson@email.com',
+      timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+      variant: 'warning' as const
     },
     {
       id: '5',
-      action: 'System Backup',
-      user: 'System',
-      timestamp: new Date(Date.now() - 1000 * 60 * 360),
-      status: 'success' as const
+      title: 'System Backup',
+      description: 'System',
+      timestamp: new Date(Date.now() - 1000 * 60 * 360).toISOString(),
+      variant: 'success' as const
     }
   ];
 
   if (loading) {
-    return <PageLoader message="Loading admin dashboard..." />;
+    return <PageLoader />;
   }
 
   if (!stats) {
@@ -592,29 +592,9 @@ export default function AdminDashboardPage() {
 
       {/* FAB for Quick Admin Actions */}
       <FAB
-        label="Quick Actions"
-        actions={[
-          {
-            icon: RefreshCw,
-            label: 'Refresh Dashboard',
-            onClick: () => loadAdminStats()
-          },
-          {
-            icon: Shield,
-            label: 'Review KYC',
-            onClick: () => setActiveTab('kyc')
-          },
-          {
-            icon: DollarSign,
-            label: 'Process Payouts',
-            onClick: () => handleCommissionAction('trigger')
-          },
-          {
-            icon: Database,
-            label: 'Run Backup',
-            onClick: () => console.log('Manual backup initiated')
-          }
-        ]}
+        icon={<RefreshCw className="h-6 w-6" />}
+        label="Refresh Dashboard"
+        onClick={() => loadAdminStats()}
       />
     </div>
   );

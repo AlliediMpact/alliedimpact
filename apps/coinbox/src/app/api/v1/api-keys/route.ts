@@ -16,20 +16,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const includeRevoked = searchParams.get('includeRevoked') === 'true';
 
-    const keys = await listApiKeys(session.user.id, includeRevoked);
+    const keys = await listApiKeys(session.user.id, { status: 'active' });
 
     // Don't return the hashed keys or sensitive data
     const sanitizedKeys = keys.map(key => ({
       id: key.id,
       name: key.name,
-      keyPrefix: key.keyPrefix,
+      keyPrefix: key.keyHash?.substring(0, 4) || '',
       tier: key.tier,
       permissions: key.permissions,
       status: key.status,
       createdAt: key.createdAt,
       expiresAt: key.expiresAt,
-      lastUsedAt: key.lastUsedAt,
-      requestCount: key.requestCount,
+      lastUsedAt: key.usage?.lastUsed,
+      requestCount: key.usage?.totalRequests || 0,
     }));
 
     return apiSuccess({

@@ -16,6 +16,8 @@ export const GET = withApiMiddleware(
       const urlParts = new URL(request.url).pathname.split('/');
       const id = urlParts[urlParts.length - 1];
 
+      const subscription = await getWebhookSubscription(id);
+
       if (!subscription) {
         return apiError('Webhook not found', 404);
       }
@@ -44,7 +46,7 @@ export const GET = withApiMiddleware(
       return apiError('Failed to fetch webhook', 500);
     }
   },
-  ['read:webhooks']
+  { requiredPermission: 'read:webhooks' }
 );
 
 export const PUT = withApiMiddleware(
@@ -105,7 +107,7 @@ export const PUT = withApiMiddleware(
       return apiError(error.message || 'Failed to update webhook', 500);
     }
   },
-  ['write:webhooks']
+  { requiredPermission: 'write:webhooks' }
 );
 
 export const DELETE = withApiMiddleware(
@@ -132,5 +134,5 @@ export const DELETE = withApiMiddleware(
       return apiError('Failed to delete webhook', 500);
     }
   },
-  ['write:webhooks']
+  { requiredPermission: 'write:webhooks' }
 );

@@ -36,5 +36,5 @@ export const GET = withApiMiddleware(
       return apiError('Failed to fetch webhook deliveries', 500);
     }
   },
-  ['read:webhooks']
+  { requiredPermission: 'read:webhooks' }
 );

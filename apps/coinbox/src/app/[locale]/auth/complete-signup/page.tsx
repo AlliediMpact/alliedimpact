@@ -19,7 +19,7 @@ const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
   { regex: /[A-Z]/, message: "Contains uppercase letter" },
   { regex: /[a-z]/, message: "Contains lowercase letter" },
   { regex: /[0-9]/, message: "Contains number" },
-  { regex: /[!@#$%^&*(),.?":{}|<>]/.test, message: "Contains special character" } // Fixed regex test
+  { regex: /[!@#$%^&*(),.?":{}|<>]/, message: "Contains special character" }
 ];
 
 function CompleteSignupContent() {

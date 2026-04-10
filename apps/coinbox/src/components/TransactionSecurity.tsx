@@ -54,8 +54,14 @@ export default function TransactionSecurity() {
     setLoading(true);
     try {
       // Check trading status
-      const status = await transactionMonitoringAPI.checkUserTradingStatus(user.uid);
-      setTradingStatus(status as 'normal' | 'restricted');
+      const statusData = await transactionMonitoringAPI.checkUserTradingStatus(user.uid);
+      setTradingStatus({
+        status: statusData.status as 'normal' | 'restricted',
+        alerts: statusData.alerts,
+        criticalAlerts: statusData.criticalAlerts,
+        isFlagged: statusData.isFlagged,
+        reason: statusData.reason
+      });
       
       // Get user alerts
       const alerts = await transactionMonitoringAPI.getUserAlerts(user.uid);

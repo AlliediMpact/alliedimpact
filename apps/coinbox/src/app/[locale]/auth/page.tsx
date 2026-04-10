@@ -248,7 +248,6 @@ export default function AuthPage() {
               phoneNumber={unverifiedEmail}
               onSuccess={handleMfaSuccess}
               onCancel={handleMfaCancel}
-              email={email}
             />
           ) : showVerificationReminder ? (
             <div className="bg-white p-6 rounded-xl shadow-lg border border-amber-200/70 space-y-4">

@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Check if user has entitlement to access Coin Box
-        const hasAccess = await hasProductAccess(decodedToken.uid, 'coinbox');
+        const hasAccess = await hasProductAccess(decodedToken.uid, 'coinbox' as any);
         
         if (!hasAccess) {
             return new NextResponse(

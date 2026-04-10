@@ -314,7 +314,7 @@ describe('BulkOperationsService', () => {
       expect(result.success).toBe(true);
       expect(result.totalItems).toBe(3);
       expect(result.successful).toBe(3);
-      expect(notificationService.createNotification).toHaveBeenCalledTimes(3);
+      expect((notificationService as any).createNotification.mock.calls.length).toBe(3);
     });
 
     it('should enforce maximum 50 recipients limit', async () => {
@@ -629,7 +629,8 @@ describe('BulkOperationsService', () => {
       const result = await bulkOperationsService.createBulkInvestments('investor123', investments);
 
       expect(result.failed).toBe(1);
-      expect(result.errors[0].error).toContain('not open' || 'closed' || 'Fulfilled');
+      const errorMsg = result.errors[0].error;
+      expect(['not open', 'closed', 'Fulfilled'].some(txt => errorMsg.includes(txt))).toBe(true);
     });
   });
 });

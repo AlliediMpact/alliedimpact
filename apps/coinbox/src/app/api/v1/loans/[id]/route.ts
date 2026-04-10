@@ -2,6 +2,7 @@
 import { NextRequest } from 'next/server';
 import { withApiMiddleware, apiSuccess, apiError } from '@/lib/api-middleware';
 import { db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const GET = withApiMiddleware(
   async (request: NextRequest, context: { apiKey: any }) => {
@@ -9,7 +10,9 @@ export const GET = withApiMiddleware(
       const urlParts = new URL(request.url).pathname.split('/');
       const id = urlParts[urlParts.length - 1];
 
-      if (!loanDoc.exists) {
+      const loanDoc = await getDoc(doc(db, 'loans', id));
+
+      if (!loanDoc.exists()) {
         return apiError('Loan not found', 404);
       }
 
@@ -31,5 +34,5 @@ export const GET = withApiMiddleware(
       return apiError('Failed to fetch loan', 500);
     }
   },
-  ['read:loans']
+  { requiredPermission: 'read:loans' }
 );

@@ -74,10 +74,12 @@ interface StatCardProps {
   prefix?: string;
   suffix?: string;
   format?: 'number' | 'currency' | 'percentage';
+  subtitle?: string;
+  variant?: string;
   className?: string;
 }
 
-export function StatCard({ title, value, change, icon, trend, prefix, suffix, format, className }: StatCardProps) {
+export function StatCard({ title, value, change, icon, trend, prefix, suffix, format, subtitle, variant, className }: StatCardProps) {
   return (
     <AnimatedCard hover glow gradient>
       <div className="flex items-start justify-between">
@@ -91,6 +93,9 @@ export function StatCard({ title, value, change, icon, trend, prefix, suffix, fo
           >
             {value}
           </motion.p>
+          {subtitle && (
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">{subtitle}</p>
+          )}
           {change !== undefined && (
             <motion.p
               className={cn(

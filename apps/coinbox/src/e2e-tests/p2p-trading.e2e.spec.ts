@@ -201,7 +201,7 @@ test.describe('P2P Trading Lifecycle', () => {
     await expect(borrowerPage.getByText(/loan repayment/i)).toBeVisible();
   });
 
-  test('Compliance report includes the transaction', async () => {
+  test('Compliance report includes the transaction', async ({ browser }) => {
     // This test would be for admin users
     // Create an admin user context and page
     const adminContext = await browser.newContext();

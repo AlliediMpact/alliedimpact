@@ -205,7 +205,7 @@ export default function BulkCryptoOrderForm() {
         const result = data.results.find((r: any) => r.index === index);
         return {
           ...order,
-          status: result?.status === 'success' ? 'success' : 'error',
+          status: (result?.status === 'success' ? 'success' : 'error') as 'success' | 'error',
           error: data.errors.find((e: any) => e.index === index)?.error
         };
       });

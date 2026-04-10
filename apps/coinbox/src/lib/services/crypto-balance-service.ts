@@ -389,6 +389,8 @@ class CryptoBalanceService {
         ETH: null,
         USDC: null,
         XRP: null,
+        USDT: null,
+        SOL: null,
       };
     }
 

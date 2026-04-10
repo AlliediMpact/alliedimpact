@@ -92,9 +92,11 @@ describe('User Journey Integration Tests', () => {
       vi.spyOn(membershipService, 'getUserMembership').mockResolvedValue({
         userId,
         currentTier: 'basic',
-        joinDate: {} as any,
-        renewalDate: {} as any,
+        joinDate: { toDate: () => new Date() } as any,
+        renewalDate: { toDate: () => new Date() } as any,
         paymentStatus: 'active',
+        loanLimit: 10000,
+        p2pCryptoLimit: 50000,
         metrics: {
           monthlyTradingVolume: 200000,
           totalReferrals: 15,
@@ -106,7 +108,7 @@ describe('User Journey Integration Tests', () => {
 
       await membershipService.upgradeMembership(userId, 'ambassador');
       
-      expect(notificationService.createNotification).toHaveBeenCalledWith(expect.objectContaining({
+      expect((notificationService as any).createNotification).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Membership Upgraded'
       }));
 
@@ -115,7 +117,7 @@ describe('User Journey Integration Tests', () => {
       
       await commissionService.processReferralCommission(referrerId, userId, 550, 'membership');
       
-      expect(notificationService.createNotification).toHaveBeenCalledWith(expect.objectContaining({
+      expect((notificationService as any).createNotification).toHaveBeenCalledWith(expect.objectContaining({
         type: 'commission'
       }));
 

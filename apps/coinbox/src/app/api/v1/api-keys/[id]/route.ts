@@ -144,7 +144,7 @@ export async function DELETE(
       return apiError('Forbidden', 403);
     }
 
-    await revokeApiKey(params.id, 'user_request');
+    await revokeApiKey(params.id);
 
     return apiSuccess({ message: 'API key revoked successfully' });
   } catch (error) {

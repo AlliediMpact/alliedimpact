@@ -6,6 +6,7 @@ import { useRoleAccess } from '@/hooks/use-role-access';
 interface RoleProtectedRouteProps {
   children: React.ReactNode;
   requiredRole?: 'admin' | 'support' | 'user';
+  allowedRoles?: ('admin' | 'support' | 'user')[];
   redirectTo?: string;
   allowSupport?: boolean; // For admin sections that should be visible to support
 }
@@ -13,11 +14,12 @@ interface RoleProtectedRouteProps {
 export function RoleProtectedRoute({ 
   children, 
   requiredRole = 'user',
+  allowedRoles,
   redirectTo = '/',
   allowSupport = false
 }: RoleProtectedRouteProps) {
   const { hasAccess, isLoading } = useRoleAccess({
-    requiredRole,
+    requiredRole: allowedRoles ? (allowedRoles[0] as any) : requiredRole,
     redirectTo,
     allowSupport
   });

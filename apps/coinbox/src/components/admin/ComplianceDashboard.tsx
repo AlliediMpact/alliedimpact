@@ -112,9 +112,9 @@ export default function ComplianceDashboard() {
     } catch (error) {
       console.error('Failed to load compliance reports:', error);
       toast({
-        title: "Loading Error",
-        description: "Failed to load compliance reports. Please try again.",
-        variant: "destructive",
+        id: `error-${Date.now()}`,
+        title: 'Error',
+        description: 'Failed to load compliance reports. Please try again.'
       });
     } finally {
       setLoading(false);
@@ -194,6 +194,7 @@ export default function ComplianceDashboard() {
       setGenerateLoading(true);
       
       toast({
+        id: `generating-${Date.now()}`,
         title: "Generating Report",
         description: "Your report is being generated. This may take a few moments."
       });
@@ -225,6 +226,7 @@ export default function ComplianceDashboard() {
       setActiveTab('reports');
       
       toast({
+        id: `generated-${Date.now()}`,
         title: "Report Generated",
         description: `Your ${reportType} report has been generated successfully.`
       });
@@ -232,9 +234,9 @@ export default function ComplianceDashboard() {
     } catch (error) {
       console.error('Failed to generate compliance report:', error);
       toast({
-        title: "Report Generation Failed",
-        description: "There was an error generating your compliance report.",
-        variant: "destructive",
+        id: `error-${Date.now()}`,
+        title: 'Error',
+        description: 'There was an error generating your compliance report.'
       });
     } finally {
       setGenerateLoading(false);
@@ -249,6 +251,7 @@ export default function ComplianceDashboard() {
   const downloadReport = (report: any, format: string) => {
     // In a real app, this would download the actual report
     toast({
+      id: `download-${Date.now()}`,
       title: "Download Started",
       description: `Your report is being downloaded as ${format.toUpperCase()}`
     });

@@ -38,7 +38,6 @@ export function QuickMatchWidget({ userId, asset, fiatCurrency }: QuickMatchProp
         asset,
         fiatCurrency,
         amount: parseFloat(amount),
-        userId,
       });
 
       if (result.matched && result.offers.length > 0) {
@@ -68,7 +67,6 @@ export function QuickMatchWidget({ userId, asset, fiatCurrency }: QuickMatchProp
         asset,
         fiatCurrency,
         amount: parseFloat(amount),
-        userId,
       });
 
       if (result.matched && result.orderId) {

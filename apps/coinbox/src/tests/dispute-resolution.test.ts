@@ -90,7 +90,7 @@ describe('Dispute Resolution Service', () => {
 
     expect(disputeId).toBe('dispute-123');
     expect(notificationService.notifyDispute).toHaveBeenCalled();
-    expect(notificationService.createNotification).toHaveBeenCalled();
+    expect(((notificationService as any).createNotification).mock.calls.length).toBeGreaterThan(0);
   });
 
   test('should add evidence to dispute', async () => {
@@ -105,7 +105,7 @@ describe('Dispute Resolution Service', () => {
     );
 
     expect(evidenceId).toBeDefined();
-    expect(notificationService.createNotification).toHaveBeenCalled();
+    expect(((notificationService as any).createNotification).mock.calls.length).toBeGreaterThan(0);
   });
 
   test('should add comment to dispute', async () => {

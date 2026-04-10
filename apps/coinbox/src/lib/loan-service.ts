@@ -509,3 +509,10 @@ class LoanService extends ServiceClient {
 }
 
 export const loanService = new LoanService();
+
+/**
+ * Create a new loan - convenience function
+ */
+export async function createLoan(data: Partial<LoanApplication>) {
+  return loanService.applyForLoan(data.userId || '', data);
+}

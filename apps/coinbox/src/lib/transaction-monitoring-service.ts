@@ -341,7 +341,7 @@ export class TransactionMonitoringService {
         
       case 'unusual-hours':
         // Check if transaction is outside business hours
-        const transactionDate = new Date(createdAt instanceof Date ? createdAt : createdAt.toDate());
+        const transactionDate = new Date(createdAt instanceof Date ? createdAt : (createdAt as any)?.toDate());
         const hour = transactionDate.getHours();
         return hourIsOutsideBusinessHours(hour);
         
@@ -539,8 +539,8 @@ export class TransactionMonitoringService {
       
       return alertsSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
-      } as TransactionAlert));
+        ...(doc.data() as Record<string, any>)
+      } as unknown as TransactionAlert));
     } catch (error) {
       console.error('Error getting transaction alerts:', error);
       return [];
@@ -667,7 +667,7 @@ export class TransactionMonitoringService {
           totalAlerts: alertCount,
           highSeverityAlerts,
           recentAlerts: alerts.filter(a => {
-            const alertDate = new Date(a.detectedAt instanceof Date ? a.detectedAt : a.detectedAt.toDate());
+            const alertDate = new Date(a.detectedAt instanceof Date ? a.detectedAt : (a.detectedAt as any)?.toDate());
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             return alertDate >= thirtyDaysAgo;

@@ -533,8 +533,8 @@ describe('Bulk Operations Workflows', () => {
         successful: 2,
         failed: 2,
         errors: [
-          { index: 1, error: 'Amount exceeds tier limit of R500' },
-          { index: 3, error: 'Interest rate must be between 15% and 25%' },
+          { index: 1, error: 'Amount exceeds tier limit of R500', item: '', code: 'VALIDATION_ERROR' },
+          { index: 3, error: 'Interest rate must be between 15% and 25%', item: '', code: 'VALIDATION_ERROR' },
         ],
         results: [
           { index: 0, ticketId: 'ticket1', status: 'success' },
@@ -726,8 +726,8 @@ describe('Bulk Operations Workflows', () => {
         successful: 0,
         failed: 2,
         errors: [
-          { index: 0, error: 'Amount exceeds tier limit' },
-          { index: 1, error: 'Interest rate must be between 15% and 25%' },
+          { index: 0, error: 'Amount exceeds tier limit', item: '', code: 'VALIDATION_ERROR' },
+          { index: 1, error: 'Interest rate must be between 15% and 25%', item: '', code: 'VALIDATION_ERROR' },
         ],
         results: [],
         processingTimeMs: 300,
