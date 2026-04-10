@@ -10,6 +10,14 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    maxSize: 50 * 1024 * 1024,
+  },
+  webpack: (config, { isServer }) => {
+    config.cache = false; // Disable webpack cache to force clean build
+    return config;
+  },
 
   // output: 'standalone',
   // distDir: '.next',
