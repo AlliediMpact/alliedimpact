@@ -5,6 +5,8 @@
 
 export interface UserWallet {
   userId: string;
+  balance: number;
+  lockedBalance: number;
   mainBalance: number;
   investmentBalance: number;
   commissionBalance: number;
@@ -22,6 +24,8 @@ export async function getUserWallet(userId: string): Promise<UserWallet> {
   // TODO: Fetch from Firestore
   return {
     userId,
+    balance: 0,
+    lockedBalance: 0,
     mainBalance: 0,
     investmentBalance: 0,
     commissionBalance: 0,
