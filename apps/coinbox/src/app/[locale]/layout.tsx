@@ -51,63 +51,52 @@ export default function LocaleLayout({ children, params: { locale } }: Props) {
   }
 
   return (
-    <html lang={locale}>
-      <head>
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="CoinBox" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-        <link rel="apple-touch-startup-image" href="/icons/icon-512x512.png" />
-      </head>
-      <body className="antialiased">
-        {/* PWA Service Worker Registration */}
-        <Script
-          id="pwa-register"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(
-                    function(registration) {
-                      console.log('ServiceWorker registration successful');
-                    },
-                    function(err) {
-                      console.log('ServiceWorker registration failed: ', err);
-                    }
-                  );
-                });
-              }
-            `,
-          }}
-        />
-        
-        <SkipToMainContent />
-        <ErrorBoundary>
-          <ThemeProvider>
-            <NextIntlClientProvider locale={locale} messages={messages}>
-              <AuthProvider>
-                <OnboardingProvider>
-                    {/* PWA Components */}
-                    <PWAInstallPrompt />
-                    <OnlineStatus />
-                    
-                    <HeaderSidebarLayout>
-                      {children}
-                    </HeaderSidebarLayout>
-                    <Toaster />
-                    {/* <CookieConsentBanner 
-                      appName="CoinBox" 
-                      privacyLink={`/${locale}/privacy`} 
-                      cookieLink={`/${locale}/cookies`} 
-                    /> */}
-                </OnboardingProvider>
-              </AuthProvider>
-            </NextIntlClientProvider>
-          </ThemeProvider>
-        </ErrorBoundary>
-      </body>
-    </html>
+    <>
+      <Script
+        id="pwa-register"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(
+                  function(registration) {
+                    console.log('ServiceWorker registration successful');
+                  },
+                  function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                  }
+                );
+              });
+            }
+          `,
+        }}
+      />
+      
+      <SkipToMainContent />
+      <ErrorBoundary>
+        <ThemeProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <AuthProvider>
+              <OnboardingProvider>
+                  {/* PWA Components */}
+                  <PWAInstallPrompt />
+                  <OnlineStatus />
+                  
+                  <HeaderSidebarLayout>
+                    {children}
+                  </HeaderSidebarLayout>
+                  <Toaster />
+                  {/* <CookieConsentBanner 
+                    appName="CoinBox" 
+                    privacyLink={`/${locale}/privacy`} 
+                    cookieLink={`/${locale}/cookies`} 
+                  /> */}
+              </OnboardingProvider>
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    </>
   );
 }
