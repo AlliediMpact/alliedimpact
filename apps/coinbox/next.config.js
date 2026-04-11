@@ -12,7 +12,6 @@ const nextConfig = {
   },
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,
-    maxSize: 50 * 1024 * 1024,
   },
   webpack: (config, { isServer }) => {
     config.cache = false; // Disable webpack cache to force clean build
@@ -27,8 +26,6 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['firebase-admin', '@google-cloud/firestore', 'nodemailer', 'pdfkit', 'farmhash-modern'],
     optimizePackageImports: ['recharts', 'lucide-react', 'framer-motion'],
-    asyncWebAssembly: true,
-    syncWebAssembly: true,
   },
   // Enable modern build optimizations
   swcMinify: true,
