@@ -396,6 +396,7 @@ export interface UserReputation {
   postsCreated: number;
   repliesCreated: number;
   solutionsAccepted: number;
+}
 
 // ============================================================================
 // CLASS MANAGEMENT TYPES
