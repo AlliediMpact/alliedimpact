@@ -114,7 +114,7 @@ export class PayFastService {
     };
 
     // Generate signature
-    paymentData.signature = this.generateSignature(paymentData as Record<string, string>);
+    paymentData.signature = this.generateSignature(paymentData as unknown as Record<string, string>);
 
     return paymentData;
   }
@@ -160,7 +160,7 @@ export class PayFastService {
       custom_str2: params.frequency,
     };
 
-    paymentData.signature = this.generateSignature(paymentData as Record<string, string>);
+    paymentData.signature = this.generateSignature(paymentData as unknown as Record<string, string>);
 
     return paymentData;
   }

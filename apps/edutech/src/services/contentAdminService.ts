@@ -386,7 +386,11 @@ export async function addLesson(
     course.modules[moduleIndex].lessons.push(newLesson);
 
     // Update module duration
-    course.modules[moduleIndex].durationMinutes += lessonData.durationMinutes;
+    if (course.modules[moduleIndex].durationMinutes !== undefined && lessonData.durationMinutes) {
+      course.modules[moduleIndex].durationMinutes += lessonData.durationMinutes;
+    } else if (lessonData.durationMinutes) {
+      course.modules[moduleIndex].durationMinutes = lessonData.durationMinutes;
+    }
 
     await updateDoc(courseRef, {
       modules: course.modules,
@@ -438,7 +442,7 @@ export async function updateLesson(
       throw new Error('Lesson not found');
     }
 
-    const oldDuration = course.modules[moduleIndex].lessons[lessonIndex].durationMinutes;
+    const oldDuration = course.modules[moduleIndex].lessons[lessonIndex].durationMinutes || 0;
 
     course.modules[moduleIndex].lessons[lessonIndex] = {
       ...course.modules[moduleIndex].lessons[lessonIndex],
@@ -446,8 +450,10 @@ export async function updateLesson(
     };
 
     // Update module duration if lesson duration changed
-    if (updates.durationMinutes) {
+    if (updates.durationMinutes && course.modules[moduleIndex].durationMinutes !== undefined) {
       course.modules[moduleIndex].durationMinutes += updates.durationMinutes - oldDuration;
+    } else if (updates.durationMinutes) {
+      course.modules[moduleIndex].durationMinutes = updates.durationMinutes;
     }
 
     await updateDoc(courseRef, {
@@ -488,9 +494,11 @@ export async function deleteLesson(
     );
 
     if (lessonIndex !== -1) {
-      const lessonDuration = course.modules[moduleIndex].lessons[lessonIndex].durationMinutes;
+      const lessonDuration = course.modules[moduleIndex].lessons[lessonIndex].durationMinutes || 0;
       course.modules[moduleIndex].lessons.splice(lessonIndex, 1);
-      course.modules[moduleIndex].durationMinutes -= lessonDuration;
+      if (course.modules[moduleIndex].durationMinutes !== undefined) {
+        course.modules[moduleIndex].durationMinutes -= lessonDuration;
+      }
     }
 
     await updateDoc(courseRef, {

@@ -45,18 +45,21 @@ export interface InstructorProfile {
 }
 
 export interface CourseWithStats extends Course {
-  studentCount: number;
-  averageRating: number;
-  enrollmentTrend: number;
+  enrollments: number;
+  revenue: number;
+  completionRate: number;
+  lastUpdated: Timestamp | string;
 }
 
 export interface InstructorStats {
-  totalCourses: number;
-  totalStudents: number;
-  totalEnrollments: number;
-  averageRating: number;
-  recentEnrollments: number;
-  totalReviews: number;
+  instructorId: string;
+  activeCourses: number;
+  totalCourses?: number;
+  completionRate: number;
+  totalRevenue: number;
+  avgRating: number;
+  totalStudents?: number;
+  totalReviews?: number;
 }
 
 // ============================================================================
@@ -111,9 +114,10 @@ export async function getInstructorCourses(
       courses.push({
         courseId: doc.id,
         ...doc.data(),
-        studentCount: doc.data().enrollmentCount || 0,
-        averageRating: doc.data().rating || 0,
-        enrollmentTrend: 0,
+        enrollments: doc.data().enrollmentCount || 0,
+        revenue: 0, // Would need payment data
+        completionRate: 0, // Would need completion data
+        lastUpdated: doc.data().updatedAt || new Date(),
       } as CourseWithStats);
     });
     
@@ -137,15 +141,21 @@ export async function getInstructorStats(
   try {
     const courses = await getInstructorCourses(instructorId);
     
+    const totalEnrollments = courses.reduce((sum, course) => sum + (course.enrollments || 0), 0);
+    
     const stats: InstructorStats = {
+      instructorId,
+      activeCourses: courses.length,
       totalCourses: courses.length,
-      totalStudents: courses.reduce((sum, course) => sum + course.studentCount, 0),
-      totalEnrollments: courses.reduce((sum, course) => sum + course.enrollmentCount, 0),
-      averageRating: courses.length > 0
-        ? courses.reduce((sum, course) => sum + course.averageRating, 0) / courses.length
+      completionRate: courses.length > 0
+        ? courses.reduce((sum, course) => sum + (course.completionRate || 0), 0) / courses.length
         : 0,
-      recentEnrollments: 0, // Would need enrollment data
-      totalReviews: courses.reduce((sum, course) => sum + course.reviewCount, 0),
+      totalRevenue: courses.reduce((sum, course) => sum + (course.revenue || 0), 0),
+      avgRating: courses.length > 0
+        ? courses.reduce((sum, course) => sum + ((course as any).rating || 0), 0) / courses.length
+        : 0,
+      totalStudents: totalEnrollments,
+      totalReviews: courses.reduce((sum, course) => sum + ((course as any).reviewCount || 0), 0),
     };
     
     return stats;

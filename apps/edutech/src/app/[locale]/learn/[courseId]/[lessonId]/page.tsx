@@ -30,14 +30,17 @@ const mockCourse: Course = {
   category: 'Digital Literacy',
   level: 'beginner',
   tier: 'FREE',
+  tags: ['beginner', 'computers', 'digital'],
+  createdBy: 'platform',
+  published: true,
   thumbnailUrl: '',
   estimatedHours: 8,
   modules: [
     {
       moduleId: '1',
-      courseId: '1',
       title: 'Getting Started with Computers',
       description: 'Introduction to computer basics',
+      order: 1,
       orderIndex: 1,
       lessons: [
         {
@@ -48,7 +51,7 @@ const mockCourse: Course = {
           description: 'Understanding computer components and how they work together',
           contentType: 'video',
           contentUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          orderIndex: 1,
+          order: 1,
           estimatedMinutes: 15,
           isPreview: true,
         },
@@ -60,7 +63,7 @@ const mockCourse: Course = {
           description: 'Learn about CPU, RAM, storage, and peripherals',
           contentType: 'reading',
           contentUrl: '',
-          orderIndex: 2,
+          order: 2,
           estimatedMinutes: 10,
           isPreview: true,
         },
@@ -72,17 +75,18 @@ const mockCourse: Course = {
           description: 'Test your understanding of computer hardware',
           contentType: 'quiz',
           contentUrl: '',
-          orderIndex: 3,
+          order: 3,
           estimatedMinutes: 10,
           isPreview: false,
         },
       ],
+      durationMinutes: 35,
     },
     {
       moduleId: '2',
-      courseId: '1',
       title: 'Operating System Basics',
       description: 'Learn to navigate Windows',
+      order: 2,
       orderIndex: 2,
       lessons: [
         {
@@ -93,11 +97,12 @@ const mockCourse: Course = {
           description: 'Desktop components and icons',
           contentType: 'video',
           contentUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-          orderIndex: 1,
+          order: 1,
           estimatedMinutes: 15,
           isPreview: false,
         },
       ],
+      durationMinutes: 15,
     },
   ],
   instructorId: 'instructor-1',
@@ -107,9 +112,7 @@ const mockCourse: Course = {
   reviewCount: 320,
   skillsYouWillLearn: [],
   prerequisites: [],
-  language: 'en',
   certificateOffered: true,
-  isPublished: true,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };
@@ -293,7 +296,7 @@ function LessonContent({
               {course.modules.map((module) => (
                 <div key={module.moduleId}>
                   <h3 className="text-sm font-semibold mb-2 text-muted-foreground">
-                    Module {module.orderIndex}: {module.title}
+                    Module {module.orderIndex || module.order}: {module.title}
                   </h3>
 
                   <div className="space-y-1">
@@ -317,7 +320,7 @@ function LessonContent({
                                 <CheckCircle className="h-4 w-4 text-green-600" />
                               ) : (
                                 <div className="text-muted-foreground">
-                                  {getLessonIcon(lesson.contentType)}
+                                  {getLessonIcon(lesson.contentType || 'reading')}
                                 </div>
                               )}
                             </div>

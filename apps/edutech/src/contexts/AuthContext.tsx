@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
-import { PlatformUser } from '@allied-impact/types';
+import type { EduTechUser as PlatformUser } from '@/types';
 
 interface AuthContextType {
   user: FirebaseUser | null;
@@ -29,19 +29,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // For now, create basic platform user from Firebase user
         setPlatformUser({
           uid: firebaseUser.uid,
+          userId: firebaseUser.uid, // Use uid as userId
           email: firebaseUser.email || '',
-          displayName: firebaseUser.displayName || undefined,
+          displayName: firebaseUser.displayName || 'User',
           photoURL: firebaseUser.photoURL || undefined,
-          phoneNumber: firebaseUser.phoneNumber || undefined,
-          emailVerified: firebaseUser.emailVerified,
-          disabled: false,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          metadata: {
-            lastSignInTime: firebaseUser.metadata.lastSignInTime || '',
-            creationTime: firebaseUser.metadata.creationTime || '',
-          },
-        });
+          userType: 'learner', // Default type
+          languagePreference: 'en' as const,
+          createdAt: { toDate: () => new Date() } as any, // Firebase Timestamp-like
+          updatedAt: { toDate: () => new Date() } as any, // Firebase Timestamp-like
+        } as PlatformUser);
       } else {
         setPlatformUser(null);
       }

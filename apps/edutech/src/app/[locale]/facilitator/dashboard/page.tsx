@@ -30,7 +30,7 @@ import {
  */
 
 export default function FacilitatorDashboard() {
-  const { user } = useAuth();
+  const { user, platformUser } = useAuth();
   const router = useRouter();
   const t = useTranslations('facilitator');
 
@@ -50,13 +50,13 @@ export default function FacilitatorDashboard() {
       return;
     }
 
-    if (user.userType !== 'facilitator') {
+    if (platformUser?.userType !== 'facilitator') {
       router.push('/dashboard');
       return;
     }
 
     loadData();
-  }, [user, router]);
+  }, [user, platformUser, router]);
 
   const loadData = async () => {
     if (!user) return;
@@ -64,8 +64,8 @@ export default function FacilitatorDashboard() {
     try {
       setLoading(true);
       const [assignedClasses, facilitatorStats] = await Promise.all([
-        getAssignedClasses(user.userId),
-        getFacilitatorStats(user.userId),
+        getAssignedClasses(platformUser?.userId || user?.uid || ''),
+        getFacilitatorStats(platformUser?.userId || user?.uid || ''),
       ]);
 
       setClasses(assignedClasses);

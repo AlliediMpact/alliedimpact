@@ -26,14 +26,17 @@ const mockCourse: Course = {
   category: 'Digital Literacy',
   level: 'beginner',
   tier: 'FREE',
+  tags: ['beginner', 'computers', 'digital'],
+  createdBy: 'platform',
+  published: true,
   thumbnailUrl: '',
   estimatedHours: 8,
   modules: [
     {
       moduleId: '1',
-      courseId: '1',
       title: 'Getting Started with Computers',
       description: 'Introduction to computer basics',
+      order: 1,
       orderIndex: 1,
       lessons: [
         {
@@ -43,7 +46,7 @@ const mockCourse: Course = {
           title: 'What is a Computer?',
           description: 'Understanding computer components',
           contentType: 'video',
-          orderIndex: 1,
+          order: 1,
           estimatedMinutes: 15,
           isPreview: true,
         },
@@ -54,7 +57,7 @@ const mockCourse: Course = {
           title: 'Turning Your Computer On and Off',
           description: 'Basic power operations',
           contentType: 'video',
-          orderIndex: 2,
+          order: 2,
           estimatedMinutes: 10,
           isPreview: true,
         },
@@ -65,17 +68,18 @@ const mockCourse: Course = {
           title: 'Using the Mouse and Keyboard',
           description: 'Input device fundamentals',
           contentType: 'interactive',
-          orderIndex: 3,
+          order: 3,
           estimatedMinutes: 20,
           isPreview: false,
         },
       ],
+      durationMinutes: 45,
     },
     {
       moduleId: '2',
-      courseId: '1',
       title: 'Operating System Basics',
       description: 'Learn to navigate Windows',
+      order: 2,
       orderIndex: 2,
       lessons: [
         {
@@ -85,7 +89,7 @@ const mockCourse: Course = {
           title: 'Understanding the Desktop',
           description: 'Desktop components and icons',
           contentType: 'video',
-          orderIndex: 1,
+          order: 1,
           estimatedMinutes: 15,
           isPreview: false,
         },
@@ -96,17 +100,18 @@ const mockCourse: Course = {
           title: 'Working with Windows',
           description: 'Opening, closing, and managing windows',
           contentType: 'video',
-          orderIndex: 2,
+          order: 2,
           estimatedMinutes: 20,
           isPreview: false,
         },
       ],
+      durationMinutes: 35,
     },
     {
       moduleId: '3',
-      courseId: '1',
       title: 'File Management',
       description: 'Organizing your files and folders',
+      order: 3,
       orderIndex: 3,
       lessons: [
         {
@@ -116,7 +121,7 @@ const mockCourse: Course = {
           title: 'Creating Files and Folders',
           description: 'File system basics',
           contentType: 'video',
-          orderIndex: 1,
+          order: 1,
           estimatedMinutes: 15,
           isPreview: false,
         },
@@ -127,11 +132,12 @@ const mockCourse: Course = {
           title: 'Copying, Moving, and Deleting',
           description: 'File operations',
           contentType: 'interactive',
-          orderIndex: 2,
+          order: 2,
           estimatedMinutes: 25,
           isPreview: false,
         },
       ],
+      durationMinutes: 40,
     },
   ],
   instructorId: 'instructor-1',
@@ -147,9 +153,7 @@ const mockCourse: Course = {
     'Email basics',
   ],
   prerequisites: [],
-  language: 'en',
   certificateOffered: true,
-  isPublished: true,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };
@@ -203,8 +207,8 @@ export default function CourseDetailPage({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.uid,
-          courseId: course.courseId,
-          tier: course.tier,
+          courseId: course?.courseId,
+          tier: course?.tier,
         }),
       });
       
@@ -214,7 +218,7 @@ export default function CourseDetailPage({
 
       // Redirect to first lesson
       const firstLesson = course?.modules[0]?.lessons[0];
-      if (firstLesson) {
+      if (firstLesson && course?.courseId) {
         router.push(
           `/${params.locale}/learn/${course.courseId}/${firstLesson.lessonId}`
         );
@@ -237,7 +241,7 @@ export default function CourseDetailPage({
       const firstLesson = course?.modules[0]?.lessons[0];
       const targetLesson = lastLessonId || firstLesson?.lessonId;
       
-      if (targetLesson) {
+      if (targetLesson && course?.courseId) {
         router.push(
           `/${params.locale}/learn/${course.courseId}/${targetLesson}`
         );
@@ -415,7 +419,7 @@ export default function CourseDetailPage({
             <section>
               <h2 className="text-2xl font-bold mb-4">What you'll learn</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {course.skillsYouWillLearn.map((skill, index) => (
+                {(course.skillsYouWillLearn || []).map((skill, index) => (
                   <div key={index} className="flex items-start space-x-2">
                     <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                     <span className="text-sm">{skill}</span>
@@ -443,7 +447,7 @@ export default function CourseDetailPage({
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="font-semibold">
-                            Module {module.orderIndex}: {module.title}
+                            Module {module.orderIndex || module.order}: {module.title}
                           </h3>
                           <p className="text-sm text-muted-foreground mt-1">
                             {module.description}

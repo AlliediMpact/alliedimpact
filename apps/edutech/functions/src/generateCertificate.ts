@@ -28,7 +28,7 @@ interface CertificateData {
  */
 export const onCourseComplete = functions.firestore
   .document('edutech_users/{userId}/edutech_enrollments/{enrollmentId}')
-  .onUpdate(async (change, context) => {
+  .onUpdate(async (change: functions.Change<admin.firestore.DocumentSnapshot>, context: functions.EventContext) => {
     const before = change.before.data();
     const after = change.after.data();
 
@@ -360,7 +360,7 @@ async function sendCongratulationsEmail(
  * HTTP Function: Verify Certificate
  * GET /verifyCertificate?code=XXXXX
  */
-export const verifyCertificate = functions.https.onRequest(async (req, res) => {
+export const verifyCertificate = functions.https.onRequest(async (req: functions.https.Request, res: functions.Response) => {
   // Enable CORS
   res.set('Access-Control-Allow-Origin', '*');
   res.set('Access-Control-Allow-Methods', 'GET');
@@ -414,7 +414,7 @@ export const verifyCertificate = functions.https.onRequest(async (req, res) => {
  * Body: { certificateId: string }
  */
 export const regenerateCertificate = functions.https.onCall(
-  async (data, context) => {
+  async (data: any, context: functions.https.CallableContext) => {
     // Require authentication
     if (!context.auth) {
       throw new functions.https.HttpsError(

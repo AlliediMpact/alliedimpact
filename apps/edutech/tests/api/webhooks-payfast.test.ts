@@ -30,7 +30,7 @@ jest.mock('@/services/emailService', () => ({
 // Mock Firestore
 const mockGetDoc = jest.fn();
 const mockUpdateDoc = jest.fn();
-const mockDoc = jest.fn(() => 'mock-doc-ref');
+const mockDoc = jest.fn((...args: any[]) => 'mock-doc-ref');
 
 jest.mock('firebase/firestore', () => ({
   getFirestore: jest.fn(() => ({})),

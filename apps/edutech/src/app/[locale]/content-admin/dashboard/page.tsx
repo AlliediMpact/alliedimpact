@@ -31,7 +31,7 @@ import {
  */
 
 export default function ContentAdminDashboard() {
-  const { user } = useAuth();
+  const { user, platformUser } = useAuth();
   const router = useRouter();
   const t = useTranslations('contentAdmin');
 
@@ -54,13 +54,13 @@ export default function ContentAdminDashboard() {
       return;
     }
 
-    if (user.userType !== 'content_admin') {
+    if (platformUser?.userType !== 'content_admin') {
       router.push('/dashboard');
       return;
     }
 
     loadData();
-  }, [user, router]);
+  }, [user, platformUser, router]);
 
   useEffect(() => {
     // Filter courses based on selected filter
@@ -74,13 +74,13 @@ export default function ContentAdminDashboard() {
   }, [filter, courses]);
 
   const loadData = async () => {
-    if (!user) return;
+    if (!user || !platformUser?.userId) return;
 
     try {
       setLoading(true);
       const [allCourses, adminStats] = await Promise.all([
         getAllCourses(),
-        getContentAdminStats(user.userId),
+        getContentAdminStats(platformUser.userId),
       ]);
 
       setCourses(allCourses);

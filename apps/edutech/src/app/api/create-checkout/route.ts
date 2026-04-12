@@ -68,8 +68,8 @@ export async function POST(request: NextRequest) {
       // Return checkout URL
       return NextResponse.json({
         success: true,
-        checkoutUrl: payment.paymentUrl || payment.checkoutUrl,
-        paymentId: payment.paymentId,
+        checkoutUrl: payment.paymentUrl || (payment as any).checkoutUrl,
+        paymentId: (payment as any).paymentId,
       });
     } catch (billingError) {
       console.error('Billing service error:', billingError);

@@ -186,7 +186,11 @@ async function updateUserStats(userId: string, courseCompleted: boolean): Promis
 
     const userData = userDoc.data() as EduTechUser;
     const lastAccessDate = userData.updatedAt
-      ? new Date(userData.updatedAt).toDateString()
+      ? new Date(
+          (userData.updatedAt as any).toDate 
+            ? (userData.updatedAt as any).toDate() 
+            : userData.updatedAt
+        ).toDateString()
       : null;
     const today = new Date().toDateString();
 

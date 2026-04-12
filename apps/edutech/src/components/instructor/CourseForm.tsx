@@ -6,17 +6,19 @@ import { Button } from '@allied-impact/ui';
 import { Save, Eye } from 'lucide-react';
 
 interface CourseFormProps {
-  course?: Partial<Course>;
-  onSave: (courseData: Partial<Course>) => Promise<void>;
-  onPreview?: () => void;
+  mode?: 'create' | 'edit';
+  onSaveDraft?: (courseData: Partial<Course>) => Promise<void>;
+  onPublish?: (courseData: Partial<Course>) => Promise<void>;
   loading?: boolean;
+  course?: Partial<Course>;
 }
 
 export default function CourseForm({
-  course = {},
-  onSave,
-  onPreview,
+  mode = 'create',
+  onSaveDraft,
+  onPublish,
   loading = false,
+  course = {},
 }: CourseFormProps) {
   const [formData, setFormData] = useState<Partial<Course>>({
     title: course.title || '',
@@ -70,7 +72,19 @@ export default function CourseForm({
       return;
     }
 
-    await onSave(formData);
+    if (onSaveDraft) {
+      await onSaveDraft(formData);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    if (onPublish) {
+      await onPublish(formData);
+    }
   };
 
   return (
@@ -173,16 +187,16 @@ export default function CourseForm({
           <Save className="w-4 h-4" />
           {loading ? 'Saving...' : 'Save Draft'}
         </Button>
-        {onPreview && (
+        {onPublish && (
           <Button
             type="button"
             variant="outline"
-            onClick={onPreview}
+            onClick={handlePublish}
             disabled={loading}
             className="flex items-center gap-2"
           >
             <Eye className="w-4 h-4" />
-            Preview
+            Publish
           </Button>
         )}
       </div>

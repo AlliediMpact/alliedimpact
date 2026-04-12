@@ -4,7 +4,7 @@
 
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import MobileNav from '../../src/components/layout/MobileNav';
+import { MobileNav } from '../../src/components/layout/MobileNav';
 
 // Mock next/link
 jest.mock('next/link', () => {

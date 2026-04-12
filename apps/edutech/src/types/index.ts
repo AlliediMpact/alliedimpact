@@ -1,3 +1,4 @@
+import React from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 // ============================================================================
@@ -10,9 +11,11 @@ export type Language = 'en' | 'zu' | 'xh';
 
 export interface EduTechUser {
   userId: string;
+  uid?: string;
   userType: UserType;
   displayName: string;
   email: string;
+  photoURL?: string;
   
   // Learning preferences (for learners)
   primaryTrack?: LearningTrack;
@@ -53,26 +56,34 @@ export interface EduTechUser {
 
 export type CourseTrack = 'computer-skills' | 'coding';
 export type CourseLevel = 'beginner' | 'intermediate' | 'advanced';
-export type SubscriptionTier = 'FREE' | 'PREMIUM' | 'ENTERPRISE';
+export type SubscriptionTier = 'FREE' | 'PREMIUM' | 'ENTERPRISE' | 'premium' | 'free';
 
 export interface CourseModule {
   moduleId: string;
   title: string;
   description: string;
   order: number;
+  orderIndex?: number;
   lessons: CourseLesson[];
-  durationMinutes: number;
+  durationMinutes?: number;
 }
 
-export type LessonType = 'video' | 'reading' | 'quiz' | 'coding-exercise';
+export type LessonType = 'video' | 'reading' | 'quiz' | 'coding-exercise' | 'interactive';
 
 export interface CourseLesson {
   lessonId: string;
+  courseId?: string;
   title: string;
-  type: LessonType;
-  content: string; // URL for video, markdown for reading
-  durationMinutes: number;
+  type?: LessonType;
+  contentType?: 'video' | 'interactive' | 'reading' | 'quiz' | 'coding-exercise';
+  content?: string; // URL for video, markdown for reading
+  contentUrl?: string; // alternative field for video URL
+  description?: string;
+  durationMinutes?: number;
+  estimatedMinutes?: number;
   order: number;
+  moduleId?: string;
+  isPreview?: boolean;
 }
 
 export interface Course {
@@ -80,6 +91,7 @@ export interface Course {
   title: string;
   description: string;
   shortDescription: string;
+  skillsYouWillLearn?: string[];
   
   // Categorization
   track: CourseTrack;
@@ -93,6 +105,14 @@ export interface Course {
   // Content
   modules: CourseModule[];
   
+  // Instructor
+  instructorId?: string;
+  instructorName?: string;
+  
+  // Prerequisites & certificates
+  prerequisites?: string[];
+  certificateOffered?: boolean;
+  
   // Metadata - ALL COURSES CREATED BY PLATFORM
   createdBy: 'platform'; // all courses created centrally by Content Admins
   contentAdminId?: string; // which content admin created it
@@ -105,8 +125,8 @@ export interface Course {
   rating: number;
   reviewCount: number;
   
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: Timestamp | string;
+  updatedAt: Timestamp | string;
 }
 
 // ============================================================================
@@ -119,6 +139,8 @@ export interface Enrollment {
   enrollmentId: string;
   userId: string;
   courseId: string;
+  courseTitle?: string;
+  courseTier?: SubscriptionTier;
   enrolledAt: Timestamp;
   
   // Progress
@@ -147,12 +169,17 @@ export interface Certificate {
   
   // Details
   courseName: string;
+  courseTitle?: string;
   userName: string;
+  learnerName?: string;
+  totalHours?: number;
+  instructorName?: string;
   completedAt: Timestamp;
   issuedAt: Timestamp;
   
   // Verification
   certificateNumber: string;
+  verificationCode?: string;
   verificationUrl: string;
   
   // PDF
@@ -396,6 +423,9 @@ export interface UserReputation {
   postsCreated: number;
   repliesCreated: number;
   solutionsAccepted: number;
+  upvotesReceived?: number;
+  downvotesReceived?: number;
+  badges?: string[];
 }
 
 // ============================================================================
@@ -482,3 +512,139 @@ export interface Subscription {
   updatedAt: Timestamp;
 }
 
+// ============================================================================
+// PLATFORM USER & EXTENDED TYPES
+// ============================================================================
+
+export type PlatformUser = EduTechUser; // alias for compatibility
+
+// Firebase Auth User interface - used in useAuth() hook
+export interface User {
+  uid: string;
+  userId?: string; // alias for uid
+  email?: string;
+  displayName?: string;
+  photoURL?: string;
+  userType?: UserType;
+  emailVerified?: boolean;
+  isAnonymous?: boolean;
+}
+
+export interface InstructorStats {
+  instructorId: string;
+  activeCourses: number;
+  totalCourses: number;
+  completionRate: number;
+  totalRevenue: number;
+  avgRating: number;
+}
+
+export interface CourseWithStats {
+  courseId: string;
+  title: string;
+  enrollments: number;
+  revenue: number;
+  completionRate: number;
+  lastUpdated: Timestamp | string;
+}
+
+// ============================================================================
+// PAYMENT TYPES
+// ============================================================================
+
+export interface PayFastPaymentData {
+  merchant_id: string;
+  merchant_key: string;
+  return_url: string;
+  cancel_url: string;
+  notify_url: string;
+  name_first: string;
+  name_last: string;
+  email_address: string;
+  item_name: string;
+  item_description: string;
+  amount: string;
+  currency_code: string;
+  signature?: string;
+}
+
+export interface PaymentResult {
+  success: boolean;
+  paymentUrl?: string;
+  checkoutUrl?: string;
+  transactionId?: string;
+  error?: string;
+}
+
+// ============================================================================
+// UI COMPONENT TYPES
+// ============================================================================
+
+export interface FooterSection {
+  title: string;
+  links?: Array<{ label: string; href: string }>;
+  content?: React.ReactNode;
+}
+
+export interface SocialLink {
+  icon: string;
+  url: string;
+  label: string;
+}
+
+export interface FooterProps {
+  sections?: FooterSection[];
+  socialLinks?: SocialLink[];
+  legalLinks?: Array<{ label: string; href: string }>;
+  copyrightText?: string;
+  description?: string;
+  renderLink?: (link: string) => React.ReactElement;
+}
+
+export interface PageLoaderProps {
+  isLoading?: boolean;
+  text?: string;
+  message?: string;
+}
+
+export interface EmptyStateProps {
+  icon?: React.ReactNode;
+  title?: string;
+  description?: string;
+  action?: { label: string; onClick: () => void };
+}
+
+export interface FooterProps {
+  appName?: string;
+  sections?: FooterSection[];
+  socialLinks?: SocialLink[];
+  legalLinks?: Array<{ label: string; href: string }>;
+  copyrightText?: string;
+  description?: string;
+  renderLink?: (link: string) => React.ReactElement;
+}
+
+export interface CourseFormProps {
+  mode?: 'create' | 'edit';
+  onSaveDraft?: (courseData: Partial<Course>) => Promise<void>;
+  onPublish?: (courseData: Partial<Course>) => Promise<void>;
+  loading?: boolean;
+}
+
+// ============================================================================
+// ERROR TYPES
+// ============================================================================
+
+export type ErrorCode = 
+  | 'AUTH_FAILED'
+  | 'AUTH_REQUIRED'
+  | 'AUTH_TOKEN_EXPIRED'
+  | 'AUTH_TOKEN_INVALID'
+  | 'AUTH_EMAIL_NOT_VERIFIED'
+  | 'COURSE_FETCH_FAILED'
+  | 'COURSES_FETCH_FAILED'
+  | 'SUBSCRIPTION_EXPIRED'
+  | 'SUBSCRIPTION_REQUIRED'
+  | 'VALIDATION_ERROR'
+
+// ============================================================================

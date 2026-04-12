@@ -25,7 +25,8 @@
       "@/lib/*": ["./src/lib/*"],
       "@/types/*": ["./src/types/*"],
       "@/config/*": ["./src/config/*"],
-      "@/utils/*": ["./src/utils/*"]
+      "@/utils/*": ["./src/utils/*"],
+      "@alliedimpact/ui": ["../../packages/ui/src/index.ts"]
     }
   },
   "include": [
@@ -35,6 +36,8 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "functions",
+    ".next"
   ]
 }

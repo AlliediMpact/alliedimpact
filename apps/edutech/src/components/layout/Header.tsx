@@ -13,7 +13,7 @@ export default function Header() {
   const t = useTranslations();
   const pathname = usePathname();
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, platformUser, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -31,7 +31,7 @@ export default function Header() {
         <Logo 
           appName="EduTech" 
           onClick={() => router.push('/en')}
-          size="md"
+          size={40}
         />
 
         {/* Desktop Navigation */}
@@ -78,7 +78,7 @@ export default function Header() {
                     </Link>
                     
                     {/* Role-based dashboards */}
-                    {user.userType === 'facilitator' && (
+                    {platformUser?.userType === 'facilitator' && (
                       <Link
                         href="/en/facilitator/dashboard"
                         className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
@@ -89,7 +89,7 @@ export default function Header() {
                       </Link>
                     )}
                     
-                    {user.userType === 'content_admin' && (
+                    {platformUser?.userType === 'content_admin' && (
                       <Link
                         href="/en/content-admin/dashboard"
                         className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
@@ -100,7 +100,7 @@ export default function Header() {
                       </Link>
                     )}
                     
-                    {user.userType === 'system_admin' && (
+                    {platformUser?.userType === 'system_admin' && (
                       <Link
                         href="/en/admin/dashboard"
                         className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"

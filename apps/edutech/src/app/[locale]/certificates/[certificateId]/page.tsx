@@ -115,7 +115,9 @@ export default function CertificatePage({ params }: CertificateViewProps) {
     );
   }
 
-  const completedDate = new Date(certificate.issuedAt).toLocaleDateString('en-US', {
+  const completedDate = new Date(
+    (certificate.issuedAt as any).toDate ? (certificate.issuedAt as any).toDate() : certificate.issuedAt
+  ).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

@@ -21,29 +21,31 @@ import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/lib/utils';
 
 export function NotificationCenter() {
-  const { user } = useAuth();
+  const { user, platformUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  
+  const userId = platformUser?.userId || user?.uid;
 
   // Real-time notifications
   const { data: notifications, loading } = useRealtime<Notification>({
     collectionName: 'edutech_notifications',
-    constraints: user
+    constraints: userId
       ? [
-          where('userId', '==', user.userId),
+          where('userId', '==', userId),
           orderBy('createdAt', 'desc'),
           limit(20),
         ]
       : [],
-    enabled: !!user,
+    enabled: !!userId,
   });
 
   // Update unread count
   useEffect(() => {
-    if (user) {
-      getUnreadCount(user.userId).then(setUnreadCount).catch(console.error);
+    if (userId) {
+      getUnreadCount(userId).then(setUnreadCount).catch(console.error);
     }
-  }, [user, notifications]);
+  }, [userId, notifications]);
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
@@ -55,10 +57,10 @@ export function NotificationCenter() {
   };
 
   const handleMarkAllAsRead = async () => {
-    if (!user) return;
+    if (!userId) return;
     
     try {
-      await markAllNotificationsAsRead(user.userId);
+      await markAllNotificationsAsRead(userId);
       setUnreadCount(0);
     } catch (error) {
       console.error('Failed to mark all notifications as read:', error);

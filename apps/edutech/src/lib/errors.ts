@@ -8,6 +8,11 @@
 export enum ErrorCode {
   // Authentication Errors
   AUTH_INVALID_CREDENTIALS = 'AUTH_INVALID_CREDENTIALS',
+  AUTH_FAILED = 'AUTH_FAILED',
+  AUTH_REQUIRED = 'AUTH_REQUIRED',
+  AUTH_TOKEN_EXPIRED = 'AUTH_TOKEN_EXPIRED',
+  AUTH_TOKEN_INVALID = 'AUTH_TOKEN_INVALID',
+  AUTH_EMAIL_NOT_VERIFIED = 'AUTH_EMAIL_NOT_VERIFIED',
   AUTH_USER_NOT_FOUND = 'AUTH_USER_NOT_FOUND',
   AUTH_EMAIL_ALREADY_EXISTS = 'AUTH_EMAIL_ALREADY_EXISTS',
   AUTH_WEAK_PASSWORD = 'AUTH_WEAK_PASSWORD',
@@ -16,6 +21,8 @@ export enum ErrorCode {
   
   // Course Errors
   COURSE_NOT_FOUND = 'COURSE_NOT_FOUND',
+  COURSE_FETCH_FAILED = 'COURSE_FETCH_FAILED',
+  COURSES_FETCH_FAILED = 'COURSES_FETCH_FAILED',
   COURSE_ALREADY_ENROLLED = 'COURSE_ALREADY_ENROLLED',
   COURSE_ENROLLMENT_FAILED = 'COURSE_ENROLLMENT_FAILED',
   COURSE_ACCESS_DENIED = 'COURSE_ACCESS_DENIED',
@@ -28,6 +35,7 @@ export enum ErrorCode {
   SUBSCRIPTION_PAYMENT_FAILED = 'SUBSCRIPTION_PAYMENT_FAILED',
   SUBSCRIPTION_NOT_FOUND = 'SUBSCRIPTION_NOT_FOUND',
   SUBSCRIPTION_EXPIRED = 'SUBSCRIPTION_EXPIRED',
+  SUBSCRIPTION_REQUIRED = 'SUBSCRIPTION_REQUIRED',
   
   // Class Management Errors
   CLASS_NOT_FOUND = 'CLASS_NOT_FOUND',
@@ -56,6 +64,7 @@ export enum ErrorCode {
   NETWORK_OFFLINE = 'NETWORK_OFFLINE',
   
   // Validation Errors
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
   VALIDATION_FAILED = 'VALIDATION_FAILED',
   VALIDATION_REQUIRED_FIELD = 'VALIDATION_REQUIRED_FIELD',
   VALIDATION_INVALID_FORMAT = 'VALIDATION_INVALID_FORMAT',
@@ -74,6 +83,11 @@ export enum ErrorCode {
 const ERROR_MESSAGES: Record<ErrorCode, string> = {
   // Authentication
   [ErrorCode.AUTH_INVALID_CREDENTIALS]: 'Invalid email or password. Please try again.',
+  [ErrorCode.AUTH_FAILED]: 'Authentication failed. Please try again.',
+  [ErrorCode.AUTH_REQUIRED]: 'You must be logged in to access this resource.',
+  [ErrorCode.AUTH_TOKEN_EXPIRED]: 'Your authentication token has expired. Please log in again.',
+  [ErrorCode.AUTH_TOKEN_INVALID]: 'Your authentication token is invalid.',
+  [ErrorCode.AUTH_EMAIL_NOT_VERIFIED]: 'Please verify your email address first.',
   [ErrorCode.AUTH_USER_NOT_FOUND]: 'No account found with this email address.',
   [ErrorCode.AUTH_EMAIL_ALREADY_EXISTS]: 'An account with this email already exists.',
   [ErrorCode.AUTH_WEAK_PASSWORD]: 'Password must be at least 8 characters long.',
@@ -82,6 +96,8 @@ const ERROR_MESSAGES: Record<ErrorCode, string> = {
   
   // Courses
   [ErrorCode.COURSE_NOT_FOUND]: 'Course not found. It may have been removed.',
+  [ErrorCode.COURSE_FETCH_FAILED]: 'Unable to fetch course. Please try again.',
+  [ErrorCode.COURSES_FETCH_FAILED]: 'Unable to fetch courses. Please try again.',
   [ErrorCode.COURSE_ALREADY_ENROLLED]: 'You are already enrolled in this course.',
   [ErrorCode.COURSE_ENROLLMENT_FAILED]: 'Unable to enroll in this course. Please try again.',
   [ErrorCode.COURSE_ACCESS_DENIED]: 'This course requires an active subscription.',
@@ -94,6 +110,7 @@ const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ErrorCode.SUBSCRIPTION_PAYMENT_FAILED]: 'Payment failed. Please check your payment details.',
   [ErrorCode.SUBSCRIPTION_NOT_FOUND]: 'No subscription found for your account.',
   [ErrorCode.SUBSCRIPTION_EXPIRED]: 'Your subscription has expired. Please renew to continue.',
+  [ErrorCode.SUBSCRIPTION_REQUIRED]: 'This feature requires an active subscription.',
   
   // Classes
   [ErrorCode.CLASS_NOT_FOUND]: 'Class not found.',
@@ -122,6 +139,7 @@ const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ErrorCode.NETWORK_OFFLINE]: 'You are offline. Some features may not be available.',
   
   // Validation
+  [ErrorCode.VALIDATION_ERROR]: 'Validation error. Please check your input.',
   [ErrorCode.VALIDATION_FAILED]: 'Please check your input and try again.',
   [ErrorCode.VALIDATION_REQUIRED_FIELD]: 'This field is required.',
   [ErrorCode.VALIDATION_INVALID_FORMAT]: 'Invalid format. Please check your input.',

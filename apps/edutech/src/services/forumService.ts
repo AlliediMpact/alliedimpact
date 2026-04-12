@@ -571,30 +571,31 @@ async function checkAndAwardBadges(userId: string): Promise<void> {
     if (!reputation) return;
 
     const newBadges: string[] = [];
+    const badges = reputation.badges || [];
 
     // First Post
-    if (reputation.postsCreated >= 1 && !reputation.badges.includes('first-post')) {
+    if (reputation.postsCreated >= 1 && !badges.includes('first-post')) {
       newBadges.push('first-post');
     }
 
     // Helpful (10+ solutions accepted)
-    if (reputation.solutionsAccepted >= 10 && !reputation.badges.includes('helpful')) {
+    if (reputation.solutionsAccepted >= 10 && !badges.includes('helpful')) {
       newBadges.push('helpful');
     }
 
     // Popular (50+ upvotes)
-    if (reputation.upvotesReceived >= 50 && !reputation.badges.includes('popular')) {
+    if ((reputation.upvotesReceived || 0) >= 50 && !badges.includes('popular')) {
       newBadges.push('popular');
     }
 
     // Expert (100+ points)
-    if (reputation.totalPoints >= 100 && !reputation.badges.includes('expert')) {
+    if (reputation.totalPoints >= 100 && !badges.includes('expert')) {
       newBadges.push('expert');
     }
 
     // Active (50+ posts + replies)
     const totalContributions = reputation.postsCreated + reputation.repliesCreated;
-    if (totalContributions >= 50 && !reputation.badges.includes('active')) {
+    if (totalContributions >= 50 && !badges.includes('active')) {
       newBadges.push('active');
     }
 

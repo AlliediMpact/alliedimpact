@@ -14,6 +14,7 @@ import {
   CheckCircle,
   Target,
   Flame,
+  Users,
 } from 'lucide-react';
 import { PageLoader } from '@allied-impact/ui';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -75,13 +76,14 @@ function DashboardContent({ params }: { params: { locale: string } }) {
   // Load personalized recommendations
   useEffect(() => {
     async function loadRecommendations() {
-      if (!user?.userId) return;
+      if (!platformUser?.userId && !user?.uid) return;
 
       setLoadingRecommendations(true);
       try {
+        const userId = platformUser?.userId || user?.uid || '';
         const enrolledIds = enrollments?.map(e => e.courseId) || [];
         const feed = await getPersonalizedFeed(
-          user.userId,
+          userId,
           enrolledIds,
           platformUser?.primaryTrack,
           currentStats.totalCoursesCompleted
@@ -95,12 +97,12 @@ function DashboardContent({ params }: { params: { locale: string } }) {
     }
 
     loadRecommendations();
-  }, [user?.userId, enrollments, platformUser?.primaryTrack, currentStats.totalCoursesCompleted]);
+  }, [platformUser?.userId, user?.uid, enrollments, platformUser?.primaryTrack, currentStats.totalCoursesCompleted]);
 
   if (loading) {
     return (
       <div className="container py-12">
-        <PageLoader text="Loading your dashboard..." />
+        <PageLoader message="Loading your dashboard..." />
       </div>
     );
   };
@@ -132,11 +134,12 @@ function DashboardContent({ params }: { params: { locale: string } }) {
                   type="button"
                   disabled={onboardingSubmitting || done || !user}
                   onClick={async () => {
-                    if (!user) return;
+                    if (!user && !platformUser) return;
                     try {
                       setOnboardingSubmitting(true);
+                      const userId = platformUser?.userId || user?.uid || '';
                       await completeOnboardingStep(
-                        user.userId,
+                        userId,
                         step.id,
                         learnerOnboardingSteps.length
                       );
@@ -194,10 +197,11 @@ function DashboardContent({ params }: { params: { locale: string } }) {
               type="button"
               disabled={onboardingSubmitting || !user}
               onClick={async () => {
-                if (!user) return;
+                if (!user && !platformUser) return;
                 try {
                   setOnboardingSubmitting(true);
-                  await markOnboardingComplete(user.userId);
+                  const userId = platformUser?.userId || user?.uid || '';
+                  await markOnboardingComplete(userId);
                 } finally {
                   setOnboardingSubmitting(false);
                 }
@@ -509,7 +513,11 @@ function DashboardContent({ params }: { params: { locale: string } }) {
                   <p className="font-medium">{enrollment.courseTitle}</p>
                   <p className="text-sm text-muted-foreground">
                     Last accessed:{' '}
-                    {new Date(enrollment.lastAccessedAt).toLocaleDateString()}
+                    {new Date(
+                      (enrollment.lastAccessedAt as any).toDate 
+                        ? (enrollment.lastAccessedAt as any).toDate() 
+                        : enrollment.lastAccessedAt
+                    ).toLocaleDateString()}
                   </p>
                 </div>
               </div>

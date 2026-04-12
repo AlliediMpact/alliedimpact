@@ -78,7 +78,7 @@ export default function CoursesPage({
     } catch (err: any) {
       const errorMessage = err.userMessage || 'Failed to load courses. Please try again.';
       setError(errorMessage);
-      showToast(errorMessage, 'error');
+      showToast(errorMessage);
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -294,14 +294,10 @@ export default function CoursesPage({
           icon={<BookOpen />}
           title="No courses found"
           description="Try adjusting your search or filters to find what you're looking for."
-          action={
-            <button
-              onClick={handleClearFilters}
-              className="px-6 py-2 bg-primary-blue text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Clear Filters
-            </button>
-          }
+          action={{
+            label: 'Clear Filters',
+            onClick: handleClearFilters,
+          }}
         />
       )}
     </div>

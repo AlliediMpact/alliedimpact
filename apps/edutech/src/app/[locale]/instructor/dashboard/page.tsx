@@ -351,10 +351,15 @@ function InstructorDashboardContent() {
                       <div>
                         <p className="text-sm text-muted-foreground mb-1">Updated</p>
                         <p className="font-semibold text-sm">
-                          {course.lastUpdated.toLocaleDateString('en-ZA', {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                          {(course.lastUpdated as any).toDate
+                            ? (course.lastUpdated as any).toDate().toLocaleDateString('en-ZA', {
+                                month: 'short',
+                                day: 'numeric',
+                              })
+                            : new Date(course.lastUpdated as string).toLocaleDateString('en-ZA', {
+                                month: 'short',
+                                day: 'numeric',
+                              })}
                         </p>
                       </div>
                     </div>

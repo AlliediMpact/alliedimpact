@@ -116,7 +116,7 @@ test.describe('Course Browsing and Enrollment', () => {
     await page.goto('/courses');
     
     // Click first course
-    await page.click('[data-testid="course-card"]').first();
+    await page.locator('[data-testid="course-card"]').first().click();
     
     // Should be on course details page
     await expect(page.locator('h1')).toBeVisible();
@@ -140,13 +140,13 @@ test.describe('Learning Experience', () => {
     await page.goto('/dashboard');
     
     // Click on an enrolled course
-    await page.click('[data-testid="enrolled-course"]').first();
+    await page.locator('[data-testid="enrolled-course"]').first().click();
     
     // Should see lesson list
     await expect(page.locator('[data-testid="lesson-item"]')).toBeVisible();
     
     // Click first lesson
-    await page.click('[data-testid="lesson-item"]').first();
+    await page.locator('[data-testid="lesson-item"]').first().click();
     
     // Read lesson content
     await expect(page.locator('[data-testid="lesson-content"]')).toBeVisible();
@@ -212,7 +212,7 @@ test.describe('Forum Interaction', () => {
     await page.goto('/forum');
     
     // Click on first post
-    await page.click('[data-testid="forum-post"]').first();
+    await page.locator('[data-testid="forum-post"]').first().click();
     
     // Fill reply
     await page.fill('textarea[placeholder*="reply" i]', 'This is my reply');
@@ -263,7 +263,7 @@ test.describe('Subscription Management', () => {
     
     // Try to access premium course
     await page.goto('/courses');
-    await page.click('[data-testid="premium-badge"]').first();
+    await page.locator('[data-testid="premium-badge"]').first().click();
     
     // Should see upgrade prompt
     await expect(page.locator('text=/premium|upgrade|subscribe/i')).toBeVisible();

@@ -17,7 +17,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import type { Course, CourseModule } from '@/types';
-import { EduTechError } from '@/lib/errors';
+import { EduTechError, ErrorCode } from '@/lib/errors';
 import { retryWithBackoff } from '@/lib/retry';
 
 // Collection name
@@ -78,7 +78,8 @@ export async function getCoursesPaginated(
       let newLastDoc: QueryDocumentSnapshot | null = null;
       let hasMore = false;
 
-      querySnapshot.forEach((doc, index) => {
+      querySnapshot.forEach((doc) => {
+        const index = Array.from(querySnapshot.docs).indexOf(doc);
         if (index < pageSize) {
           const data = doc.data();
           courses.push({
@@ -113,7 +114,7 @@ export async function getCoursesPaginated(
     });
   } catch (error) {
     throw new EduTechError(
-      'COURSES_FETCH_FAILED',
+      ErrorCode.COURSES_FETCH_FAILED,
       'Unable to load courses. Please try again.',
       error
     );
@@ -158,7 +159,7 @@ export async function getCourse(courseId: string): Promise<Course | null> {
     });
   } catch (error) {
     throw new EduTechError(
-      'COURSE_FETCH_FAILED',
+      ErrorCode.COURSE_FETCH_FAILED,
       'Unable to load course details. Please try again.',
       error
     );

@@ -118,9 +118,11 @@ function CertificatesContent({ params }: { params: { locale: string } }) {
             <Calendar className="h-8 w-8 text-green-600" />
             <span className="text-3xl font-bold text-green-700">
               {certificates.filter(
-                (c) =>
-                  new Date(c.issuedAt).getMonth() === new Date().getMonth() &&
-                  new Date(c.issuedAt).getFullYear() === new Date().getFullYear()
+                (c) => {
+                  const certDate = (c.issuedAt as any).toDate ? (c.issuedAt as any).toDate() : c.issuedAt;
+                  return new Date(certDate).getMonth() === new Date().getMonth() &&
+                         new Date(certDate).getFullYear() === new Date().getFullYear();
+                }
               ).length}
             </span>
           </div>
@@ -142,7 +144,8 @@ function CertificatesContent({ params }: { params: { locale: string } }) {
       {certificates.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {certificates.map((certificate) => {
-            const issuedDate = new Date(certificate.issuedAt).toLocaleDateString('en-US', {
+            const certDate = (certificate.issuedAt as any).toDate ? (certificate.issuedAt as any).toDate() : certificate.issuedAt;
+            const issuedDate = new Date(certDate).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
