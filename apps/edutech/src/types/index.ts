@@ -480,7 +480,4 @@ export interface Subscription {
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
-  upvotesReceived: number;
-  downvotesReceived: number;
-  badges: string[];
-}
+

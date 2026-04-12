@@ -67,78 +67,71 @@ export default function Header() {
                   <span>{user.displayName || user.email}</span>
                 </button>
               
-              {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-background border rounded-lg shadow-lg">
-                  <Link
-                    href="/en/dashboard"
-                    className="block px-4 py-2 text-sm hover:bg-muted"
-                    onClick={() => setUserMenuOpen(false)}
-                  >
-                    {t('navigation.dashboard')}
-                  </Link>
-                  {isInstructor && (
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-background border rounded-lg shadow-lg">
                     <Link
-                      href="/en/instructor/dashboard"
-                      className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"
-                      onClick={() => setUserMenuOpen(false)}
-                    >56 bg-background border rounded-lg shadow-lg py-1">
-                  <Link
-                    href="/en/dashboard"
-                    className="block px-4 py-2 text-sm hover:bg-muted"
-                    onClick={() => setUserMenuOpen(false)}
-                  >
-                    {t('navigation.dashboard')}
-                  </Link>
-                  
-                  {/* Role-based dashboards */}
-                  {user.userType === 'facilitator' && (
-                    <Link
-                      href="/en/facilitator/dashboard"
-                      className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
+                      href="/en/dashboard"
+                      className="block px-4 py-2 text-sm hover:bg-muted"
                       onClick={() => setUserMenuOpen(false)}
                     >
-                      <Users className="h-4 w-4" />
-                      <span>Facilitator Dashboard</span>
+                      {t('navigation.dashboard')}
                     </Link>
-                  )}
-                  
-                  {user.userType === 'content_admin' && (
+                    
+                    {/* Role-based dashboards */}
+                    {user.userType === 'facilitator' && (
+                      <Link
+                        href="/en/facilitator/dashboard"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Users className="h-4 w-4" />
+                        <span>Facilitator Dashboard</span>
+                      </Link>
+                    )}
+                    
+                    {user.userType === 'content_admin' && (
+                      <Link
+                        href="/en/content-admin/dashboard"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <BookOpen className="h-4 w-4" />
+                        <span>Content Admin</span>
+                      </Link>
+                    )}
+                    
+                    {user.userType === 'system_admin' && (
+                      <Link
+                        href="/en/admin/dashboard"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4" />
+                        <span>Admin Panel</span>
+                      </Link>
+                    )}
+                    
                     <Link
-                      href="/en/content-admin/dashboard"
+                      href="/en/certificates"
                       className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
                       onClick={() => setUserMenuOpen(false)}
                     >
-                      <BookOpen className="h-4 w-4" />
-                      <span>Content Admin</span>
+                      <Award className="h-4 w-4" />
+                      <span>Certificates</span>
                     </Link>
-                  )}
-                  
-                  {user.userType === 'system_admin' && (
-                    <Link
-                      href="/en/admin/dashboard"
-                      className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted border-t"
-                      onClick={() => setUserMenuOpen(false)}
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setUserMenuOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-muted flex items-center space-x-2 border-t"
                     >
-                      <Settings className="h-4 w-4" />
-                      <span>Admin Panel space-x-2 px-4 py-2 text-sm hover:bg-muted"
-                    onClick={() => setUserMenuOpen(false)}
-                  >
-                    <Award className="h-4 w-4" />
-                    <span>Certificates</span>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      signOut();
-                      setUserMenuOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-muted flex items-center space-x-2"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>{t('common.logout')}</span>
-                  </button>
-                </div>
-              )}
-            </div>
+                      <LogOut className="h-4 w-4" />
+                      <span>{t('common.logout')}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
           ) : (
             <>
               <Link
