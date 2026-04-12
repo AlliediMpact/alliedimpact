@@ -236,8 +236,8 @@ export default function AboutPage() {
         <div className="container text-center">
           <h2 className="text-3xl font-bold mb-4">Join Our Learning Community</h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Whether you're starting with computer basics or launching a coding career,
-            we're here to support your journey.
+            Whether you&apos;re starting with computer basics or launching a coding career,
+            we&apos;re here to support your journey.
           </p>
           <div className="flex items-center justify-center space-x-4">
             <a

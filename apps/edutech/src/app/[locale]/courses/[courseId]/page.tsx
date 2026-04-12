@@ -417,7 +417,7 @@ export default function CourseDetailPage({
           <div className="lg:col-span-2 space-y-8">
             {/* What You'll Learn */}
             <section>
-              <h2 className="text-2xl font-bold mb-4">What you'll learn</h2>
+              <h2 className="text-2xl font-bold mb-4">What you&apos;ll learn</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {(course.skillsYouWillLearn || []).map((skill, index) => (
                   <div key={index} className="flex items-start space-x-2">

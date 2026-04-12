@@ -458,7 +458,7 @@ function DashboardContent({ params }: { params: { locale: string } }) {
           <div className="bg-background border rounded-xl p-12 text-center">
             <BookOpen className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">
-              You haven't enrolled in any courses yet
+              You haven&apos;t enrolled in any courses yet
             </h3>
             <p className="text-muted-foreground mb-6">
               Start your learning journey today!

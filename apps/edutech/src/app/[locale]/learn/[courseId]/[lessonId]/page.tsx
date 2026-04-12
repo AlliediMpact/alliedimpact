@@ -192,8 +192,8 @@ function LessonContent({
   // Find current lesson
   useEffect(() => {
     if (course) {
-      for (const module of course.modules) {
-        const lesson = module.lessons.find((l) => l.lessonId === params.lessonId);
+      for (const courseModule of course.modules) {
+        const lesson = courseModule.lessons.find((l) => l.lessonId === params.lessonId);
         if (lesson) {
           setCurrentLesson(lesson);
           setLessonCompleted(completedLessons.includes(lesson.lessonId));

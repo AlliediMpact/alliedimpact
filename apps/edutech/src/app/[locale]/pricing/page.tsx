@@ -198,7 +198,7 @@ export default function PricingPage({ params }: { params: { locale: string } }) 
           <div className="space-y-6">
             <div>
               <h3 className="font-semibold mb-2">
-                What's included in the free Computer Skills track?
+                What&apos;s included in the free Computer Skills track?
               </h3>
               <p className="text-muted-foreground">
                 The Computer Skills track includes courses on basic computer operation,
@@ -214,7 +214,7 @@ export default function PricingPage({ params }: { params: { locale: string } }) 
               </h3>
               <p className="text-muted-foreground">
                 Absolutely! You can upgrade to the Coding Track anytime. Your progress
-                in the Computer Skills courses will be saved, and you'll gain immediate
+                in the Computer Skills courses will be saved, and you&apos;ll gain immediate
                 access to all premium coding content.
               </p>
             </div>
@@ -222,8 +222,8 @@ export default function PricingPage({ params }: { params: { locale: string } }) 
             <div>
               <h3 className="font-semibold mb-2">Is there a free trial for the Coding Track?</h3>
               <p className="text-muted-foreground">
-                Yes! We offer a 30-day FREE trial for the Coding Track. You'll have full
-                access to all coding courses during the trial, and you won't be charged
+                Yes! We offer a 30-day FREE trial for the Coding Track. You&apos;ll have full
+                access to all coding courses during the trial, and you won&apos;t be charged
                 unless you decide to continue after the trial ends.
               </p>
             </div>
