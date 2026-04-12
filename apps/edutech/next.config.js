@@ -89,16 +89,6 @@ const nextConfig = {
     // Enable when needed
   },
   
-  // Redirects
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/en',
-        permanent: false,
-      },
-    ];
-  },
 };
 
 // Wrap with Sentry for error monitoring
