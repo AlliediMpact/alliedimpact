@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { GraduationCap, Users, Target, Heart, Sparkles, Globe } from 'lucide-react';
 
 export default function AboutPage() {

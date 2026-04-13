@@ -14,9 +14,11 @@ import { NotificationCenter } from '@/components/notifications/NotificationCente
 import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@alliedimpact/ui';
 import '../globals.css';
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+// Prevent static pre-rendering - all pages use server-side rendering
+export const dynamic = 'force-dynamic';
+
+// Removed generateStaticParams() to prevent static export attempt
+// All locale variants are served via server-side rendering
 
 export const metadata: Metadata = {
   title: {

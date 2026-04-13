@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
+  // Disable static export to allow server-side rendering for dynamic routes
+  // This is required for 'use client' components with dynamic data and auth
+  skipTrailingSlashRedirect: true,
   
   // Internationalization
   i18n: {
@@ -88,7 +92,6 @@ const nextConfig = {
   experimental: {
     // Enable when needed
   },
-  
 };
 
 // Wrap with Sentry for error monitoring
