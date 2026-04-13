@@ -51,7 +51,7 @@ function NotificationsContent() {
       message: 'You successfully sent R150 to John Doe.',
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
       read: true,
-      actionUrl: 'https://coinbox.alliedimpact.com',
+      actionUrl: 'https://coinbox.alliedimpact.co.za',
       actionLabel: 'View Transaction',
     },
     {
@@ -71,7 +71,7 @@ function NotificationsContent() {
       message: 'You\'re 75% through "Introduction to Digital Skills". Keep it up!',
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 days ago
       read: true,
-      actionUrl: 'https://umkhanyakude.alliedimpact.com',
+      actionUrl: 'https://umkhanyakude.alliedimpact.co.za',
       actionLabel: 'Continue Learning',
     },
     {
@@ -81,7 +81,7 @@ function NotificationsContent() {
       message: 'Sarah Williams commented on your project "Website Redesign".',
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), // 5 days ago
       read: true,
-      actionUrl: 'https://myprojects.alliedimpact.com',
+      actionUrl: 'https://myprojects.alliedimpact.co.za',
       actionLabel: 'View Comment',
     },
   ]);

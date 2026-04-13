@@ -27,7 +27,7 @@ export default function ContactPage() {
       if (!db) {
         setSubmitStatus({
           type: 'error',
-          message: 'Service temporarily unavailable. Please try again later or email us directly at hello@alliedimpact.co.za',
+          message: 'Service temporarily unavailable. Please try again later or email us directly at support@alliedimpact.co.za',
         });
         setLoading(false);
         return;
@@ -58,7 +58,7 @@ export default function ContactPage() {
       console.error('Contact form submission error:', error);
       setSubmitStatus({
         type: 'error',
-        message: 'Failed to send message. Please try again or contact us directly at support@alliedimpact.com',
+        message: 'Failed to send message. Please try again or contact us directly at support@alliedimpact.co.za',
       });
     } finally {
       setLoading(false);
@@ -76,9 +76,9 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: 'Email Us',
-      value: 'support@alliedimpact.com',
+      value: 'support@alliedimpact.co.za',
       description: 'Get a response within 24 hours',
-      link: 'mailto:support@alliedimpact.com',
+      link: 'mailto:support@alliedimpact.co.za',
     },
     {
       icon: Phone,

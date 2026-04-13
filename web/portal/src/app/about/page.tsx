@@ -42,7 +42,7 @@ export default function AboutPage() {
     { year: '2023', title: 'Founded', description: 'Allied iMpact launches with vision to unify digital services' },
     { year: '2024', title: 'Coin Box Launch', description: 'First product goes live, serving 8,500+ users' },
     { year: '2024', title: 'My Projects Launch', description: 'Project management platform reaches 1,200+ users' },
-    { year: '2025', title: 'uMkhanyakude Launch', description: 'Education platform empowers 2,800+ students' },
+    { year: '2024', title: 'My Projects Launch', description: 'Project management platform reaches 1,200+ users' },
     { year: '2026', title: 'Platform Expansion', description: 'Three new products launching throughout the year' },
   ];
 
@@ -186,10 +186,34 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
                 <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-semibold">CareerBox</h3>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">LIVE</span>
+                </div>
+                <p className="text-sm text-muted-foreground">AI-powered career matching and job opportunities</p>
+              </div>
+
+              <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
+                <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xl font-semibold">Coin Box</h3>
                   <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">LIVE</span>
                 </div>
                 <p className="text-sm text-muted-foreground">P2P financial platform for savings and transfers</p>
+              </div>
+
+              <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-semibold">Drive Master</h3>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">LIVE</span>
+                </div>
+                <p className="text-sm text-muted-foreground">Professional driver training and licensing prep</p>
+              </div>
+
+              <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xl font-semibold">EduTech</h3>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">LIVE</span>
+                </div>
+                <p className="text-sm text-muted-foreground">Technology education and coding bootcamps</p>
               </div>
 
               <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
@@ -202,34 +226,10 @@ export default function AboutPage() {
 
               <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold">uMkhanyakude</h3>
+                  <h3 className="text-xl font-semibold">SportsHub</h3>
                   <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">LIVE</span>
                 </div>
-                <p className="text-sm text-muted-foreground">Community education and skills development</p>
-              </div>
-
-              <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold">Drive Master</h3>
-                  <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">COMING SOON</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Comprehensive driver training and licensing</p>
-              </div>
-
-              <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold">CodeTech</h3>
-                  <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">COMING SOON</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Professional tech education and career development</p>
-              </div>
-
-              <div className="p-6 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold">Cup Final</h3>
-                  <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">COMING SOON</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Sports tournament and league management</p>
+                <p className="text-sm text-muted-foreground">Sports community and tournament management</p>
               </div>
             </div>
 
@@ -242,9 +242,6 @@ export default function AboutPage() {
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="w-full py-20 bg-gradient-to-br from-primary-blue to-primary-purple text-white">

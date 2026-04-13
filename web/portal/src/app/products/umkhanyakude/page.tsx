@@ -78,7 +78,7 @@ export default function UmkhanyakudePage() {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link 
-                  href="https://umkhanyakude.alliedimpact.com"
+                  href="https://umkhanyakude.alliedimpact.co.za"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center bg-white text-primary-blue hover:bg-gray-100 font-semibold px-8 py-4 rounded-lg transition-colors group"
@@ -191,7 +191,7 @@ export default function UmkhanyakudePage() {
             </p>
             <div className="pt-4">
               <Link 
-                href="https://umkhanyakude.alliedimpact.com"
+                href="https://umkhanyakude.alliedimpact.co.za"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center bg-white text-primary-blue hover:bg-gray-100 font-semibold px-8 py-4 rounded-lg transition-colors group text-lg"

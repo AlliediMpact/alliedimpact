@@ -16,33 +16,28 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const products = [
-    { name: 'Coin Box', href: '/products/coinbox', description: 'Financial Platform' },
-    { name: 'My Projects', href: '/products/myprojects', description: 'Project Management' },
-    { name: 'Drive Master', href: '/products/drivemaster', description: 'Driver Training' },
-    { name: 'CodeTech', href: '/products/codetech', description: 'Learn to Code' },
-    { name: 'Cup Final', href: '/products/cupfinal', description: 'Sports Management' },
-    { name: 'uMkhanyakude', href: '/products/umkhanyakude', description: 'Community Platform' },
+    { name: 'CareerBox', href: 'https://careerbox.alliedimpact.co.za', description: 'Career Platform' },
+    { name: 'CoinBox', href: 'https://coinbox.alliedimpact.co.za', description: 'Financial Platform' },
+    { name: 'DriveMaster', href: 'https://drivemaster.alliedimpact.co.za', description: 'Driver Training' },
+    { name: 'EduTech', href: 'https://edutech.alliedimpact.co.za', description: 'Tech Education' },
+    { name: 'MyProjects', href: 'https://myprojects.alliedimpact.co.za', description: 'Project Management' },
+    { name: 'SportsHub', href: 'https://sportshup.alliedimpact.co.za', description: 'Sports Community' },
   ];
 
   const company = [
     { name: 'About Us', href: '/about' },
     { name: 'Contact', href: '/contact' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Blog', href: '/blog' },
   ];
 
   const resources = [
-    { name: 'Help Center', href: '/help' },
     { name: 'Documentation', href: '/docs' },
-    { name: 'API Reference', href: '/api' },
     { name: 'System Status', href: '/status' },
   ];
 
   const legal = [
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Cookie Policy', href: '/cookies' },
-    { name: 'Compliance', href: '/compliance' },
+    { name: 'Terms of Service', href: '/legal/terms' },
+    { name: 'Privacy Policy', href: '/legal/privacy' },
+    { name: 'Cookie Policy', href: '/legal/cookies' },
   ];
 
   const social = [

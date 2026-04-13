@@ -70,6 +70,32 @@ const nextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      // Redirect deprecated products to products page
+      {
+        source: '/products/codetech',
+        destination: '/products',
+        permanent: true,
+      },
+      {
+        source: '/products/cupfinal',
+        destination: '/products',
+        permanent: true,
+      },
+      {
+        source: '/products/umkhanyakude',
+        destination: '/products',
+        permanent: true,
+      },
+      // Alternative: redirect to the main products page with deprecated product info
+      {
+        source: '/products/cup-final',
+        destination: '/products',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

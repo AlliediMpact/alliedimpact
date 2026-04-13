@@ -85,12 +85,12 @@ describe('DashboardPage', () => {
 
     render(<DashboardPage />);
 
+    expect(screen.getByText('CareerBox')).toBeInTheDocument();
     expect(screen.getByText('Coin Box')).toBeInTheDocument();
-    expect(screen.getByText('My Projects')).toBeInTheDocument();
-    expect(screen.getByText('uMkhanyakude')).toBeInTheDocument();
     expect(screen.getByText('Drive Master')).toBeInTheDocument();
-    expect(screen.getByText('Code Tech')).toBeInTheDocument();
-    expect(screen.getByText('Cup Final')).toBeInTheDocument();
+    expect(screen.getByText('EduTech')).toBeInTheDocument();
+    expect(screen.getByText('My Projects')).toBeInTheDocument();
+    expect(screen.getByText('SportsHub')).toBeInTheDocument();
   });
 
   it('should show active status for available products', () => {

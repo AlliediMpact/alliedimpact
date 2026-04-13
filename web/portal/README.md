@@ -1,8 +1,8 @@
 # Allied iMpact Platform Portal
 
-> **Status:** ✅ Production Ready  
-> **Version:** 1.0.0  
-> **Last Updated:** January 9, 2026
+> **Status:** ✅ LIVE  
+> **URL:** www.alliedimpact.co.za  
+> **Last Updated:** April 13, 2026
 
 ## 🎯 Overview
 

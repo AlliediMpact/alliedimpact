@@ -25,16 +25,17 @@ export default function HeroSection() {
 
           {/* Main Heading */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
-            Welcome to{' '}
+            Building Digital Solutions{' '}
             <span className="text-yellow-300">
-              Allied iMpact
-            </span>
+              That Empower
+            </span>{' '}
+            People, Businesses, and Communities
           </h1>
 
           {/* Subheading */}
           <p className="text-xl sm:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-            One platform. Six powerful products. Sign up once and access financial services, 
-            project management, education, sports engagement, and more—all with a single account.
+            Allied iMpact builds world-class digital solutions focused on African markets. 
+            From fintech to education, we create platforms that solve real problems and unlock opportunity.
           </p>
 
           {/* Feature Pills */}

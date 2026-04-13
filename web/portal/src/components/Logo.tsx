@@ -24,19 +24,19 @@ export default function Logo({ className = '', showText = true, size = 'md' }: L
       className={`flex items-center gap-2 logo-animated ${className}`}
       aria-label="Allied iMpact Home"
     >
-      {/* Logo Icon - Using text for now, can be replaced with actual logo */}
+      {/* Logo Icon - Using actual logo image */}
       <div 
-        className="font-bold rounded-lg flex items-center justify-center"
-        style={{ 
-          width: `${width}px`, 
-          height: `${height}px`,
-          background: 'linear-gradient(135deg, #193281 0%, #5e17eb 100%)',
-          color: 'white'
-        }}
+        className="flex items-center justify-center"
+        style={{ width: `${width}px`, height: `${height}px` }}
       >
-        <span className={`${size === 'sm' ? 'text-sm' : size === 'md' ? 'text-lg' : 'text-xl'}`}>
-          AI
-        </span>
+        <Image 
+          src="/logo.png"
+          alt="Allied iMpact"
+          width={width}
+          height={height}
+          priority
+          className="rounded-lg"
+        />
       </div>
       
       {showText && (

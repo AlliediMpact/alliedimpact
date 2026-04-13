@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Wallet, FolderKanban, GraduationCap, Car, Code, Trophy, Bell, Settings, TrendingUp } from 'lucide-react';
+import { ArrowRight, Wallet, FolderKanban, GraduationCap, Car, Briefcase, BookOpen, Zap, Bell, Settings, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,14 +10,44 @@ function DashboardContent() {
 
   const products = [
     {
+      id: 'careerbox',
+      name: 'CareerBox',
+      icon: Briefcase,
+      status: 'active',
+      description: 'AI-Powered Career Platform',
+      url: 'https://careerbox.alliedimpact.co.za',
+      stats: { label: 'Job Matches', value: '450+' },
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
       id: 'coinbox',
       name: 'Coin Box',
       icon: Wallet,
       status: 'active',
       description: 'P2P Financial Platform',
-      url: 'https://coinbox.alliedimpact.com',
+      url: 'https://coinbox.alliedimpact.co.za',
       stats: { label: 'Balance', value: 'R2,450' },
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-green-500 to-green-600',
+    },
+    {
+      id: 'drivemaster',
+      name: 'Drive Master',
+      icon: Car,
+      status: 'active',
+      description: 'Driver Training Platform',
+      url: 'https://drivemaster.alliedimpact.co.za',
+      stats: { label: 'Lessons Booked', value: '12' },
+      color: 'from-purple-500 to-purple-600',
+    },
+    {
+      id: 'edutech',
+      name: 'EduTech',
+      icon: BookOpen,
+      status: 'active',
+      description: 'Technology Education',
+      url: 'https://edutech.alliedimpact.co.za',
+      stats: { label: 'Courses Enrolled', value: '3' },
+      color: 'from-pink-500 to-pink-600',
     },
     {
       id: 'myprojects',
@@ -25,61 +55,31 @@ function DashboardContent() {
       icon: FolderKanban,
       status: 'active',
       description: 'Project Management',
-      url: 'https://myprojects.alliedimpact.com',
-      stats: { label: 'Active Projects', value: '3' },
-      color: 'from-purple-500 to-purple-600',
-    },
-    {
-      id: 'umkhanyakude',
-      name: 'uMkhanyakude',
-      icon: GraduationCap,
-      status: 'active',
-      description: 'Community Education',
-      url: 'https://umkhanyakude.alliedimpact.com',
-      stats: { label: 'Courses', value: '2 in progress' },
-      color: 'from-green-500 to-green-600',
-    },
-    {
-      id: 'drivemaster',
-      name: 'Drive Master',
-      icon: Car,
-      status: 'coming-soon',
-      description: 'Driver Training',
-      url: '#',
-      stats: { label: 'Status', value: 'Coming Q2 2026' },
+      url: 'https://myprojects.alliedimpact.co.za',
+      stats: { label: 'Active Projects', value: '5' },
       color: 'from-orange-500 to-orange-600',
     },
     {
-      id: 'codetech',
-      name: 'CodeTech',
-      icon: Code,
-      status: 'coming-soon',
-      description: 'Tech Education',
-      url: '#',
-      stats: { label: 'Status', value: 'Coming Q3 2026' },
-      color: 'from-red-500 to-red-600',
-    },
-    {
-      id: 'cupfinal',
-      name: 'Cup Final',
-      icon: Trophy,
-      status: 'coming-soon',
-      description: 'Sports Management',
-      url: '#',
-      stats: { label: 'Status', value: 'Coming Q4 2026' },
-      color: 'from-yellow-500 to-yellow-600',
+      id: 'sportshup',
+      name: 'SportsHub',
+      icon: Zap,
+      status: 'active',
+      description: 'Sports Community Platform',
+      url: 'https://sportshup.alliedimpact.co.za',
+      stats: { label: 'Tournaments', value: '8' },
+      color: 'from-amber-500 to-amber-600',
     },
   ];
 
   const recentActivity = [
     { product: 'Coin Box', action: 'Received R500 from Sarah M.', time: '2 hours ago', icon: Wallet },
     { product: 'My Projects', action: 'Task completed: Design Homepage', time: '5 hours ago', icon: FolderKanban },
-    { product: 'uMkhanyakude', action: 'Completed lesson: Financial Literacy 101', time: '1 day ago', icon: GraduationCap },
-    { product: 'Coin Box', action: 'Added R1,000 to Emergency Fund jar', time: '2 days ago', icon: Wallet },
+    { product: 'CareerBox', action: 'Job match found: Senior Developer', time: '1 day ago', icon: Briefcase },
+    { product: 'EduTech', action: 'Completed module: JavaScript Basics', time: '2 days ago', icon: BookOpen },
   ];
 
   const notifications = [
-    { title: 'Drive Master Launch', message: 'Be among the first to join when we launch in Q2 2026', type: 'info' },
+    { title: 'Drive Master Now Live', message: 'Start your driver training journey today', type: 'success' },
     { title: 'My Projects Update', message: 'New features available: Gantt charts and time tracking', type: 'success' },
     { title: 'Security Alert', message: 'New login from Johannesburg, South Africa', type: 'warning' },
   ];
@@ -102,8 +102,8 @@ function DashboardContent() {
               <span className="text-sm text-muted-foreground">Active Products</span>
               <TrendingUp className="w-5 h-5 text-green-500" />
             </div>
-            <div className="text-3xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground mt-1">Coin Box, My Projects, uMkhanyakude</p>
+            <div className="text-3xl font-bold">6</div>
+            <p className="text-xs text-muted-foreground mt-1">CareerBox, CoinBox, DriveMaster, EduTech, MyProjects, SportsHub</p>
           </div>
 
           <div className="bg-background p-6 rounded-xl border-2 border-muted">

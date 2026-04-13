@@ -1,13 +1,11 @@
 # 🏢 Allied iMpact Platform
 
-> **One Identity. Eight Products. Built for Scale.**
+> **One Identity. Six Products. All Live.**
 
-**🚀 Launching February 25, 2026 | All 8 Apps Production-Ready**  
-**📅 Last Updated**: February 17, 2026 | **🎯 Launch Countdown**: 8 Days
+**🚀 LIVE NOW | www.alliedimpact.co.za**  
+**📅 Last Updated**: April 13, 2026
 
-Allied iMpact is a **multi-product digital platform ecosystem** delivering 8 independent applications under a unified identity and entitlements system. This monorepo powers the complete platform: shared services, production apps, and unified dashboard.
-
-**✅ Latest**: PWA implementation complete across all apps (Feb 17, 2026) - all apps now installable to home screen on Android/iOS/Desktop without app store approval!
+Allied iMpact is a **multi-product digital platform ecosystem** delivering 6 independent applications under a unified identity and entitlements system. This monorepo powers the complete platform: shared services, production apps, and unified dashboard.
 
 ---
 

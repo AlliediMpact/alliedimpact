@@ -12,9 +12,9 @@ describe('Footer Component', () => {
   it('renders all product links', () => {
     render(<Footer />);
 
+    expect(screen.getByRole('link', { name: /careerbox/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /coin box/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /drive master/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /codetech/i })).toBeInTheDocument();
   });
 
   it('renders company links', () => {

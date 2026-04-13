@@ -110,7 +110,7 @@ export default function SignUpPage() {
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl">Create Account</CardTitle>
             <CardDescription>
-              Sign up once and get access to Coin Box, Drive Master, CodeTech, and more
+              Sign up once and get access to CareerBox, CoinBox, DriveMaster, EduTech, MyProjects, and SportsHub
             </CardDescription>
           </CardHeader>
           <CardContent>
