@@ -263,8 +263,11 @@ export default function WalletPage() {
                     </>
                   )}
                 </Button>
+              </form>
+            </CardContent>
+          </Card>
 
-              Info Banner */}
+          {/* Info Banner */}
           <Card className="bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900">
             <CardContent className="p-6">
               <h3 className="font-semibold text-blue-900 dark:text-blue-400 mb-2">💡 How Wallet Works</h3>
@@ -277,7 +280,7 @@ export default function WalletPage() {
               </ul>
             </CardContent>
           </Card>
-        </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="transactions">
@@ -285,8 +288,7 @@ export default function WalletPage() {
               <EnhancedWalletTransactions userId={currentUser.uid} />
             )}
           </TabsContent>
-        </Tabsrd>
-        </div>
+        </Tabs>
 
         {/* Info Banner */}
         <Card className="mt-8 bg-blue-50 border-blue-200">
