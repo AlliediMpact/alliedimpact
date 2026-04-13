@@ -242,6 +242,9 @@ export default function AboutPage() {
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="w-full py-20 bg-gradient-to-br from-primary-blue to-primary-purple text-white">
