@@ -34,9 +34,7 @@ const messagesMap: Record<string, any> = {
   xh: xhMessages,
 };
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+export const dynamic = 'force-dynamic';
 
 export default function LocaleLayout({ children, params: { locale } }: Props) {
   // Validate that the incoming `locale` parameter is valid

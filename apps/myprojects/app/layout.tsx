@@ -8,6 +8,8 @@ import { ProjectProvider } from '@/contexts/ProjectContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: {
     default: 'MyProjects - Custom Development Tracking',

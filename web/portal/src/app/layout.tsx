@@ -9,6 +9,8 @@ import { WebVitalsReporter } from '@/components/WebVitalsReporter';
 import { AccessibilityMonitor } from '@/components/AccessibilityMonitor';
 import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@allied-impact/ui';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: {
     default: 'Allied iMpact - One Identity. Multiple Products.',

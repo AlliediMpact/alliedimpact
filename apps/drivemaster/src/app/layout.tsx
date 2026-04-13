@@ -9,6 +9,8 @@ import PlatformFooter from '@/components/PlatformFooter';
 
 const inter = Inter({ subsets: ['latin'] });
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: {
     default: 'Allied iMpact DriveMaster',
