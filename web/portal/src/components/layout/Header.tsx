@@ -40,7 +40,7 @@ export default function Header() {
         className="sticky top-0 z-40 w-full border-b shadow-sm"
         style={{ backgroundColor: '#193281' }}
       >
-        <nav className="w-full max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-1">
+        <nav className="w-full max-w-7xl mx-auto flex items-start justify-between px-4 sm:px-6 lg:px-8 py-0">
           {/* Logo */}
           <Logo className="text-white" showText={false} size="xl" />
 
