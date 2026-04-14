@@ -18,7 +18,7 @@ const firebaseConfig = {
 };
 
 // Validate configuration
-const validateConfig = (): boolean => {
+const validateConfig = (): { isValid: boolean; missing: string[] } => {
   const required = [
     'NEXT_PUBLIC_FIREBASE_API_KEY',
     'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
@@ -31,37 +31,48 @@ const validateConfig = (): boolean => {
     console.error(
       `⚠️ Missing Firebase environment variables: ${missing.join(', ')}\n` +
       `Please add these to your Vercel project settings:\n` +
-      `https://vercel.com/your-team/portal/settings/environment-variables`
+      `https://vercel.com/your-team/portal/settings/environment-variables`,
+      `\n\nMissing vars: ${JSON.stringify(missing)}`
     );
-    return false;
+    return { isValid: false, missing };
   }
-  return true;
+  return { isValid: true, missing };
 };
 
 // Initialize Firebase
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
+let initError: string | null = null;
 
 export const initializeFirebase = (): FirebaseApp | null => {
   if (typeof window === 'undefined') {
     // Server-side: don't initialize
-    console.warn('Firebase initialization attempted on server-side');
     return null;
   }
 
   // Validate config before initialization
-  if (!validateConfig()) {
-    // Config validation failed - return null and let app handle gracefully
+  const { isValid, missing } = validateConfig();
+  if (!isValid) {
+    const errorMsg = `Firebase configuration incomplete. Missing: ${missing.join(', ')}`;
+    initError = errorMsg;
+    console.error(errorMsg);
     return null;
   }
 
   // Initialize only if not already initialized
   if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-    console.log('✅ Firebase initialized successfully');
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      initError = null;
+      console.log('✅ Firebase initialized successfully');
+    } catch (error) {
+      initError = `Firebase initialization failed: ${error}`;
+      console.error(initError);
+      return null;
+    }
   } else {
     app = getApps()[0];
     auth = getAuth(app);
@@ -70,6 +81,9 @@ export const initializeFirebase = (): FirebaseApp | null => {
 
   return app;
 };
+
+// Export initialization error
+export const getInitError = (): string | null => initError;
 
 // Export auth and db instances
 export const getAuthInstance = (): Auth | null => {

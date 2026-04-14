@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Mail, Lock, User, Phone, AlertCircle, ArrowRight, 
-  CheckCircle2, X, Eye, EyeOff, Info, Loader2, CheckIcon
+  CheckCircle2, X, Eye, EyeOff, Info, Loader2, CheckIcon, RefreshCw
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -23,9 +23,10 @@ const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
 
 interface SignupPageContentProps {
   signUp: ((email: string, password: string, displayName?: string) => Promise<any>) | null;
+  onRetry?: () => void;
 }
 
-export default function SignupPageContent({ signUp }: SignupPageContentProps) {
+export default function SignupPageContent({ signUp, onRetry }: SignupPageContentProps) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -129,23 +130,40 @@ export default function SignupPageContent({ signUp }: SignupPageContentProps) {
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 border border-muted/50">
           {!signUp ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-500 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-200">
-                    Service Unavailable
+                  <p className="text-sm font-semibold text-orange-800 dark:text-orange-200">
+                    Authentication Initializing...
                   </p>
-                  <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-                    The authentication service is currently unavailable. Please try again in a few moments or contact support.
+                  <p className="text-xs text-orange-700 dark:text-orange-300 mt-1">
+                    The authentication service is still loading. Please wait a moment or refresh the page.
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => window.location.reload()}
-                className="w-full py-3 px-4 bg-primary-blue text-white font-semibold rounded-xl hover:bg-primary-blue/90 transition-colors"
-              >
-                Try Again
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="w-full py-3 px-4 bg-primary-blue text-white font-semibold rounded-xl hover:bg-primary-blue/90 transition-colors flex items-center justify-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Refresh Page
+                </button>
+                {onRetry && (
+                  <button
+                    onClick={onRetry}
+                    className="w-full py-3 px-4 border border-primary-blue text-primary-blue font-semibold rounded-xl hover:bg-primary-blue/5 transition-colors"
+                  >
+                    Try Again
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-center text-muted-foreground mt-4">
+                If this issue persists, please{' '}
+                <Link href="/contact" className="text-primary-blue hover:underline">
+                  contact support
+                </Link>
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
