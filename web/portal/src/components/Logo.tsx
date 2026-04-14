@@ -6,7 +6,7 @@ import Image from 'next/image';
 interface LogoProps {
   className?: string;
   showText?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'header' | 'footer';
 }
 
@@ -14,7 +14,8 @@ export default function Logo({ className = '', showText = true, size = 'md', var
   const sizes = {
     sm: { width: 32, height: 32, text: 'text-lg' },
     md: { width: 40, height: 40, text: 'text-xl' },
-    lg: { width: 48, height: 48, text: 'text-2xl' }
+    lg: { width: 48, height: 48, text: 'text-2xl' },
+    xl: { width: 160, height: 160, text: 'text-4xl' }
   };
 
   const { width, height, text } = sizes[size];
