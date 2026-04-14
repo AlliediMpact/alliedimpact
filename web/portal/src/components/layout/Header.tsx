@@ -42,7 +42,7 @@ export default function Header() {
       >
         <nav className="w-full max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
           {/* Logo */}
-          <Logo className="text-white" showText={true} />
+          <Logo className="text-white" showText={false} size="md" />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
