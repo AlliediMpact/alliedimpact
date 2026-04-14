@@ -17,6 +17,27 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Debug logging during build/init
+if (typeof window !== 'undefined') {
+  // Log which vars are actually loaded (client-side only)
+  const vars = [
+    'NEXT_PUBLIC_FIREBASE_API_KEY',
+    'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
+    'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
+  ];
+  const loaded = vars.filter(v => process.env[v]);
+  const missing = vars.filter(v => !process.env[v]);
+  
+  if (missing.length > 0) {
+    console.warn(
+      `🔍 Firebase env vars status:\n` +
+      `✅ Loaded: ${loaded.length}/${vars.length}\n` +
+      `❌ Missing: ${missing.join(', ')}\n` +
+      `💡 Tip: If you just added env vars, Vercel needs to redeploy. Go to Deployments → Redeploy.`
+    );
+  }
+}
+
 // Validate configuration
 const validateConfig = (): { isValid: boolean; missing: string[] } => {
   const required = [
