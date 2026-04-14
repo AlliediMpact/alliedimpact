@@ -40,9 +40,9 @@ export default function Header() {
         className="sticky top-0 z-40 w-full border-b shadow-sm"
         style={{ backgroundColor: '#193281' }}
       >
-        <nav className="w-full max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2.5">
+        <nav className="w-full max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-1">
           {/* Logo */}
-          <Logo className="text-white" showText={false} size="xl" />
+          <Logo className="text-white" showText={false} size="lg" />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
