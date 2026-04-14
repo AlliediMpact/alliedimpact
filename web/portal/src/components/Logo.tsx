@@ -14,7 +14,7 @@ export default function Logo({ className = '', showText = true, size = 'md', var
   const sizes = {
     sm: { width: 32, height: 32, text: 'text-lg' },
     md: { width: 40, height: 40, text: 'text-xl' },
-    lg: { width: 120, height: 96, text: 'text-2xl' },
+    lg: { width: 150, height: 76, text: 'text-2xl' },
     xl: { width: 80, height: 80, text: 'text-4xl' }
   };
 
