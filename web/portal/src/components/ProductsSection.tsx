@@ -98,49 +98,49 @@ export default function ProductsSection() {
                 href={product.href}
                 target={isExternal ? '_blank' : undefined}
                 rel={isExternal ? 'noopener noreferrer' : undefined}
-                className="group"
+                className="group h-full"
               >
-                <div className="h-full p-6 rounded-lg border-2 border-border bg-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-primary-blue">
-                  <div className="flex items-start justify-between mb-4">
+                <div className="h-full p-8 rounded-2xl border-2 border-muted/50 bg-gradient-to-br from-white via-background to-muted/20 dark:from-slate-900 dark:via-background dark:to-muted/20 hover:shadow-2xl hover:border-primary-blue/50 transition-all duration-500 hover:-translate-y-2 backdrop-blur-sm">
+                  <div className="flex items-start justify-between mb-6">
                     <div 
-                      className={`w-14 h-14 rounded-xl bg-gradient-to-br ${product.color} flex items-center justify-center group-hover:scale-110 transition-transform`}
+                      className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${product.color} flex items-center justify-center group-hover:scale-125 transition-transform duration-500 shadow-lg`}
                     >
-                      <Icon className="w-7 h-7 text-white" />
+                      <Icon className="w-8 h-8 text-white" />
                     </div>
                     {product.status === 'live' ? (
-                      <span className="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs font-semibold rounded-full">
-                        Live
+                      <span className="px-4 py-1.5 bg-gradient-to-r from-green-400 to-green-500 text-white text-xs font-bold rounded-full shadow-lg">
+                        LIVE
                       </span>
                     ) : (
-                      <span className="px-3 py-1 bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 text-xs font-semibold rounded-full">
-                        Coming Soon
+                      <span className="px-4 py-1.5 bg-gradient-to-r from-orange-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
+                        COMING
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-2xl font-bold mb-2 group-hover:text-primary-blue transition-colors">
+                  <h3 className="text-2xl font-bold mb-2 group-hover:text-primary-blue transition-colors duration-300">
                     {product.name}
                   </h3>
-                  <p className="text-sm font-medium text-muted-foreground mb-3">
+                  <p className="text-sm font-semibold text-primary-blue mb-3 opacity-75 group-hover:opacity-100 transition-opacity">
                     {product.tagline}
                   </p>
 
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">
                     {product.description}
                   </p>
 
-                  <div className="space-y-2 mb-4">
+                  <div className="space-y-3 mb-6 pb-6 border-b border-muted/50">
                     {product.features.map((feature, index) => (
-                      <div key={index} className="flex items-center text-sm">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary-blue mr-2" />
-                        <span>{feature}</span>
+                      <div key={index} className="flex items-center text-sm font-medium group/feature">
+                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary-blue to-primary-purple mr-3 group-hover/feature:scale-150 transition-transform" />
+                        <span className="group-hover/feature:translate-x-1 transition-transform">{feature}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex items-center text-primary-blue font-medium pt-2 group-hover:translate-x-1 transition-transform">
-                    Learn More
-                    <ArrowRight className="ml-2 w-4 h-4" />
+                  <div className="flex items-center text-primary-blue font-bold group-hover:text-primary-purple group-hover:translate-x-2 transition-all duration-300">
+                    Explore Now
+                    <ArrowRight className="ml-2 w-5 h-5" />
                   </div>
                 </div>
               </Link>

@@ -143,19 +143,23 @@ export default function ServicesPage() {
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
-                <div key={index} className="p-8 rounded-xl border-2 border-muted hover:border-primary-blue transition-all group">
-                  <div className="w-14 h-14 mb-6 rounded-lg bg-primary-blue/10 flex items-center justify-center group-hover:bg-primary-blue/20 transition-colors">
-                    <Icon className="w-7 h-7 text-primary-blue" />
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-3">{service.title}</h3>
-                  <p className="text-muted-foreground mb-6">{service.description}</p>
-                  <div className="space-y-2">
-                    {service.capabilities.map((cap, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-primary-blue flex-shrink-0" />
-                        <span className="text-sm">{cap}</span>
-                      </div>
-                    ))}
+                <div key={index} className="group h-full">
+                  <div className="h-full p-8 rounded-2xl border-2 border-muted/50 bg-gradient-to-br from-white via-background to-muted/20 dark:from-slate-900 dark:via-background dark:to-muted/20 hover:shadow-2xl hover:border-primary-blue/50 transition-all duration-500 hover:-translate-y-2 backdrop-blur-sm">
+                    <div className="w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br from-primary-blue/20 to-primary-purple/20 flex items-center justify-center group-hover:from-primary-blue/30 group-hover:to-primary-purple/30 group-hover:scale-125 transition-all duration-500 border border-primary-blue/20">
+                      <Icon className="w-8 h-8 text-primary-blue" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-3 group-hover:text-primary-blue transition-colors duration-300">{service.title}</h3>
+                    <p className="text-muted-foreground mb-6 leading-relaxed">{service.description}</p>
+                    <div className="space-y-3">
+                      {service.capabilities.map((cap, i) => (
+                        <div key={i} className="flex items-center gap-3 group/item">
+                          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-primary-blue to-primary-purple flex-shrink-0">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                          </div>
+                          <span className="text-sm font-medium group-hover/item:translate-x-1 transition-transform">{cap}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );
@@ -211,19 +215,23 @@ export default function ServicesPage() {
             {caseStudies.map((study, index) => (
               <div 
                 key={index}
-                className="relative group overflow-hidden rounded-xl border-2 border-muted hover:border-primary-blue transition-all"
+                className="group relative overflow-hidden rounded-2xl border-2 border-muted/50 hover:border-primary-blue/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
               >
-                <div className="p-6 bg-gradient-to-br from-primary-blue/10 to-primary-purple/10">
-                  <div className="mb-4">
-                    <h3 className="text-xl font-bold text-foreground">{study.name}</h3>
-                    <p className="text-sm text-primary-blue font-medium">{study.tagline}</p>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-blue/5 via-transparent to-primary-purple/5 group-hover:from-primary-blue/10 group-hover:to-primary-purple/10 transition-all" />
+                <div className="relative p-8 bg-gradient-to-br from-white/95 via-background to-muted/20 dark:from-slate-900/95 dark:via-background dark:to-muted/20 backdrop-blur-sm">
+                  <div className="mb-6 flex items-start justify-between">
+                    <div>
+                      <h3 className="text-xl font-bold text-foreground group-hover:text-primary-blue transition-colors duration-300">{study.name}</h3>
+                      <p className="text-sm text-primary-blue font-semibold mt-1.5 opacity-80 group-hover:opacity-100 transition-opacity">{study.tagline}</p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary-blue group-hover:translate-x-2 transition-all" />
                   </div>
-                  <p className="text-sm text-muted-foreground mb-6">{study.description}</p>
+                  <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{study.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {study.technologies.map((tech, i) => (
                       <span 
                         key={i}
-                        className="px-3 py-1 bg-primary-blue/10 text-primary-blue text-xs font-medium rounded-full"
+                        className="px-3 py-1.5 bg-gradient-to-r from-primary-blue/10 to-primary-purple/10 text-primary-blue text-xs font-medium rounded-full border border-primary-blue/20 group-hover:border-primary-blue/50 group-hover:bg-gradient-to-r group-hover:from-primary-blue/20 group-hover:to-primary-purple/20 transition-all"
                       >
                         {tech}
                       </span>
