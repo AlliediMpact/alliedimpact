@@ -66,7 +66,9 @@ export default function HeroSection() {
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
-              href="/services"
+              href="https://myprojects.alliedimpact.co.za"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg border-2 border-white text-white hover:bg-white hover:text-primary-blue transition-all"
             >
               Start A Project
@@ -77,10 +79,6 @@ export default function HeroSection() {
           <div className="pt-8">
             <p className="text-sm text-white/70 mb-4">Trusted by thousands across South Africa</p>
             <div className="flex flex-wrap justify-center gap-6 items-center">
-              <div className="text-center">
-                <div className="text-2xl font-bold">6</div>
-                <div className="text-xs text-white/70">Products</div>
-              </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">10K+</div>
                 <div className="text-xs text-white/70">Active Users</div>

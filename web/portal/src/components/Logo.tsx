@@ -7,9 +7,10 @@ interface LogoProps {
   className?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  variant?: 'header' | 'footer';
 }
 
-export default function Logo({ className = '', showText = true, size = 'md' }: LogoProps) {
+export default function Logo({ className = '', showText = true, size = 'md', variant = 'header' }: LogoProps) {
   const sizes = {
     sm: { width: 32, height: 32, text: 'text-lg' },
     md: { width: 40, height: 40, text: 'text-xl' },
@@ -17,11 +18,12 @@ export default function Logo({ className = '', showText = true, size = 'md' }: L
   };
 
   const { width, height, text } = sizes[size];
+  const logoSrc = variant === 'footer' ? '/logo_footer.png' : '/logo.png';
 
   return (
     <Link 
       href="/" 
-      className={`flex items-center gap-2 logo-animated ${className}`}
+      className={`flex items-center gap-2 ${className}`}
       aria-label="Allied iMpact Home"
     >
       {/* Logo Icon - Using actual logo image */}
@@ -30,12 +32,12 @@ export default function Logo({ className = '', showText = true, size = 'md' }: L
         style={{ width: `${width}px`, height: `${height}px` }}
       >
         <Image 
-          src="/logo.png"
+          src={logoSrc}
           alt="Allied iMpact"
           width={width}
           height={height}
           priority
-          className="rounded-lg"
+          className="rounded-lg hover:scale-105 transition-transform duration-300"
         />
       </div>
       

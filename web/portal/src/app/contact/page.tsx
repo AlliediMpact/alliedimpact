@@ -75,7 +75,14 @@ export default function ContactPage() {
   const contactMethods = [
     {
       icon: Mail,
-      title: 'Email Us',
+      title: 'General Inquiries',
+      value: 'info@alliedimpact.co.za',
+      description: 'General questions and information',
+      link: 'mailto:info@alliedimpact.co.za',
+    },
+    {
+      icon: Mail,
+      title: 'Support',
       value: 'support@alliedimpact.co.za',
       description: 'Get a response within 24 hours',
       link: 'mailto:support@alliedimpact.co.za',
@@ -83,9 +90,9 @@ export default function ContactPage() {
     {
       icon: Phone,
       title: 'Call Us',
-      value: '+27 (0) 11 234 5678',
+      value: '+2765 353 0993',
       description: 'Mon-Fri, 8:00 AM - 5:00 PM SAST',
-      link: 'tel:+27112345678',
+      link: 'tel:+27653530993',
     },
     {
       icon: MapPin,

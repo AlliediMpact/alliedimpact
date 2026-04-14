@@ -55,7 +55,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-8">
           {/* Company Info */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <Logo showText={false} className="mb-4" />
+            <Logo showText={false} className="mb-4" variant="footer" />
             <p className="text-sm text-muted-foreground mb-4">
               Your custom, scalable digital solutions partner. Building transformative experiences for individuals, businesses, and organizations.
             </p>
