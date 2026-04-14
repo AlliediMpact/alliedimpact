@@ -25,6 +25,7 @@ export default function Footer() {
   ];
 
   const company = [
+    { name: 'Services', href: '/services' },
     { name: 'About Us', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ];
@@ -56,7 +57,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <Logo showText={false} className="mb-4" />
             <p className="text-sm text-muted-foreground mb-4">
-              One Identity. Multiple Products. Allied iMpact connects you to a world of solutions.
+              Your custom, scalable digital solutions partner. Building transformative experiences for individuals, businesses, and organizations.
             </p>
             <div className="flex gap-2">
               {social.map((item) => (

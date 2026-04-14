@@ -20,57 +20,56 @@ export default function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
             <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium">One Identity. Multiple Products.</span>
+            <span className="text-sm font-medium">One Account. Infinite Possibilities.</span>
           </div>
 
           {/* Main Heading */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
-            Building Digital Solutions{' '}
+            Your Custom, Scalable{' '}
             <span className="text-yellow-300">
-              That Empower
+              Digital Solutions
             </span>{' '}
-            People, Businesses, and Communities
+            Partner
           </h1>
 
           {/* Subheading */}
           <p className="text-xl sm:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-            Allied iMpact builds world-class digital solutions focused on African markets. 
-            From fintech to education, we create platforms that solve real problems and unlock opportunity.
+            We develop and build custom digital solutions tailored to your needs. Whether you're an individual seeking growth opportunities, a business scaling your operations, or an organization solving community challenges—we have proven solutions designed for your success.
           </p>
 
           {/* Feature Pills */}
           <div className="flex flex-wrap justify-center gap-3">
             <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm">
-              💰 Financial Services
+              🚀 Custom Web Development
             </div>
             <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm">
-              📊 Project Management
+              📱 Mobile App Development
             </div>
             <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm">
-              🚗 Driving Education
+              💼 Enterprise Solutions
             </div>
             <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm">
-              💻 Tech Training
+              🔧 Custom Software Development
             </div>
             <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm">
-              ⚽ Sports & Community
+              🌍 Community Impact Solutions
             </div>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Link 
-              href="/signup"
+              href="/products"
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg bg-white text-primary-blue hover:bg-white/90 transition-all group"
             >
-              Get Started Free
+              Explore Our Platform
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
-              href="/products"
+              href="/services"
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg border-2 border-white text-white hover:bg-white hover:text-primary-blue transition-all"
             >
-              Explore Products
+              Start A Project
             </Link>
           </div>
 

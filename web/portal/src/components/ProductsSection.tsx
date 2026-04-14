@@ -79,10 +79,10 @@ export default function ProductsSection() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            Six Products. One Platform.
+            Multi-Solutions. One Platform.
           </h2>
           <p className="text-lg text-muted-foreground">
-            Access multiple services with a single account. No need to sign up multiple times—your Allied iMpact identity works everywhere.
+            Our capabilities in action. Every solution we've built demonstrates our ability to create transformative digital experiences. Explore our portfolio and imagine what we can build for you.
           </p>
         </div>
 
