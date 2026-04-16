@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, Sun, Moon, User, LogOut, Settings } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Logo from '../Logo';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -46,37 +47,48 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-white hover:text-white/80 transition-colors"
-              >
-                {item.name}
-              </Link>
+            {navigation.map((item, index) => (
+              <motion.div key={item.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: index * 0.1 }}>
+                <Link
+                  href={item.href}
+                  className="text-sm font-medium text-white relative group"
+                >
+                  {item.name}
+                  <motion.span
+                    className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: '100%' }}
+                  />
+                </Link>
+              </motion.div>
             ))}
 
             {/* Theme Toggle */}
-            <button
+            <motion.button
               onClick={toggleTheme}
               className="text-white hover:bg-white/10 p-2 rounded-md transition-colors"
               aria-label="Toggle theme"
+              whileHover={{ rotate: 20, scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
             >
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </button>
+            </motion.button>
 
             {/* Auth Buttons / User Menu */}
             {user ? (
               <div className="relative">
-                <button
+                <motion.button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2 text-white hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {user.photoURL ? (
-                    <img 
+                    <motion.img 
                       src={user.photoURL} 
                       alt={user.displayName || 'User'} 
                       className="w-8 h-8 rounded-full"
+                      whileHover={{ scale: 1.1 }}
                     />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
@@ -89,61 +101,92 @@ export default function Header() {
                 </button>
 
                 {/* User Dropdown */}
-                {userMenuOpen && (
-                  <>
-                    <div 
-                      className="fixed inset-0 z-40" 
-                      onClick={() => setUserMenuOpen(false)}
-                    />
-                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                <AnimatePresence>
+                  {userMenuOpen && (
+                    <>
+                      <motion.div 
+                        className="fixed inset-0 z-40" 
                         onClick={() => setUserMenuOpen(false)}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      />
+                      <motion.div
+                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50"
+                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                        transition={{ duration: 0.15 }}
                       >
-                        <User className="h-4 w-4" />
-                        Dashboard
-                      </Link>
-                      <Link
-                        href="/settings"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <Settings className="h-4 w-4" />
-                        Settings
-                      </Link>
-                      <hr className="my-1" />
-                      <button
-                        onClick={() => {
-                          setUserMenuOpen(false);
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.05 }}
+                        >
+                          <Link
+                            href="/dashboard"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <User className="h-4 w-4" />
+                            Dashboard
+                          </Link>
+                        </motion.div>
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 }}
+                        >
+                          <Link
+                            href="/settings"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
+                            <Settings className="h-4 w-4" />
+                            Settings
+                          </Link>
+                        </motion.div>
+                        <hr className="my-1" />
+                        <motion.button
+                          onClick={() => {
+                            setUserMenuOpen(false);
                           handleSignOut();
                         }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </>
-                )}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.15 }}
+                          whileHover={{ backgroundColor: 'rgba(75, 75, 75, 0.1)' }}
+                        >
+                          <LogOut className="h-4 w-4" />
+                          Sign Out
+                        </motion.button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-white hover:text-white/80 transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="px-4 py-2 text-sm font-medium text-white rounded-md transition-all"
-                  style={{
-                    background: 'linear-gradient(to right, #3b82f6, #5e17eb)',
-                  }}
-                >
-                  Sign Up
-                </Link>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link
+                    href="/login"
+                    className="text-sm font-medium text-white hover:text-white/80 transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link
+                    href="/signup"
+                    className="px-4 py-2 text-sm font-medium text-white rounded-md transition-all shadow-lg hover:shadow-xl"
+                    style={{
+                      background: 'linear-gradient(to right, #3b82f6, #5e17eb)',
+                    }}
+                  >
+                    Sign Up
+                  </Link>
+                </motion.div>
               </div>
             )}
           </div>
