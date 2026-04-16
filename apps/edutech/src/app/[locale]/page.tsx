@@ -1,7 +1,14 @@
+'use client';
+
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-
-export const dynamic = 'force-dynamic';
+import { motion } from 'framer-motion';
+import {
+  fadeInVariants,
+  containerVariants,
+  itemVariants,
+  scaleVariants,
+} from '@allied-impact/ui/lib/animations';
 
 export default function HomePage() {
   const t = useTranslations();
@@ -10,45 +17,102 @@ export default function HomePage() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative w-full py-20 bg-gradient-to-br from-primary-blue via-[#1a3690] to-primary-purple overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center text-white space-y-6">
-            <h1 className="text-5xl sm:text-6xl font-bold leading-tight">
+        {/* Animated background orbs */}
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute w-80 h-80 bg-white/5 rounded-full blur-3xl"
+            animate={{
+              x: [0, 120, 0],
+              y: [0, 60, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            style={{ top: '-20%', left: '-10%' }}
+          />
+          <motion.div
+            className="absolute w-96 h-96 bg-primary-purple/10 rounded-full blur-3xl"
+            animate={{
+              x: [0, -100, 0],
+              y: [0, -80, 0],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            style={{ bottom: '-30%', right: '-10%' }}
+          />
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            className="max-w-4xl mx-auto text-center text-white space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.h1 variants={fadeInVariants} className="text-5xl sm:text-6xl font-bold leading-tight">
               {t('appName')}
-            </h1>
-            <p className="text-xl text-white/90">
+            </motion.h1>
+            <motion.p variants={fadeInVariants} className="text-xl text-white/90">
               {t('tagline')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Link
-                href="/en/courses"
-                className="inline-flex items-center justify-center bg-white text-primary-blue hover:bg-gray-100 font-semibold px-8 py-4 rounded-lg transition-colors"
-              >
-                {t('common.getStarted')}
-              </Link>
-              <Link
-                href="/en/about"
-                className="inline-flex items-center justify-center border-2 border-white text-white hover:bg-white hover:text-primary-blue font-semibold px-8 py-4 rounded-lg transition-colors"
-              >
-                {t('common.learnMore')}
-              </Link>
-            </div>
-          </div>
+            </motion.p>
+            <motion.div variants={containerVariants} className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <motion.div variants={itemVariants}>
+                <Link
+                  href="/en/courses"
+                  className="inline-flex items-center justify-center bg-white text-primary-blue hover:bg-gray-100 font-semibold px-8 py-4 rounded-lg transition-colors"
+                >
+                  <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    {t('common.getStarted')}
+                  </motion.span>
+                </Link>
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <Link
+                  href="/en/about"
+                  className="inline-flex items-center justify-center border-2 border-white text-white hover:bg-white hover:text-primary-blue font-semibold px-8 py-4 rounded-lg transition-colors"
+                >
+                  <motion.span whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    {t('common.learnMore')}
+                  </motion.span>
+                </Link>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* Tracks Section */}
       <section className="w-full py-20 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
             <h2 className="text-4xl font-bold mb-4">Choose Your Learning Track</h2>
             <p className="text-lg text-muted-foreground">
               Start with computer basics or dive into professional coding
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"
+          >
             {/* Computer Skills Track */}
-            <div className="p-8 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors">
+            <motion.div
+              variants={itemVariants}
+              className="p-8 rounded-xl border-2 border-muted hover:border-primary-blue transition-colors"
+            >
               <div className="mb-4">
                 <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full">
                   {t('common.free')}
@@ -82,10 +146,13 @@ export default function HomePage() {
               >
                 Browse Computer Skills Courses
               </Link>
-            </div>
+            </motion.div>
 
             {/* Coding Track */}
-            <div className="p-8 rounded-xl border-2 border-primary-blue bg-primary-blue/5">
+            <motion.div
+              variants={itemVariants}
+              className="p-8 rounded-xl border-2 border-primary-blue bg-primary-blue/5"
+            >
               <div className="mb-4">
                 <span className="px-3 py-1 bg-primary-blue text-white text-sm font-semibold rounded-full">
                   {t('common.premium')}
@@ -119,28 +186,46 @@ export default function HomePage() {
               >
                 Start Coding Track - R199/month
               </Link>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* Stats Section */}
       <section className="w-full py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
-            <div>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-center"
+          >
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.05 }}
+              className="p-6 rounded-lg"
+            >
               <div className="text-4xl font-bold text-primary-blue mb-2">10,000+</div>
               <div className="text-muted-foreground">Learners Enrolled</div>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.05 }}
+              className="p-6 rounded-lg"
+            >
               <div className="text-4xl font-bold text-primary-blue mb-2">500+</div>
               <div className="text-muted-foreground">Courses Available</div>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.05 }}
+              className="p-6 rounded-lg"
+            >
               <div className="text-4xl font-bold text-primary-blue mb-2">95%</div>
               <div className="text-muted-foreground">Success Rate</div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </main>
