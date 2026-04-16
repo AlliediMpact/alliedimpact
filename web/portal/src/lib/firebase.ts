@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Firebase Configuration and Initialization
  * Central Firebase setup for Allied iMpact Portal
@@ -7,15 +9,15 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
-// Firebase configuration from environment variables
-const firebaseConfig = {
+// Firebase configuration - wrapped in function for safe lazy evaluation
+const getFirebaseConfig = () => ({
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
+});
 
 // Debug logging during build/init
 if (typeof window !== 'undefined') {
@@ -72,6 +74,19 @@ export const initializeFirebase = (): FirebaseApp | null => {
     return null;
   }
 
+  // Debug: Log env var status
+  const config = getFirebaseConfig();
+  console.log('🔍 [FIREBASE DEBUG]', {
+    apiKey: config.apiKey ? '✅ SET' : '❌ MISSING',
+    authDomain: config.authDomain ? '✅ SET' : '❌ MISSING',
+    projectId: config.projectId ? '✅ SET' : '❌ MISSING',
+    actual_values: {
+      apiKey: config.apiKey?.substring(0, 10) + '...' || 'undefined',
+      authDomain: config.authDomain || 'undefined',
+      projectId: config.projectId || 'undefined',
+    }
+  });
+
   // Validate config before initialization
   const { isValid, missing } = validateConfig();
   if (!isValid) {
@@ -84,6 +99,7 @@ export const initializeFirebase = (): FirebaseApp | null => {
   // Initialize only if not already initialized
   if (!getApps().length) {
     try {
+      const firebaseConfig = getFirebaseConfig();
       app = initializeApp(firebaseConfig);
       auth = getAuth(app);
       db = getFirestore(app);
