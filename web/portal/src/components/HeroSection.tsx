@@ -2,43 +2,79 @@
 
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import AnimatedHeroBackground from './AnimatedHeroBackground';
 
 export default function HeroSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: 'easeOut' },
+    },
+  };
+
   return (
     <section 
       className="relative w-full min-h-screen flex items-center justify-center text-white overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #193281 0%, #5e17eb 100%)' }}
     >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
+      {/* Animated background */}
+      <AnimatedHeroBackground />
 
-      <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <motion.div
+        className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-20"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <div className="max-w-4xl mx-auto text-center space-y-8">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+          <motion.div
+            variants={itemVariants}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20"
+          >
             <Sparkles className="w-4 h-4" />
             <span className="text-sm font-medium">One Account. Infinite Possibilities.</span>
-          </div>
+          </motion.div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight"
+          >
             Your Custom, Scalable{' '}
             <span className="text-yellow-300">
               Digital Solutions
             </span>{' '}
             Partner
-          </h1>
+          </motion.h1>
 
           {/* Subheading */}
-          <p className="text-xl sm:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          <motion.p
+            variants={itemVariants}
+            className="text-xl sm:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed"
+          >
             We develop and build custom digital solutions tailored to your needs. Whether you're an individual seeking growth opportunities, a business scaling your operations, or an organization solving community challenges—we have proven solutions designed for your success.
-          </p>
+          </motion.p>
 
           {/* Feature Pills */}
-          <div className="flex flex-wrap justify-center gap-3">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-wrap justify-center gap-3"
+          >
             <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm">
               🚀 Custom Web Development
             </div>
@@ -54,10 +90,13 @@ export default function HeroSection() {
             <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-sm">
               🌍 Community Impact Solutions
             </div>
-          </div>
+          </motion.div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
+          >
             <Link 
               href="/products"
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-lg bg-white text-primary-blue hover:bg-white/90 transition-all group"
@@ -73,10 +112,13 @@ export default function HeroSection() {
             >
               Start A Project
             </Link>
-          </div>
+          </motion.div>
 
           {/* Trust Indicators */}
-          <div className="pt-8">
+          <motion.div
+            variants={itemVariants}
+            className="pt-8"
+          >
             <p className="text-sm text-white/70 mb-4">Trusted by thousands across South Africa</p>
             <div className="flex flex-wrap justify-center gap-6 items-center">
               <div className="text-center">
@@ -92,9 +134,9 @@ export default function HeroSection() {
                 <div className="text-xs text-white/70">Uptime</div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
