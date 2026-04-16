@@ -2,6 +2,7 @@
 
 import { ArrowRight, Wallet, GraduationCap, Briefcase, BookOpen, Car, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 const products = [
   {
@@ -73,33 +74,67 @@ const products = [
 ];
 
 export default function ProductsSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: 'easeOut' },
+    },
+  };
+
   return (
     <section className="w-full py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div
+          className="text-center max-w-3xl mx-auto mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
             Multi-Solutions. One Platform.
           </h2>
           <p className="text-lg text-muted-foreground">
             Our capabilities in action. Every solution we've built demonstrates our ability to create transformative digital experiences. Explore our portfolio and imagine what we can build for you.
           </p>
-        </div>
+        </motion.div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-100px' }}
+        >
           {products.map((product) => {
             const Icon = product.icon;
             const isExternal = product.href.startsWith('http');
             
             return (
-              <Link 
-                key={product.id} 
-                href={product.href}
-                target={isExternal ? '_blank' : undefined}
-                rel={isExternal ? 'noopener noreferrer' : undefined}
-                className="group h-full"
+              <motion.div
+                key={product.id}
+                variants={itemVariants}
               >
+                <Link 
+                  href={product.href}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                  className="group h-full"
+                >
                 <div className="h-full p-8 rounded-2xl border-2 border-muted/50 bg-gradient-to-br from-white via-background to-muted/20 dark:from-slate-900 dark:via-background dark:to-muted/20 hover:shadow-2xl hover:border-primary-blue/50 transition-all duration-300 hover:-translate-y-2 backdrop-blur-sm flex flex-col">
                   <div className="flex items-start justify-between mb-6">
                     <div 
@@ -143,17 +178,24 @@ export default function ProductsSection() {
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </div>
                 </div>
-              </Link>
+                </Link>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Bottom Note */}
-        <div className="text-center mt-12 p-6 bg-muted/50 rounded-lg max-w-3xl mx-auto">
+        <motion.div
+          className="text-center mt-12 p-6 bg-muted/50 rounded-lg max-w-3xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
           <p className="text-sm text-muted-foreground">
             <strong className="text-foreground">One Account, Unlimited Access:</strong> Sign up once and unlock all current and future Allied iMpact products. Your identity, your ecosystem.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
