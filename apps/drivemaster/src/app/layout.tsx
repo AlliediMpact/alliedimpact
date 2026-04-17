@@ -6,6 +6,7 @@ import { Toaster } from '@/components/Toaster';
 import { FeedbackWidget } from '@/components/FeedbackWidget';
 import { CookieConsentBanner, PWAInstaller, ServiceWorkerRegistration } from '@allied-impact/ui';
 import PlatformFooter from '@/components/PlatformFooter';
+import Header from '@/components/Header';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -69,6 +70,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <div className="flex flex-col min-h-screen">
+            <Header />
             <main className="flex-1">
               {children}
             </main>
