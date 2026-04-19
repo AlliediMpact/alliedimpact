@@ -121,25 +121,25 @@ describe('EmptyStates', () => {
 
   describe('NoTeamMembersEmpty', () => {
     it('should render empty state with correct heading', () => {
-      render(<NoTeamMembersEmpty onCreate={() => {}} />);
+      render(<NoTeamMembersEmpty onInvite={() => {}} />);
       expect(screen.getByText('No Team Members Yet')).toBeInTheDocument();
     });
 
     it('should render getting started steps', () => {
-      render(<NoTeamMembersEmpty onCreate={() => {}} />);
+      render(<NoTeamMembersEmpty onInvite={() => {}} />);
       expect(screen.getByText(/invite your first team member/i)).toBeInTheDocument();
     });
 
     it('should render create button when onCreate provided', () => {
       const onCreateMock = jest.fn();
-      render(<NoTeamMembersEmpty onCreate={onCreateMock} />);
+      render(<NoTeamMembersEmpty onInvite={onCreateMock} />);
       
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
     });
 
     it('should render icon', () => {
-      render(<NoTeamMembersEmpty onCreate={() => {}} />);
+      render(<NoTeamMembersEmpty onInvite={() => {}} />);
       expect(screen.getByTestId('user-plus-icon')).toBeInTheDocument();
     });
   });

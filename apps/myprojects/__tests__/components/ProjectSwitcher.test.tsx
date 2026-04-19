@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProjectSwitcher from '@/components/ProjectSwitcher';
-import { Project, ProjectStatus } from '@allied-impact/projects';
+import { Project, ProjectStatus, ProjectType } from '@allied-impact/projects';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -65,33 +65,63 @@ describe('ProjectSwitcher', () => {
       name: 'Website Redesign',
       description: 'Complete website redesign project',
       clientId: 'client1',
+      clientName: 'Acme Corp',
+      type: ProjectType.WEB_APP,
       status: ProjectStatus.PLANNING,
+      startDate: new Date('2026-01-01'),
+      endDate: new Date('2026-06-01'),
+      currency: 'USD',
       progress: 75,
+      milestones: [],
+      deliverables: [],
+      tickets: [],
+      teamMembers: ['user1', 'user2'],
       createdAt: new Date('2026-01-01'),
       updatedAt: new Date('2026-01-05'),
       createdBy: 'user123',
+      lastActivityAt: new Date('2026-01-05'),
     },
     {
       id: 'p2',
       name: 'Mobile App Development',
       description: 'iOS and Android app development',
       clientId: 'client1',
+      clientName: 'Acme Corp',
+      type: ProjectType.MOBILE_APP,
       status: ProjectStatus.PLANNING,
+      startDate: new Date('2025-12-01'),
+      endDate: new Date('2026-09-01'),
+      currency: 'USD',
       progress: 45,
+      milestones: [],
+      deliverables: [],
+      tickets: [],
+      teamMembers: ['user2', 'user3'],
       createdAt: new Date('2025-12-01'),
       updatedAt: new Date('2026-01-03'),
       createdBy: 'user123',
+      lastActivityAt: new Date('2026-01-03'),
     },
     {
       id: 'p3',
       name: 'API Integration',
       description: 'Third-party API integration',
       clientId: 'client2',
+      clientName: 'Tech Startups Inc',
+      type: ProjectType.API,
       status: ProjectStatus.PLANNING,
+      startDate: new Date('2025-11-15'),
+      endDate: new Date('2026-02-15'),
+      currency: 'USD',
       progress: 20,
+      milestones: [],
+      deliverables: [],
+      tickets: [],
+      teamMembers: ['user1'],
       createdAt: new Date('2025-11-15'),
       updatedAt: new Date('2026-01-01'),
       createdBy: 'user123',
+      lastActivityAt: new Date('2026-01-01'),
     },
   ];
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, renderHook, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ProjectProvider, useProject } from '@/contexts/ProjectContext';
-import { Project, ProjectStatus } from '@allied-impact/projects';
+import { Project, ProjectStatus, ProjectType } from '@allied-impact/projects';
 
 // Mock @allied-impact/projects
 const mockGetClientProjects = jest.fn();
@@ -46,20 +46,42 @@ describe('ProjectContext', () => {
       name: 'Project 1',
       description: 'First project',
       clientId: 'client1',
+      clientName: 'Client A',
+      type: ProjectType.WEB_APP,
       status: ProjectStatus.PLANNING,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      startDate: new Date('2026-01-01'),
+      endDate: new Date('2026-06-01'),
+      currency: 'USD',
+      progress: 0,
+      milestones: [],
+      deliverables: [],
+      tickets: [],
+      teamMembers: [],
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
       createdBy: 'user123',
+      lastActivityAt: new Date('2026-01-01'),
     },
     {
       id: 'p2',
       name: 'Project 2',
       description: 'Second project',
       clientId: 'client1',
+      clientName: 'Client A',
+      type: ProjectType.MOBILE_APP,
       status: ProjectStatus.PLANNING,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      startDate: new Date('2026-02-01'),
+      endDate: new Date('2026-08-01'),
+      currency: 'USD',
+      progress: 0,
+      milestones: [],
+      deliverables: [],
+      tickets: [],
+      teamMembers: [],
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
       createdBy: 'user123',
+      lastActivityAt: new Date('2026-01-01'),
     },
   ];
 

@@ -17,12 +17,12 @@ describe('search-utils', () => {
       description: 'Complete all design mockups and wireframes',
       status: MilestoneStatus.IN_PROGRESS,
       dueDate: new Date('2026-02-01'),
+      progress: 75,
       assignedTo: ['user1', 'user2'],
       deliverables: [],
       dependencies: [],
       createdAt: new Date('2026-01-01'),
       updatedAt: new Date('2026-01-01'),
-      createdBy: 'user1',
     },
     {
       id: '2',
@@ -31,12 +31,12 @@ describe('search-utils', () => {
       description: 'First development sprint for core features',
       status: MilestoneStatus.PENDING,
       dueDate: new Date('2026-03-01'),
+      progress: 0,
       assignedTo: ['user3'],
       deliverables: [],
       dependencies: [],
       createdAt: new Date('2026-01-01'),
       updatedAt: new Date('2026-01-01'),
-      createdBy: 'user1',
     },
     {
       id: '3',
@@ -45,12 +45,12 @@ describe('search-utils', () => {
       description: 'Quality assurance and testing phase',
       status: MilestoneStatus.COMPLETED,
       dueDate: new Date('2025-12-15'),
+      progress: 100,
       assignedTo: ['user1'],
       deliverables: [],
       dependencies: [],
       createdAt: new Date('2025-12-01'),
       updatedAt: new Date('2025-12-15'),
-      createdBy: 'user1',
     },
   ];
 
@@ -69,7 +69,6 @@ describe('search-utils', () => {
       fileUrls: [],
       createdAt: new Date('2026-01-01'),
       updatedAt: new Date('2026-01-15'),
-      createdBy: 'user1',
     },
     {
       id: 'd2',
@@ -84,7 +83,6 @@ describe('search-utils', () => {
       fileUrls: [],
       createdAt: new Date('2026-01-01'),
       updatedAt: new Date('2026-01-10'),
-      createdBy: 'user2',
     },
     {
       id: 'd3',
@@ -100,7 +98,6 @@ describe('search-utils', () => {
       fileUrls: [],
       createdAt: new Date('2026-01-01'),
       updatedAt: new Date('2026-01-01'),
-      createdBy: 'user3',
     },
   ];
 

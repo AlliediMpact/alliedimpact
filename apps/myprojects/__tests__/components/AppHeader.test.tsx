@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AppHeader from '@/components/AppHeader';
-import { Project, ProjectStatus } from '@allied-impact/projects';
+import { Project, ProjectStatus, ProjectType } from '@allied-impact/projects';
 
 // Mock next/navigation
 const mockPush = jest.fn();
@@ -99,10 +99,23 @@ describe('AppHeader', () => {
     name: 'Test Project',
     description: 'Test project description',
     clientId: 'client1',
+    clientName: 'Test Client',
+    type: ProjectType.WEB_APP,
     status: ProjectStatus.PLANNING,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    startDate: new Date('2026-01-01'),
+    endDate: new Date('2026-03-01'),
+    estimatedBudget: 50000,
+    actualBudget: 0,
+    currency: 'USD',
+    progress: 0,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
     createdBy: 'user123',
+    lastActivityAt: new Date('2026-01-01'),
+    milestones: [],
+    deliverables: [],
+    tickets: [],
+    teamMembers: [],
   };
 
   const mockOnSignOut = jest.fn();
