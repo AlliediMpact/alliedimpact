@@ -98,7 +98,7 @@ export default function Header() {
                   <span className="text-sm font-medium">
                     {user.displayName || user.email?.split('@')[0]}
                   </span>
-                </button>
+                </motion.button>
 
                 {/* User Dropdown */}
                 <AnimatePresence>
@@ -150,8 +150,8 @@ export default function Header() {
                         <motion.button
                           onClick={() => {
                             setUserMenuOpen(false);
-                          handleSignOut();
-                        }}
+                            handleSignOut();
+                          }}
                           className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
