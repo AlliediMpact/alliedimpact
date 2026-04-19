@@ -26,7 +26,8 @@
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.2.0",
     "lucide-react": "^0.294.0",
-    "next": "^14.0.4"
+    "next": "^14.0.4",
+    "framer-motion": "^10.16.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.45",
