@@ -32,6 +32,7 @@ export function CookieConsentBanner({
       const timer = setTimeout(() => setVisible(true), 60000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, []);
 
   const savePreferences = (prefs: typeof preferences) => {

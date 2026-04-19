@@ -21,7 +21,7 @@ export function PWAInstaller({ appName }: PWAInstallerProps) {
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
-      return;
+      return undefined;
     }
 
     // Listen for the beforeinstallprompt event
