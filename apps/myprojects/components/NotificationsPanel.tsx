@@ -36,7 +36,7 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
     loadNotifications();
   }, []);
 
-  const loadNotifications = async () => {
+  const loadNotifications = async (): Promise<void> => {
     try {
       setLoading(true);
       const { getAuthInstance } = await import('@allied-impact/auth');
@@ -68,11 +68,10 @@ export default function NotificationsPanel({ onClose }: NotificationsPanelProps)
         setLoading(false);
       });
 
-      return () => unsubscribe();
+      // Listeners are set up
     } catch (error) {
       console.error('Failed to load notifications:', error);
       setLoading(false);
-      return undefined;
     }
   };
 

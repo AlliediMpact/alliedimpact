@@ -101,7 +101,7 @@ export default function MyProjectsDashboard() {
     };
   }, [selectedProject]);
 
-  const setupProjectDetailsListeners = async () => {
+  const setupProjectDetailsListeners = async (): Promise<void> => {
     if (!selectedProject) return;
 
     try {
@@ -180,15 +180,9 @@ export default function MyProjectsDashboard() {
         setTickets(projectTickets);
       });
 
-      // Return cleanup function
-      return () => {
-        unsubscribeMilestones();
-        unsubscribeDeliverables();
-        unsubscribeTickets();
-      };
+      // Listeners are set up, they will clean up automatically
     } catch (error) {
       console.error('Failed to set up project details listeners:', error);
-      return undefined;
     }
   };
 

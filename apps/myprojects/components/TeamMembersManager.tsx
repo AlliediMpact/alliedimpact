@@ -65,7 +65,7 @@ export default function TeamMembersManager({ projectId }: TeamMembersManagerProp
     }
   };
 
-  const loadTeamMembers = async () => {
+  const loadTeamMembers = async (): Promise<void> => {
     try {
       setLoading(true);
       const { getFirestore, collection, query, where, orderBy, onSnapshot } = await import('firebase/firestore');
@@ -93,11 +93,10 @@ export default function TeamMembersManager({ projectId }: TeamMembersManagerProp
         setLoading(false);
       });
 
-      return () => unsubscribe();
+      // Listeners are set up
     } catch (error) {
       console.error('Failed to load team members:', error);
       setLoading(false);
-      return undefined;
     }
   };
 

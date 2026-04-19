@@ -35,7 +35,7 @@ export default function AppHeader({ user, onSignOut, onMenuToggle, isMobileMenuO
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Load unread notifications count
-  useEffect(() => {
+  useEffect((): (() => void) | void => {
     if (!user?.uid) return;
 
     let unsubscribe: (() => void) | undefined;
