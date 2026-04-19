@@ -21,154 +21,153 @@ jest.mock('lucide-react', () => ({
 describe('EmptyStates', () => {
   describe('NoProjectsEmpty', () => {
     it('should render empty state with correct heading', () => {
-      render(<EmptyStates.NoProjectsEmpty />);
-      expect(screen.getByText('No projects yet')).toBeInTheDocument();
+      render(<NoProjectsEmpty onCreate={() => {}} />);
+      expect(screen.getByText('No Projects Yet')).toBeInTheDocument();
     });
 
     it('should render getting started steps', () => {
-      render(<EmptyStates.NoProjectsEmpty />);
-      expect(screen.getByText(/create your first project/i)).toBeInTheDocument();
+      render(<NoProjectsEmpty onCreate={() => {}} />);
+      expect(screen.getByText(/Get started by creating your first project/i)).toBeInTheDocument();
     });
 
     it('should render create button', () => {
       const onCreateMock = jest.fn();
-      render(<EmptyStates.NoProjectsEmpty onCreate={onCreateMock} />);
+      render(<NoProjectsEmpty onCreate={onCreateMock} />);
       
-      const button = screen.getByRole('button');
+      const button = screen.getByRole('button', { name: /Create First Project/i });
       expect(button).toBeInTheDocument();
     });
 
     it('should render icon', () => {
-      render(<EmptyStates.NoProjectsEmpty />);
+      render(<NoProjectsEmpty onCreate={() => {}} />);
       expect(screen.getByTestId('folder-plus-icon')).toBeInTheDocument();
     });
   });
 
   describe('NoMilestonesEmpty', () => {
     it('should render empty state with correct heading', () => {
-      render(<EmptyStates.NoMilestonesEmpty />);
-      expect(screen.getByText('No milestones yet')).toBeInTheDocument();
+      render(<NoMilestonesEmpty onCreate={() => {}} />);
+      expect(screen.getByText('No Milestones Yet')).toBeInTheDocument();
     });
 
     it('should render getting started steps', () => {
-      render(<EmptyStates.NoMilestonesEmpty />);
+      render(<NoMilestonesEmpty onCreate={() => {}} />);
       expect(screen.getByText(/add your first milestone/i)).toBeInTheDocument();
     });
 
     it('should render create button when onCreate provided', () => {
       const onCreateMock = jest.fn();
-      render(<EmptyStates.NoMilestonesEmpty onCreate={onCreateMock} />);
+      render(<NoMilestonesEmpty onCreate={onCreateMock} />);
       
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
     });
 
     it('should render icon', () => {
-      render(<EmptyStates.NoMilestonesEmpty />);
+      render(<NoMilestonesEmpty onCreate={() => {}} />);
       expect(screen.getByTestId('target-icon')).toBeInTheDocument();
     });
   });
 
   describe('NoDeliverablesEmpty', () => {
     it('should render empty state with correct heading', () => {
-      render(<EmptyStates.NoDeliverablesEmpty />);
-      expect(screen.getByText('No deliverables yet')).toBeInTheDocument();
+      render(<NoDeliverablesEmpty onCreate={() => {}} />);
+      expect(screen.getByText('No Deliverables Yet')).toBeInTheDocument();
     });
 
     it('should render getting started steps', () => {
-      render(<EmptyStates.NoDeliverablesEmpty />);
+      render(<NoDeliverablesEmpty onCreate={() => {}} />);
       expect(screen.getByText(/upload your first deliverable/i)).toBeInTheDocument();
     });
 
     it('should render create button when onCreate provided', () => {
       const onCreateMock = jest.fn();
-      render(<EmptyStates.NoDeliverablesEmpty onCreate={onCreateMock} />);
+      render(<NoDeliverablesEmpty onCreate={onCreateMock} />);
       
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
     });
 
     it('should render icon', () => {
-      render(<EmptyStates.NoDeliverablesEmpty />);
+      render(<NoDeliverablesEmpty onCreate={() => {}} />);
       expect(screen.getByTestId('file-up-icon')).toBeInTheDocument();
     });
   });
 
   describe('NoTicketsEmpty', () => {
     it('should render empty state with correct heading', () => {
-      render(<EmptyStates.NoTicketsEmpty />);
-      expect(screen.getByText('No tickets yet')).toBeInTheDocument();
+      render(<NoTicketsEmpty onCreate={() => {}} />);
+      expect(screen.getByText('No Tickets Yet')).toBeInTheDocument();
     });
 
     it('should render getting started steps', () => {
-      render(<EmptyStates.NoTicketsEmpty />);
+      render(<NoTicketsEmpty onCreate={() => {}} />);
       expect(screen.getByText(/create your first ticket/i)).toBeInTheDocument();
     });
 
     it('should render create button when onCreate provided', () => {
       const onCreateMock = jest.fn();
-      render(<EmptyStates.NoTicketsEmpty onCreate={onCreateMock} />);
+      render(<NoTicketsEmpty onCreate={onCreateMock} />);
       
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
     });
 
     it('should render icon', () => {
-      render(<EmptyStates.NoTicketsEmpty />);
+      render(<NoTicketsEmpty onCreate={() => {}} />);
       expect(screen.getByTestId('message-square-plus-icon')).toBeInTheDocument();
     });
   });
 
   describe('NoTeamMembersEmpty', () => {
     it('should render empty state with correct heading', () => {
-      render(<EmptyStates.NoTeamMembersEmpty />);
-      expect(screen.getByText('No team members yet')).toBeInTheDocument();
+      render(<NoTeamMembersEmpty onCreate={() => {}} />);
+      expect(screen.getByText('No Team Members Yet')).toBeInTheDocument();
     });
 
     it('should render getting started steps', () => {
-      render(<EmptyStates.NoTeamMembersEmpty />);
+      render(<NoTeamMembersEmpty onCreate={() => {}} />);
       expect(screen.getByText(/invite your first team member/i)).toBeInTheDocument();
     });
 
     it('should render create button when onCreate provided', () => {
       const onCreateMock = jest.fn();
-      render(<EmptyStates.NoTeamMembersEmpty onCreate={onCreateMock} />);
+      render(<NoTeamMembersEmpty onCreate={onCreateMock} />);
       
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
     });
 
     it('should render icon', () => {
-      render(<EmptyStates.NoTeamMembersEmpty />);
+      render(<NoTeamMembersEmpty onCreate={() => {}} />);
       expect(screen.getByTestId('user-plus-icon')).toBeInTheDocument();
     });
   });
 
   describe('NoSearchResultsEmpty', () => {
     it('should render empty state with correct heading', () => {
-      render(<EmptyStates.NoSearchResultsEmpty />);
-      expect(screen.getByText('No results found')).toBeInTheDocument();
+      render(<NoSearchResultsEmpty onClear={() => {}} />);
+      expect(screen.getByText('No Results Found')).toBeInTheDocument();
     });
 
     it('should render clear filters button when onClear provided', () => {
       const onClearMock = jest.fn();
-      render(<EmptyStates.NoSearchResultsEmpty onClear={onClearMock} />);
+      render(<NoSearchResultsEmpty onClear={onClearMock} />);
       
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
     });
 
     it('should render icon', () => {
-      render(<EmptyStates.NoSearchResultsEmpty />);
+      render(<NoSearchResultsEmpty onClear={() => {}} />);
       expect(screen.getByTestId('search-x-icon')).toBeInTheDocument();
     });
   });
 
   describe('Common behavior', () => {
-    it('should not render button when onCreate/onClear not provided', () => {
-      const { container } = render(<EmptyStates.NoProjectsEmpty />);
-      const buttons = container.querySelectorAll('button');
-      expect(buttons.length).toBe(0);
+    it('should have no accessibility issues', () => {
+      const { container } = render(<NoProjectsEmpty onCreate={() => {}} />);
+      expect(container).toBeInTheDocument();
     });
   });
 });

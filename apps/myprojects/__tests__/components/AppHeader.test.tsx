@@ -100,8 +100,8 @@ describe('AppHeader', () => {
     description: 'Test project description',
     clientId: 'client1',
     status: ProjectStatus.PLANNING,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
     createdBy: 'user123',
   };
 

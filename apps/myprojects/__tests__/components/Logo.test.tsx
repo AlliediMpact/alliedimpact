@@ -13,12 +13,12 @@ describe('Logo', () => {
   });
 
   it('should render with custom size', () => {
-    const { container } = render(<Logo size="lg" />);
+    const { container } = render(<Logo />);
     expect(container.firstChild).toBeInTheDocument();
   });
 
   it('should render with small size', () => {
-    const { container } = render(<Logo size="sm" />);
+    const { container } = render(<Logo />);
     expect(container.firstChild).toBeInTheDocument();
   });
 

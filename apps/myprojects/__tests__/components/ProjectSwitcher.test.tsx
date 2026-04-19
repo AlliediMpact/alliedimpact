@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProjectSwitcher from '@/components/ProjectSwitcher';
-import { Project } from '@allied-impact/projects';
+import { Project, ProjectStatus } from '@allied-impact/projects';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -65,10 +65,10 @@ describe('ProjectSwitcher', () => {
       name: 'Website Redesign',
       description: 'Complete website redesign project',
       clientId: 'client1',
-      status: 'PLANNING',
+      status: ProjectStatus.PLANNING,
       progress: 75,
-      createdAt: new Date('2026-01-01').toISOString(),
-      updatedAt: new Date('2026-01-05').toISOString(),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-05'),
       createdBy: 'user123',
     },
     {
@@ -76,10 +76,10 @@ describe('ProjectSwitcher', () => {
       name: 'Mobile App Development',
       description: 'iOS and Android app development',
       clientId: 'client1',
-      status: 'PLANNING',
+      status: ProjectStatus.PLANNING,
       progress: 45,
-      createdAt: new Date('2025-12-01').toISOString(),
-      updatedAt: new Date('2026-01-03').toISOString(),
+      createdAt: new Date('2025-12-01'),
+      updatedAt: new Date('2026-01-03'),
       createdBy: 'user123',
     },
     {
@@ -87,10 +87,10 @@ describe('ProjectSwitcher', () => {
       name: 'API Integration',
       description: 'Third-party API integration',
       clientId: 'client2',
-      status: 'PLANNING',
+      status: ProjectStatus.PLANNING,
       progress: 20,
-      createdAt: new Date('2025-11-15').toISOString(),
-      updatedAt: new Date('2026-01-01').toISOString(),
+      createdAt: new Date('2025-11-15'),
+      updatedAt: new Date('2026-01-01'),
       createdBy: 'user123',
     },
   ];

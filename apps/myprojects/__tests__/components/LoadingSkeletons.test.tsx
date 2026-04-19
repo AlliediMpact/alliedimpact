@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import LoadingSkeletons from '../../components/LoadingSkeletons';
+import * as LoadingSkeletons from '../../components/LoadingSkeletons';
 
 describe('LoadingSkeletons', () => {
   it('should render CardSkeleton without crashing', () => {

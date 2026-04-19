@@ -5,7 +5,7 @@ import {
   SearchFilters,
   SearchResult,
 } from '@/lib/search-utils';
-import { Milestone, Deliverable, Ticket, MilestoneStatus, DeliverableStatus, TicketStatus } from '@allied-impact/projects';
+import { Milestone, Deliverable, Ticket, MilestoneStatus, DeliverableStatus, TicketStatus, TicketPriority } from '@allied-impact/projects';
 
 describe('search-utils', () => {
   // Mock data
@@ -16,12 +16,12 @@ describe('search-utils', () => {
       name: 'Design Phase Complete',
       description: 'Complete all design mockups and wireframes',
       status: MilestoneStatus.IN_PROGRESS,
-      dueDate: new Date('2026-02-01').toISOString(),
+      dueDate: new Date('2026-02-01'),
       assignedTo: ['user1', 'user2'],
       deliverables: [],
       dependencies: [],
-      createdAt: new Date('2026-01-01').toISOString(),
-      updatedAt: new Date('2026-01-01').toISOString(),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
       createdBy: 'user1',
     },
     {
@@ -30,12 +30,12 @@ describe('search-utils', () => {
       name: 'Development Sprint 1',
       description: 'First development sprint for core features',
       status: MilestoneStatus.PENDING,
-      dueDate: new Date('2026-03-01').toISOString(),
+      dueDate: new Date('2026-03-01'),
       assignedTo: ['user3'],
       deliverables: [],
       dependencies: [],
-      createdAt: new Date('2026-01-01').toISOString(),
-      updatedAt: new Date('2026-01-01').toISOString(),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
       createdBy: 'user1',
     },
     {
@@ -44,12 +44,12 @@ describe('search-utils', () => {
       name: 'QA Testing',
       description: 'Quality assurance and testing phase',
       status: MilestoneStatus.COMPLETED,
-      dueDate: new Date('2025-12-15').toISOString(),
+      dueDate: new Date('2025-12-15'),
       assignedTo: ['user1'],
       deliverables: [],
       dependencies: [],
-      createdAt: new Date('2025-12-01').toISOString(),
-      updatedAt: new Date('2025-12-15').toISOString(),
+      createdAt: new Date('2025-12-01'),
+      updatedAt: new Date('2025-12-15'),
       createdBy: 'user1',
     },
   ];
@@ -63,12 +63,12 @@ describe('search-utils', () => {
       description: 'High-fidelity design mockups for all screens',
       type: 'design',
       status: DeliverableStatus.DELIVERED,
-      dueDate: new Date('2026-01-20').toISOString(),
+      dueDate: new Date('2026-01-20'),
       assignedTo: 'user1',
       notes: 'Using Figma for all designs',
       fileUrls: [],
-      createdAt: new Date('2026-01-01').toISOString(),
-      updatedAt: new Date('2026-01-15').toISOString(),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-15'),
       createdBy: 'user1',
     },
     {
@@ -79,11 +79,11 @@ describe('search-utils', () => {
       description: 'Low-fidelity wireframes for initial review',
       type: 'design',
       status: DeliverableStatus.REVISION_REQUESTED,
-      dueDate: new Date('2026-01-15').toISOString(),
+      dueDate: new Date('2026-01-15'),
       assignedTo: 'user2',
       fileUrls: [],
-      createdAt: new Date('2026-01-01').toISOString(),
-      updatedAt: new Date('2026-01-10').toISOString(),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-10'),
       createdBy: 'user2',
     },
     {
@@ -94,12 +94,12 @@ describe('search-utils', () => {
       description: 'Comprehensive API documentation',
       type: 'documentation',
       status: DeliverableStatus.PENDING,
-      dueDate: new Date('2026-02-20').toISOString(),
+      dueDate: new Date('2026-02-20'),
       assignedTo: 'user3',
       notes: 'Include code examples and authentication flows',
       fileUrls: [],
-      createdAt: new Date('2026-01-01').toISOString(),
-      updatedAt: new Date('2026-01-01').toISOString(),
+      createdAt: new Date('2026-01-01'),
+      updatedAt: new Date('2026-01-01'),
       createdBy: 'user3',
     },
   ];
@@ -108,54 +108,57 @@ describe('search-utils', () => {
     {
       id: 't1',
       projectId: 'p1',
-      milestoneId: '1',
       title: 'Fix navigation bug',
       description: 'Navigation menu does not work on mobile devices',
       status: TicketStatus.OPEN,
-      priority: 'high',
-      category: 'bug',
+      priority: TicketPriority.HIGH,
+      type: 'bug',
+      reportedBy: 'user2',
+      reportedByName: 'User Two',
       assignedTo: 'user1',
-      createdBy: 'user2',
-      createdAt: new Date('2026-01-05').toISOString(),
-      updatedAt: new Date('2026-01-05').toISOString(),
+      assignedToName: 'User One',
+      createdAt: new Date('2026-01-05'),
+      updatedAt: new Date('2026-01-05'),
       comments: [
         {
           id: 'c1',
           userId: 'user1',
           userName: 'User One',
           content: 'I can reproduce this on iOS Safari',
-          timestamp: new Date('2026-01-05').toISOString(),
+          createdAt: new Date('2026-01-05'),
         },
       ],
     },
     {
       id: 't2',
       projectId: 'p1',
-      milestoneId: '2',
       title: 'Add dark mode support',
       description: 'Implement dark mode theme across the application',
       status: TicketStatus.IN_PROGRESS,
-      priority: 'medium',
-      category: 'feature',
+      priority: TicketPriority.MEDIUM,
+      type: 'feature',
+      reportedBy: 'user1',
+      reportedByName: 'User One',
       assignedTo: 'user3',
-      createdBy: 'user1',
-      createdAt: new Date('2026-01-03').toISOString(),
-      updatedAt: new Date('2026-01-04').toISOString(),
+      assignedToName: 'User Three',
+      createdAt: new Date('2026-01-03'),
+      updatedAt: new Date('2026-01-04'),
       comments: [],
     },
     {
       id: 't3',
       projectId: 'p1',
-      milestoneId: '3',
       title: 'Update user documentation',
       description: 'Refresh user guide with latest screenshots',
       status: TicketStatus.RESOLVED,
-      priority: 'low',
-      category: 'documentation',
+      priority: TicketPriority.LOW,
+      type: 'support',
+      reportedBy: 'user1',
+      reportedByName: 'User One',
       assignedTo: 'user2',
-      createdBy: 'user1',
-      createdAt: new Date('2025-12-10').toISOString(),
-      updatedAt: new Date('2025-12-14').toISOString(),
+      assignedToName: 'User Two',
+      createdAt: new Date('2025-12-10'),
+      updatedAt: new Date('2025-12-14'),
       comments: [],
     },
   ];
@@ -405,7 +408,7 @@ describe('search-utils', () => {
       const results = searchTickets(mockTickets, filters);
       
       expect(results.length).toBeGreaterThan(0);
-      expect(results[0].item.comments?.some(c => c.text.includes('Safari'))).toBe(true);
+      expect(results[0].item.comments?.some(c => c.content.includes('Safari'))).toBe(true);
       expect(results[0].matches.some(m => m.field.startsWith('comment_'))).toBe(true);
     });
 
@@ -437,7 +440,7 @@ describe('search-utils', () => {
       const results = searchTickets(mockTickets, filters);
       
       expect(results).toHaveLength(1);
-      expect(results[0].item.category).toBe('bug');
+      expect(results[0].item.type).toBe('bug');
     });
 
     it('should filter by assigned user', () => {
@@ -472,8 +475,8 @@ describe('search-utils', () => {
       
       expect(results).toHaveLength(1);
       expect(results[0].item.status).toBe(TicketStatus.OPEN);
-      expect(results[0].item.priority).toBe('high');
-      expect(results[0].item.category).toBe('bug');
+      expect(results[0].item.priority).toBe(TicketPriority.HIGH);
+      expect(results[0].item.type).toBe('bug');
     });
 
     it('should sort results by score', () => {

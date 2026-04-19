@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, renderHook, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ProjectProvider, useProject } from '@/contexts/ProjectContext';
-import { Project } from '@allied-impact/projects';
+import { Project, ProjectStatus } from '@allied-impact/projects';
 
 // Mock @allied-impact/projects
 const mockGetClientProjects = jest.fn();
@@ -46,9 +46,9 @@ describe('ProjectContext', () => {
       name: 'Project 1',
       description: 'First project',
       clientId: 'client1',
-      status: 'PLANNING',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      status: ProjectStatus.PLANNING,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       createdBy: 'user123',
     },
     {
@@ -56,9 +56,9 @@ describe('ProjectContext', () => {
       name: 'Project 2',
       description: 'Second project',
       clientId: 'client1',
-      status: 'PLANNING',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      status: ProjectStatus.PLANNING,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       createdBy: 'user123',
     },
   ];
