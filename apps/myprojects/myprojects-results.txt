@@ -1,0 +1,26 @@
+﻿
+> @allied-impact/myprojects@1.0.0 type-check C:\dev\alliedimpact\apps\myprojects
+> tsc --noEmit
+
+app/api/auth/signup/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/forgot-password/page.tsx(4,18): error TS2307: Cannot find module 'next/link' or its corresponding type declarations.
+app/layout.tsx(1,31): error TS2307: Cannot find module 'next' or its corresponding type declarations.
+app/layout.tsx(2,23): error TS2307: Cannot find module 'next/font/google' or its corresponding type declarations.
+app/login/page.tsx(4,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+app/page.tsx(4,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+app/settings/layout.tsx(4,18): error TS2307: Cannot find module 'next/link' or its corresponding type declarations.
+app/settings/layout.tsx(5,29): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+app/settings/page.tsx(1,26): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+app/settings/profile/page.tsx(6,19): error TS2307: Cannot find module 'next/image' or its corresponding type declarations.
+app/signup/page.tsx(4,44): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+components/AppHeader.tsx(4,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+components/AppLayout.tsx(4,40): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+components/AppSidebar.tsx(3,40): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+components/Logo.tsx(3,19): error TS2307: Cannot find module 'next/image' or its corresponding type declarations.
+components/Logo.tsx(4,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+components/ProjectSwitcher.tsx(4,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+components/RecentActivityWidget.tsx(6,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+components/UpcomingDeadlines.tsx(7,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+middleware.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+../../platform/auth/src/middleware.ts(7,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 2.

@@ -8,15 +8,13 @@
     "build": "next build",
     "start": "next start -p 3006",
     "lint": "next lint",
-    "type-check": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug",
-    "type-check": "tsc --noEmit"
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@allied-impact/auth": "workspace:*",
